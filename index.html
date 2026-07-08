@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>연수 출석 시스템</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard','Malgun Gothic',sans-serif;background:#f5f5f3;color:#111;min-height:100vh}
+.app{max-width:960px;margin:0 auto;padding:16px}
+.header{background:#fff;border:0.5px solid rgba(0,0,0,.1);border-radius:12px;padding:18px 22px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.logo{width:40px;height:40px;background:#EEEDFE;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#534AB7;font-size:20px;flex-shrink:0}
+.title{font-size:17px;font-weight:600}
+.subtitle{font-size:12px;color:#888}
+.nav{display:flex;gap:6px;flex-wrap:wrap}
+.nav-btn{padding:7px 13px;border-radius:8px;border:0.5px solid rgba(0,0,0,.1);background:transparent;font-size:13px;cursor:pointer;color:#666;transition:all .15s;display:flex;align-items:center;gap:5px}
+.nav-btn.active{background:#EEEDFE;color:#3C3489;border-color:#CECBF6}
+.nav-btn:hover:not(.active){background:#f9f9f7}
+.page{display:none}
+.page.active{display:block}
+
+.track-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.track-card{background:#fff;border:0.5px solid rgba(0,0,0,.1);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .15s;text-align:center}
+.track-card.sel-a{border:2px solid #534AB7;background:#EEEDFE}
+.track-card.sel-b{border:2px solid #0F6E56;background:#E1F5EE}
+.track-card.sel-c{border:2px solid #854F0B;background:#FAEEDA}
+.track-card:hover{background:#f9f9f7}
+.track-name{font-size:14px;font-weight:600;margin-bottom:3px}
+.track-count{font-size:12px;color:#888}
+
+.day-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.day-tab{padding:6px 14px;border-radius:20px;border:0.5px solid rgba(0,0,0,.1);background:transparent;font-size:13px;cursor:pointer;color:#666}
+.day-tab.active{background:#E1F5EE;color:#085041;border-color:#9FE1CB}
+
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.stat-card{background:#f9f9f7;border-radius:8px;padding:12px 14px}
+.stat-label{font-size:11px;color:#888;margin-bottom:4px}
+.stat-value{font-size:22px;font-weight:600}
+
+.table-wrap{background:#fff;border:0.5px solid rgba(0,0,0,.1);border-radius:12px;overflow:hidden;margin-bottom:14px}
+.table-header{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:0.5px solid rgba(0,0,0,.08)}
+.table-title{font-size:14px;font-weight:600}
+.toolbar{display:flex;gap:7px}
+.btn-sm{padding:6px 11px;border-radius:8px;border:0.5px solid rgba(0,0,0,.1);background:transparent;font-size:12px;cursor:pointer;color:#555;display:flex;align-items:center;gap:4px}
+.btn-sm:hover{background:#f0f0ee}
+.btn-primary{background:#534AB7;color:#fff;border-color:#534AB7}
+.btn-primary:hover{opacity:.9;background:#534AB7}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{padding:9px 13px;text-align:left;font-size:11px;font-weight:600;color:#888;border-bottom:0.5px solid rgba(0,0,0,.08);background:#f9f9f7;text-transform:uppercase;letter-spacing:.03em}
+td{padding:10px 13px;border-bottom:0.5px solid rgba(0,0,0,.05)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafaf9}
+
+.check-btn{width:30px;height:30px;border-radius:50%;border:0.5px solid rgba(0,0,0,.12);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .15s;color:#aaa;margin:0 auto}
+.check-btn:hover{background:#E1F5EE;color:#0F6E56;border-color:#9FE1CB}
+.check-btn.checked{background:#E1F5EE;color:#0F6E56;border-color:#9FE1CB}
+
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:10px;font-size:12px;font-weight:500}
+
+/* admin */
+.form-card{background:#fff;border:0.5px solid rgba(0,0,0,.1);border-radius:12px;padding:18px 20px;margin-bottom:14px}
+.form-title{font-size:14px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:7px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;align-items:end}
+.form-group{display:flex;flex-direction:column;gap:4px}
+.form-label{font-size:11px;color:#888;font-weight:500}
+input,select{padding:8px 10px;border:0.5px solid rgba(0,0,0,.15);border-radius:8px;font-size:13px;background:#fff;color:#111;width:100%}
+input:focus,select:focus{outline:2px solid #CECBF6;border-color:#534AB7}
+.add-btn{padding:8px 14px;background:#534AB7;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:5px;height:36px}
+.add-btn:hover{opacity:.9}
+.empty-state{text-align:center;padding:36px;color:#aaa;font-size:13px}
+.del-btn{width:28px;height:28px;border-radius:6px;border:0.5px solid rgba(0,0,0,.1);background:transparent;cursor:pointer;color:#aaa;transition:all .15s}
+.del-btn:hover{background:#FCEBEB;color:#A32D2D;border-color:transparent}
+
+/* checkin page */
+.checkin-wrap{background:#fff;border:0.5px solid rgba(0,0,0,.1);border-radius:12px;padding:32px 24px;text-align:center;margin-bottom:14px}
+.ci-icon{width:60px;height:60px;background:#E1F5EE;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;color:#0F6E56;font-size:30px}
+.ci-title{font-size:20px;font-weight:600;margin-bottom:6px}
+.ci-sub{font-size:13px;color:#888;margin-bottom:22px}
+.ci-form{display:flex;flex-direction:column;gap:10px;max-width:300px;margin:0 auto}
+.big-btn{padding:12px;background:#0F6E56;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.big-btn:hover{opacity:.9}
+.success-msg{background:#E1F5EE;border:0.5px solid #9FE1CB;border-radius:8px;padding:16px;text-align:center;font-size:14px;color:#0F6E56;display:none;margin-top:14px;max-width:300px;margin-left:auto;margin-right:auto}
+.success-msg.show{display:block}
+
+/* QR cards */
+.qr-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.qr-card{background:#fff;border:0.5px solid rgba(0,0,0,.1);border-radius:12px;padding:18px;text-align:center}
+.qr-label{font-size:12px;color:#888;margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:6px;font-weight:500}
+.qr-box{display:inline-flex;border:0.5px solid rgba(0,0,0,.08);border-radius:8px;padding:10px;background:#f9f9f7;margin-bottom:10px}
+.qr-note{font-size:11px;color:#aaa}
+
+/* export */
+.export-card{background:#fff;border:0.5px solid rgba(0,0,0,.1);border-radius:12px;overflow:hidden;margin-bottom:12px}
+.export-row{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:0.5px solid rgba(0,0,0,.06)}
+.export-row:last-child{border-bottom:none}
+.export-name{font-size:13px;font-weight:500}
+.export-sub{font-size:12px;color:#aaa;margin-top:2px}
+.dl-btn{padding:7px 13px;background:#E6F1FB;color:#0C447C;border:0.5px solid #B5D4F4;border-radius:8px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:5px}
+.dl-btn:hover{background:#B5D4F4}
+
+/* modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:12px;padding:22px;width:340px;max-width:92vw}
+.modal-title{font-size:15px;font-weight:600;margin-bottom:3px}
+.modal-sub{font-size:12px;color:#888;margin-bottom:16px}
+.modal-row{display:flex;gap:8px;margin-bottom:10px}
+.modal-row select{flex:1}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+.btn-cancel{padding:8px 14px;border:0.5px solid rgba(0,0,0,.1);border-radius:8px;background:transparent;font-size:13px;cursor:pointer}
+.btn-ok{padding:8px 14px;background:#0F6E56;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:5px}
+
+@media(max-width:600px){
+  .track-grid,.qr-row{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:1fr 1fr}
+  .stats-row{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="header">
+  <div style="display:flex;align-items:center;gap:12px">
+    <div class="logo"><i class="ti ti-clipboard-check"></i></div>
+    <div>
+      <div class="title">연수 출석 시스템</div>
+      <div class="subtitle">4박 5일 · 트랙 A / B / C</div>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="nav-btn active" onclick="showPage('attendance')"><i class="ti ti-checklist"></i> 출석 현황</button>
+    <button class="nav-btn" onclick="showPage('checkin')"><i class="ti ti-scan"></i> QR 체크인</button>
+    <button class="nav-btn" onclick="showPage('admin')"><i class="ti ti-users"></i> 참여자 관리</button>
+    <button class="nav-btn" onclick="showPage('export')"><i class="ti ti-download"></i> 내보내기</button>
+  </div>
+</div>
+
+<!-- 출석 현황 -->
+<div class="page active" id="page-attendance">
+  <div class="track-grid">
+    <div class="track-card sel-a" id="tc-card-0" onclick="selTrack(0)">
+      <div class="track-name" style="color:#534AB7">트랙 A</div>
+      <div class="track-count" id="tc-cnt-0">0명</div>
+    </div>
+    <div class="track-card" id="tc-card-1" onclick="selTrack(1)">
+      <div class="track-name" style="color:#0F6E56">트랙 B</div>
+      <div class="track-count" id="tc-cnt-1">0명</div>
+    </div>
+    <div class="track-card" id="tc-card-2" onclick="selTrack(2)">
+      <div class="track-name" style="color:#854F0B">트랙 C</div>
+      <div class="track-count" id="tc-cnt-2">0명</div>
+    </div>
+  </div>
+
+  <div class="day-tabs" id="day-tabs"></div>
+
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-label">전체 인원</div><div class="stat-value" style="color:#534AB7" id="st-total">0</div></div>
+    <div class="stat-card"><div class="stat-label">아침 출석</div><div class="stat-value" style="color:#0F6E56" id="st-am">0</div></div>
+    <div class="stat-card"><div class="stat-label">점심 출석</div><div class="stat-value" style="color:#854F0B" id="st-pm">0</div></div>
+  </div>
+
+  <div class="table-wrap">
+    <div class="table-header">
+      <div class="table-title" id="att-title">트랙 A · 1일차 출석부</div>
+      <div class="toolbar">
+        <button class="btn-sm" onclick="openManual()"><i class="ti ti-plus"></i> 수동 체크</button>
+      </div>
+    </div>
+    <table>
+      <thead><tr>
+        <th>#</th><th>이름</th><th>소속</th>
+        <th style="text-align:center">☀ 아침</th>
+        <th style="text-align:center">🌤 점심</th>
+      </tr></thead>
+      <tbody id="att-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- QR 체크인 -->
+<div class="page" id="page-checkin">
+  <div class="checkin-wrap">
+    <div class="ci-icon"><i class="ti ti-scan"></i></div>
+    <div class="ci-title">QR 출석 체크인</div>
+    <div class="ci-sub">트랙과 이름을 선택한 뒤 출석을 확인하세요.</div>
+    <div class="ci-form">
+      <select id="ci-track" onchange="ciUpdateNames()">
+        <option value="">— 트랙 선택 —</option>
+        <option value="0">트랙 A</option>
+        <option value="1">트랙 B</option>
+        <option value="2">트랙 C</option>
+      </select>
+      <select id="ci-name"><option value="">— 이름 선택 —</option></select>
+      <select id="ci-session">
+        <option value="am">☀ 아침 출석</option>
+        <option value="pm">🌤 점심 출석</option>
+      </select>
+      <button class="big-btn" onclick="doCheckin()"><i class="ti ti-check"></i> 출석 확인</button>
+    </div>
+    <div class="success-msg" id="ci-ok"></div>
+  </div>
+
+  <div class="qr-row">
+    <div class="qr-card">
+      <div class="qr-label"><i class="ti ti-sun"></i> 아침 출석 QR코드</div>
+      <div class="qr-box"><div id="qr-am"></div></div>
+      <div class="qr-note">스캔하면 아침 체크인 화면으로 이동</div>
+    </div>
+    <div class="qr-card">
+      <div class="qr-label"><i class="ti ti-sun-high"></i> 점심 출석 QR코드</div>
+      <div class="qr-box"><div id="qr-pm"></div></div>
+      <div class="qr-note">스캔하면 점심 체크인 화면으로 이동</div>
+    </div>
+  </div>
+</div>
+
+<!-- 참여자 관리 -->
+<div class="page" id="page-admin">
+  <div class="form-card">
+    <div class="form-title"><i class="ti ti-user-plus"></i> 참여자 추가</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">트랙</label>
+        <select id="inp-track">
+          <option value="0">트랙 A</option>
+          <option value="1">트랙 B</option>
+          <option value="2">트랙 C</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">이름 *</label>
+        <input id="inp-name" placeholder="홍길동" onkeydown="if(event.key==='Enter')addP()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">소속</label>
+        <input id="inp-org" placeholder="부서/기관" onkeydown="if(event.key==='Enter')addP()">
+      </div>
+      <button class="add-btn" onclick="addP()"><i class="ti ti-plus"></i> 추가</button>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <div class="table-header">
+      <div class="table-title">등록된 참여자</div>
+      <div class="toolbar">
+        <button class="btn-sm" onclick="loadSample()"><i class="ti ti-wand"></i> 샘플 데이터</button>
+        <button class="btn-sm" onclick="clearAll()"><i class="ti ti-trash"></i> 전체 삭제</button>
+      </div>
+    </div>
+    <table>
+      <thead><tr><th>트랙</th><th>이름</th><th>소속</th><th></th></tr></thead>
+      <tbody id="admin-body"></tbody>
+    </table>
+    <div class="empty-state" id="admin-empty"><div style="font-size:28px;margin-bottom:8px;opacity:.4"><i class="ti ti-users"></i></div>참여자를 추가해 주세요</div>
+  </div>
+</div>
+
+<!-- 내보내기 -->
+<div class="page" id="page-export">
+  <div class="export-card">
+    <div class="table-header"><div class="table-title"><i class="ti ti-table-export"></i> 출석 데이터 엑셀 다운로드</div></div>
+    <div class="export-row">
+      <div><div class="export-name">전체 출석 현황</div><div class="export-sub">모든 트랙 · 일차별 아침/점심</div></div>
+      <button class="dl-btn" onclick="exportAll()"><i class="ti ti-download"></i> 전체 다운로드</button>
+    </div>
+    <div class="export-row">
+      <div><div class="export-name">트랙 A</div><div class="export-sub">트랙 A 참여자만</div></div>
+      <button class="dl-btn" onclick="exportTrack(0)"><i class="ti ti-download"></i> 트랙 A</button>
+    </div>
+    <div class="export-row">
+      <div><div class="export-name">트랙 B</div><div class="export-sub">트랙 B 참여자만</div></div>
+      <button class="dl-btn" onclick="exportTrack(1)"><i class="ti ti-download"></i> 트랙 B</button>
+    </div>
+    <div class="export-row">
+      <div><div class="export-name">트랙 C</div><div class="export-sub">트랙 C 참여자만</div></div>
+      <button class="dl-btn" onclick="exportTrack(2)"><i class="ti ti-download"></i> 트랙 C</button>
+    </div>
+  </div>
+
+  <div class="export-card">
+    <div class="table-header"><div class="table-title"><i class="ti ti-chart-bar"></i> 출석률 요약</div></div>
+    <div id="exp-summary" style="padding:4px 0"></div>
+  </div>
+</div>
+
+</div><!-- .app -->
+
+<!-- 수동 체크 모달 -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-title">수동 출석 체크</div>
+    <div class="modal-sub">참여자와 세션을 선택해 출석을 기록합니다</div>
+    <div class="modal-row">
+      <select id="m-track" onchange="mUpdateNames()">
+        <option value="0">트랙 A</option>
+        <option value="1">트랙 B</option>
+        <option value="2">트랙 C</option>
+      </select>
+      <select id="m-session">
+        <option value="am">아침</option>
+        <option value="pm">점심</option>
+      </select>
+    </div>
+    <select id="m-name" style="width:100%;margin-bottom:4px"><option value="">참여자 선택</option></select>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">취소</button>
+      <button class="btn-ok" onclick="confirmManual()"><i class="ti ti-check"></i> 출석 완료</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DAYS=5;
+const TN=['트랙 A','트랙 B','트랙 C'];
+const TC_SEL=['sel-a','sel-b','sel-c'];
+
+let ps=[]; // {id,track,name,org}
+let att={}; // `${id}_d${d}_${s}` => true
+let curTrack=0, curDay=1;
+
+function uid(){return Math.random().toString(36).slice(2,9)}
+function save(){try{localStorage.setItem('rs_p',JSON.stringify(ps));localStorage.setItem('rs_a',JSON.stringify(att))}catch(e){}}
+function load(){try{const p=localStorage.getItem('rs_p');const a=localStorage.getItem('rs_a');if(p)ps=JSON.parse(p);if(a)att=JSON.parse(a)}catch(e){}}
+
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  const idx={attendance:0,checkin:1,admin:2,export:3};
+  document.querySelectorAll('.nav-btn')[idx[id]]?.classList.add('active');
+  if(id==='attendance')renderAtt();
+  if(id==='admin')renderAdmin();
+  if(id==='export')renderExport();
+  if(id==='checkin'){renderQR();ciUpdateNames()}
+}
+
+function buildDayTabs(){
+  const c=document.getElementById('day-tabs');c.innerHTML='';
+  for(let d=1;d<=DAYS;d++){
+    const b=document.createElement('button');
+    b.className='day-tab'+(d===curDay?' active':'');
+    b.textContent=d+'일차';
+    b.onclick=(dd=>()=>{curDay=dd;buildDayTabs();renderAtt()})(d);
+    c.appendChild(b);
+  }
+}
+
+function selTrack(i){
+  curTrack=i;
+  document.querySelectorAll('.track-card').forEach(c=>{
+    c.classList.remove('sel-a','sel-b','sel-c');
+  });
+  document.getElementById('tc-card-'+i).classList.add(TC_SEL[i]);
+  renderAtt();
+}
+
+function renderAtt(){
+  buildDayTabs();
+  const pts=ps.filter(p=>p.track===curTrack);
+  for(let i=0;i<3;i++) document.getElementById('tc-cnt-'+i).textContent=ps.filter(p=>p.track===i).length+'명';
+  document.getElementById('att-title').textContent=TN[curTrack]+' · '+curDay+'일차 출석부';
+  document.getElementById('st-total').textContent=pts.length;
+  document.getElementById('st-am').textContent=pts.filter(p=>att[p.id+'_d'+curDay+'_am']).length;
+  document.getElementById('st-pm').textContent=pts.filter(p=>att[p.id+'_d'+curDay+'_pm']).length;
+
+  const tbody=document.getElementById('att-body');
+  if(!pts.length){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:28px;color:#aaa;font-size:13px">참여자를 먼저 등록해 주세요</td></tr>';return}
+  tbody.innerHTML=pts.map((p,i)=>{
+    const ak=p.id+'_d'+curDay+'_am', pk=p.id+'_d'+curDay+'_pm';
+    const ac=att[ak], pc=att[pk];
+    return`<tr>
+      <td style="color:#aaa">${i+1}</td>
+      <td style="font-weight:600">${p.name}</td>
+      <td style="color:#888">${p.org||'-'}</td>
+      <td style="text-align:center"><button class="check-btn${ac?' checked':''}" onclick="toggle('${p.id}','d${curDay}_am')"><i class="ti ti-${ac?'check':'minus'}"></i></button></td>
+      <td style="text-align:center"><button class="check-btn${pc?' checked':''}" onclick="toggle('${p.id}','d${curDay}_pm')"><i class="ti ti-${pc?'check':'minus'}"></i></button></td>
+    </tr>`
+  }).join('');
+}
+
+function toggle(pid,key){
+  const k=pid+'_'+key;
+  if(att[k])delete att[k]; else att[k]=true;
+  save();renderAtt();
+}
+
+function renderAdmin(){
+  const tbody=document.getElementById('admin-body');
+  const empty=document.getElementById('admin-empty');
+  for(let i=0;i<3;i++) document.getElementById('tc-cnt-'+i).textContent=ps.filter(p=>p.track===i).length+'명';
+  if(!ps.length){tbody.innerHTML='';empty.style.display='block';return}
+  empty.style.display='none';
+  const colors=[['#EEEDFE','#534AB7'],['#E1F5EE','#0F6E56'],['#FAEEDA','#854F0B']];
+  tbody.innerHTML=ps.map(p=>`<tr>
+    <td><span class="badge" style="background:${colors[p.track][0]};color:${colors[p.track][1]}">${TN[p.track]}</span></td>
+    <td style="font-weight:600">${p.name}</td>
+    <td style="color:#888">${p.org||'-'}</td>
+    <td><button class="del-btn" onclick="delP('${p.id}')"><i class="ti ti-trash" style="font-size:13px"></i></button></td>
+  </tr>`).join('');
+}
+
+function addP(){
+  const t=parseInt(document.getElementById('inp-track').value);
+  const n=document.getElementById('inp-name').value.trim();
+  const o=document.getElementById('inp-org').value.trim();
+  if(!n){alert('이름을 입력해 주세요');return}
+  ps.push({id:uid(),track:t,name:n,org:o});
+  document.getElementById('inp-name').value='';
+  document.getElementById('inp-org').value='';
+  save();renderAdmin();
+}
+
+function delP(id){
+  ps=ps.filter(p=>p.id!==id);
+  Object.keys(att).filter(k=>k.startsWith(id+'_')).forEach(k=>delete att[k]);
+  save();renderAdmin();
+}
+
+function clearAll(){
+  if(!confirm('모든 참여자와 출석 데이터를 삭제할까요?'))return;
+  ps=[];att={};save();renderAdmin();
+}
+
+function loadSample(){
+  const s=[
+    {t:0,n:'김민준',o:'기획팀'},{t:0,n:'이서연',o:'개발팀'},{t:0,n:'박지훈',o:'디자인팀'},{t:0,n:'최예린',o:'마케팅팀'},{t:0,n:'정수빈',o:'기획팀'},
+    {t:1,n:'강현우',o:'영업팀'},{t:1,n:'윤지아',o:'HR팀'},{t:1,n:'임태양',o:'재무팀'},{t:1,n:'한소희',o:'법무팀'},{t:1,n:'오민석',o:'영업팀'},
+    {t:2,n:'신유진',o:'연구팀'},{t:2,n:'배도윤',o:'개발팀'},{t:2,n:'권나윤',o:'연구팀'},{t:2,n:'황인호',o:'품질팀'},{t:2,n:'송채원',o:'기획팀'}
+  ];
+  ps=[...ps,...s.map(x=>({id:uid(),track:x.t,name:x.n,org:x.o}))];
+  save();renderAdmin();
+}
+
+function ciUpdateNames(){
+  const t=document.getElementById('ci-track').value;
+  const sel=document.getElementById('ci-name');
+  if(t===''){sel.innerHTML='<option value="">— 이름 선택 —</option>';return}
+  const pts=ps.filter(p=>p.track===parseInt(t));
+  sel.innerHTML='<option value="">— 이름 선택 —</option>'+pts.map(p=>`<option value="${p.id}">${p.name}${p.org?' ('+p.org+')':''}</option>`).join('');
+}
+
+function doCheckin(){
+  const t=document.getElementById('ci-track').value;
+  const pid=document.getElementById('ci-name').value;
+  const ses=document.getElementById('ci-session').value;
+  if(t===''){alert('트랙을 선택해 주세요');return}
+  if(!pid){alert('이름을 선택해 주세요');return}
+  const key=pid+'_d'+curDay+'_'+ses;
+  att[key]=true;save();
+  const p=ps.find(x=>x.id===pid);
+  const sl=ses==='am'?'아침':'점심';
+  const el=document.getElementById('ci-ok');
+  el.innerHTML='<i class="ti ti-circle-check" style="font-size:22px;display:block;margin-bottom:6px"></i>'+p.name+'님 '+curDay+'일차 '+sl+' 출석 완료 ✓';
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),3000);
+}
+
+function renderQR(){
+  ['am','pm'].forEach(s=>{
+    const el=document.getElementById('qr-'+s);
+    el.innerHTML='';
+    const url=location.href.split('?')[0]+'?session='+s;
+    try{new QRCode(el,{text:url,width:130,height:130,colorDark:'#111',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M})}
+    catch(e){el.textContent=url}
+  });
+}
+
+function openManual(){mUpdateNames();document.getElementById('modal').classList.add('open')}
+function closeModal(){document.getElementById('modal').classList.remove('open')}
+function mUpdateNames(){
+  const t=parseInt(document.getElementById('m-track').value);
+  const sel=document.getElementById('m-name');
+  const pts=ps.filter(p=>p.track===t);
+  sel.innerHTML='<option value="">참여자 선택</option>'+pts.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+}
+function confirmManual(){
+  const pid=document.getElementById('m-name').value;
+  const ses=document.getElementById('m-session').value;
+  if(!pid){alert('참여자를 선택해 주세요');return}
+  att[pid+'_d'+curDay+'_'+ses]=true;
+  save();closeModal();renderAtt();
+}
+
+function renderExport(){
+  const colors=[['#EEEDFE','#534AB7'],['#E1F5EE','#0F6E56'],['#FAEEDA','#854F0B']];
+  let html='<table style="width:100%;font-size:13px;border-collapse:collapse">';
+  html+='<thead><tr style="border-bottom:0.5px solid rgba(0,0,0,.08)"><th style="padding:10px 16px;text-align:left;font-size:11px;color:#888;font-weight:600">트랙</th><th style="padding:10px 16px;text-align:right;font-size:11px;color:#888;font-weight:600">인원</th><th style="padding:10px 16px;text-align:right;font-size:11px;color:#888;font-weight:600">누적 출석</th><th style="padding:10px 16px;text-align:right;font-size:11px;color:#888;font-weight:600">출석률</th></tr></thead><tbody>';
+  [0,1,2].forEach(t=>{
+    const pts=ps.filter(p=>p.track===t);
+    const total=pts.length*DAYS*2;
+    const done=pts.reduce((a,p)=>{
+      for(let d=1;d<=DAYS;d++){
+        if(att[p.id+'_d'+d+'_am'])a++;
+        if(att[p.id+'_d'+d+'_pm'])a++;
+      }return a;
+    },0);
+    const rate=total?Math.round(done/total*100):0;
+    const rc=rate>=80?'#0F6E56':rate>=60?'#854F0B':'#A32D2D';
+    html+=`<tr style="border-bottom:0.5px solid rgba(0,0,0,.05)"><td style="padding:11px 16px"><span class="badge" style="background:${colors[t][0]};color:${colors[t][1]}">${TN[t]}</span></td><td style="padding:11px 16px;text-align:right">${pts.length}명</td><td style="padding:11px 16px;text-align:right">${done} / ${total}</td><td style="padding:11px 16px;text-align:right;font-weight:600;color:${rc}">${rate}%</td></tr>`;
+  });
+  document.getElementById('exp-summary').innerHTML=html+'</tbody></table>';
+}
+
+function buildRows(filter){
+  const hdr=['트랙','이름','소속'];
+  for(let d=1;d<=DAYS;d++){hdr.push(d+'일차 아침',d+'일차 점심')}
+  const rows=[hdr];
+  const pts=filter===undefined?ps:ps.filter(p=>p.track===filter);
+  pts.forEach(p=>{
+    const r=[TN[p.track],p.name,p.org||''];
+    for(let d=1;d<=DAYS;d++){r.push(att[p.id+'_d'+d+'_am']?'O':'',att[p.id+'_d'+d+'_pm']?'O':'')}
+    rows.push(r);
+  });return rows;
+}
+function exportAll(){doXls(buildRows(),'전체_출석현황')}
+function exportTrack(t){doXls(buildRows(t),TN[t].replace(' ','')+'_출석현황')}
+function doXls(rows,name){
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rows),'출석');
+  XLSX.writeFile(wb,name+'.xlsx');
+}
+
+load();buildDayTabs();renderAtt();
+</script>
+</body>
+</html>
