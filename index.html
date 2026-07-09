@@ -1,810 +1,614 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>2026 CMK 아츠클래스 출석 시스템</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Pretendard','Malgun Gothic',sans-serif;background:#e8e8f4;color:#111;min-height:100vh}
-.hidden{display:none!important}
-.btn{padding:10px 20px;border-radius:10px;border:none;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:all .15s;font-weight:500}
-.btn-primary{background:#4b45a1;color:#fff}.btn-primary:hover{opacity:.9}
-.btn-ghost{background:transparent;border:0.5px solid rgba(0,0,0,.15);color:#555}.btn-ghost:hover{background:#eee}
-input,select{padding:10px 12px;border:0.5px solid rgba(0,0,0,.15);border-radius:9px;font-size:14px;background:#fff;color:#111;width:100%}
-input:focus,select:focus{outline:2px solid #b8b5e8;border-color:#4b45a1}
-.logo-bar{background:#fff;border-bottom:0.5px solid rgba(0,0,0,.08);padding:10px 22px;display:flex;align-items:center;justify-content:space-between;position:fixed;top:0;left:0;right:0;z-index:200;height:56px}
-.logo-bar-left .lb-title{font-size:13px;font-weight:700;color:#4b45a1}
-.logo-bar-left .lb-sub{font-size:11px;color:#aaa;margin-top:1px}
-.logo-bar-right{display:flex;align-items:center;gap:16px}
-.logo-bar-right img{height:26px;width:auto;object-fit:contain}
-.logo-sep{width:0.5px;height:22px;background:rgba(0,0,0,.1)}
-#screen-track,#screen-qr,#screen-checkin{padding-top:56px}
-#screen-track{min-height:100vh;display:flex;flex-direction:column;background:#1e1b4b}
-.track-header{padding:18px 26px 14px;display:flex;align-items:flex-end;justify-content:space-between;border-bottom:0.5px solid rgba(255,255,255,.07)}
-.th-title{font-size:14px;font-weight:700;color:#fff}
-.th-sub{font-size:11px;color:rgba(255,255,255,.3);margin-top:2px}
-.th-time{font-size:22px;font-weight:800;color:#fff;letter-spacing:.04em}
-.th-date{font-size:11px;color:rgba(255,255,255,.4);text-align:right}
-.ssb{margin:16px 24px 0;border-radius:12px;padding:13px 18px;display:flex;align-items:center;gap:12px}
-.ssb-am{background:rgba(250,183,90,.15);border:1px solid rgba(250,183,90,.3)}
-.ssb-pm{background:rgba(95,207,170,.15);border:1px solid rgba(95,207,170,.3)}
-.ssb-closed{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
-.ssb-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
-.ssb-am .ssb-dot{background:#fab75a;box-shadow:0 0 6px #fab75a}
-.ssb-pm .ssb-dot{background:#5fcfaa;box-shadow:0 0 6px #5fcfaa}
-.ssb-closed .ssb-dot{background:rgba(255,255,255,.2)}
-.ssb-text{font-size:13px;font-weight:600}
-.ssb-am .ssb-text{color:#fab75a}.ssb-pm .ssb-text{color:#5fcfaa}.ssb-closed .ssb-text{color:rgba(255,255,255,.35)}
-.ssb-sub{font-size:11px;margin-top:1px}
-.ssb-am .ssb-sub{color:rgba(250,183,90,.55)}.ssb-pm .ssb-sub{color:rgba(95,207,170,.55)}.ssb-closed .ssb-sub{color:rgba(255,255,255,.2)}
-.track-pick-area{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px 20px;gap:16px}
-.track-pick-title{font-size:12px;color:rgba(255,255,255,.35);letter-spacing:.06em;text-transform:uppercase;font-weight:600}
-.track-cards{display:flex;flex-direction:column;gap:11px;width:100%;max-width:480px}
-.track-pick-card{border-radius:14px;padding:18px 22px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .18s;border:1.5px solid transparent}
-.tc-a{background:rgba(160,157,255,.12);border-color:rgba(160,157,255,.25)}.tc-a:hover{background:rgba(160,157,255,.2);border-color:rgba(160,157,255,.5)}
-.tc-b{background:rgba(95,207,170,.12);border-color:rgba(95,207,170,.25)}.tc-b:hover{background:rgba(95,207,170,.2);border-color:rgba(95,207,170,.5)}
-.tc-c{background:rgba(250,183,90,.12);border-color:rgba(250,183,90,.25)}.tc-c:hover{background:rgba(250,183,90,.2);border-color:rgba(250,183,90,.5)}
-.tc-name{font-size:17px;font-weight:800;color:#fff}
-.tc-count{font-size:12px;margin-top:3px}
-.tc-a .tc-count{color:rgba(160,157,255,.6)}.tc-b .tc-count{color:rgba(95,207,170,.6)}.tc-c .tc-count{color:rgba(250,183,90,.6)}
-.tc-arrow{font-size:18px;opacity:.35;color:#fff}
-.track-footer{padding:12px 24px 14px;border-top:0.5px solid rgba(255,255,255,.05);display:flex;align-items:center;justify-content:space-between}
-.tf-note{font-size:11px;color:rgba(255,255,255,.18)}
-.tf-right{display:flex;gap:7px;align-items:center}
-.day-nav{display:flex;align-items:center;gap:5px}
-.day-nav-btn{padding:6px 9px;border-radius:7px;border:0.5px solid rgba(255,255,255,.12);background:transparent;color:rgba(255,255,255,.4);cursor:pointer;font-size:12px}
-.day-nav-btn:hover{background:rgba(255,255,255,.08);color:#fff}
-.day-nav-label{font-size:12px;color:rgba(255,255,255,.45);min-width:44px;text-align:center}
-.tf-btn{padding:6px 12px;border-radius:7px;border:0.5px solid rgba(255,255,255,.1);background:transparent;font-size:11px;color:rgba(255,255,255,.3);cursor:pointer;display:flex;align-items:center;gap:4px}
-.tf-btn:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.7)}
-#screen-qr{min-height:100vh;display:flex;flex-direction:column;background:#1e1b4b}
-.qr-header{padding:14px 22px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid rgba(255,255,255,.07)}
-.qh-left{display:flex;align-items:center;gap:9px}
-.qh-back{width:30px;height:30px;border-radius:7px;border:0.5px solid rgba(255,255,255,.14);background:transparent;cursor:pointer;color:rgba(255,255,255,.45);display:flex;align-items:center;justify-content:center;font-size:14px}
-.qh-back:hover{background:rgba(255,255,255,.09);color:#fff}
-.qh-badge{padding:4px 12px;border-radius:14px;font-size:12px;font-weight:700}
-.badge-a{background:rgba(160,157,255,.2);color:#c8c6ff}
-.badge-b{background:rgba(95,207,170,.2);color:#7fe8c6}
-.badge-c{background:rgba(250,183,90,.2);color:#fde0a0}
-.qh-day{font-size:12px;color:rgba(255,255,255,.3)}
-.qh-time-r{font-size:17px;font-weight:800;color:#fff;letter-spacing:.04em}
-.qr-notice{margin:12px 22px 0;border-radius:9px;padding:11px 16px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:9px}
-.qn-am{background:rgba(250,183,90,.15);border:1px solid rgba(250,183,90,.3);color:#fab75a}
-.qn-pm{background:rgba(95,207,170,.15);border:1px solid rgba(95,207,170,.3);color:#5fcfaa}
-.qn-closed{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.28)}
-.qr-main{flex:1;display:flex;align-items:center;justify-content:center;padding:18px 22px}
-.qr-pair{display:flex;gap:18px;align-items:stretch;flex-wrap:wrap;justify-content:center}
-.qr-panel{background:rgba(255,255,255,.05);border:0.5px solid rgba(255,255,255,.1);border-radius:18px;padding:22px 26px;display:flex;flex-direction:column;align-items:center;gap:11px;min-width:200px;transition:all .25s}
-.qr-panel.inactive{opacity:.18;filter:grayscale(1);pointer-events:none}
-.qr-panel.active-now{border-color:rgba(160,157,255,.5);box-shadow:0 0 0 1px rgba(160,157,255,.2),0 8px 32px rgba(0,0,0,.3)}
-.qr-lbl{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
-.qr-am .qr-lbl{color:#fab75a}.qr-pm .qr-lbl{color:#5fcfaa}
-.qr-time-tag{font-size:11px;padding:3px 9px;border-radius:9px;font-weight:600}
-.qr-am .qr-time-tag{background:rgba(250,183,90,.15);color:#fab75a}
-.qr-pm .qr-time-tag{background:rgba(95,207,170,.15);color:#5fcfaa}
-.qr-title{font-size:19px;font-weight:800;color:#fff}
-.qr-sub{font-size:11px;color:rgba(255,255,255,.3);margin-top:-5px}
-.qr-img-wrap{background:#fff;border-radius:10px;padding:10px}
-.qr-note{font-size:11px;color:rgba(255,255,255,.2);text-align:center;line-height:1.5}
-#screen-checkin{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:76px 20px 20px;background:#1e1b4b}
-.ci-card{background:#fff;border-radius:20px;padding:28px 26px;width:100%;max-width:360px}
-.ci-top{text-align:center;margin-bottom:20px}
-.ci-icon{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 11px;font-size:23px}
-.ci-am .ci-icon{background:#FFF3E0;color:#E65100}
-.ci-pm .ci-icon{background:#E1F5EE;color:#0F6E56}
-.ci-closed .ci-icon{background:#f0f0ee;color:#bbb}
-.ci-session-tag{font-size:11px;font-weight:700;letter-spacing:.05em;margin-bottom:4px}
-.ci-am .ci-session-tag{color:#E65100}.ci-pm .ci-session-tag{color:#0F6E56}.ci-closed .ci-session-tag{color:#bbb}
-.ci-track-name{font-size:16px;font-weight:800;margin-bottom:3px}
-.ci-daydate{font-size:12px;color:#aaa}
-.ci-fields{display:flex;flex-direction:column;gap:10px;margin-bottom:15px}
-.field-label{font-size:11px;font-weight:700;color:#999;margin-bottom:4px;letter-spacing:.03em}
-.ci-submit{width:100%;padding:13px;border-radius:10px;border:none;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
-.ci-am .ci-submit{background:#E65100;color:#fff}.ci-pm .ci-submit{background:#0F6E56;color:#fff}
-.ci-submit:hover{opacity:.88}.ci-submit:disabled{opacity:.3;cursor:not-allowed}
-.ci-closed-box{text-align:center;padding:10px 0}
-.ci-closed-icon{width:88px;height:88px;border-radius:50%;background:#f5f5f3;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:40px;color:#ccc}
-.ci-closed-title{font-size:24px;font-weight:900;color:#444;margin-bottom:12px;line-height:1.3}
-.ci-closed-msg{font-size:14px;color:#aaa;line-height:1.8;margin-bottom:18px}
-.ci-closed-times{background:#f7f7f5;border-radius:12px;padding:16px 20px;font-size:14px;color:#777;line-height:2.2}
-.ci-closed-times strong{color:#444;font-weight:700}
-.ci-done-icon{width:68px;height:68px;border-radius:50%;background:#E1F5EE;display:flex;align-items:center;justify-content:center;margin:0 auto 13px;font-size:30px;color:#0F6E56}
-.ci-already-icon{width:68px;height:68px;border-radius:50%;background:#EEEDFE;display:flex;align-items:center;justify-content:center;margin:0 auto 13px;font-size:30px;color:#4b45a1}
-.tbadge{display:inline-flex;padding:3px 9px;border-radius:9px;font-size:11px;font-weight:700}
-#screen-login{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f4f4f2}
-.login-card{background:#fff;border:0.5px solid rgba(0,0,0,.1);border-radius:16px;padding:28px;width:310px;text-align:center}
-.login-icon{width:48px;height:48px;background:#EEEDFE;border-radius:11px;display:flex;align-items:center;justify-content:center;margin:0 auto 13px;color:#4b45a1;font-size:21px}
-.login-title{font-size:16px;font-weight:800;margin-bottom:5px}
-.login-sub{font-size:12px;color:#999;margin-bottom:16px}
-.login-err{font-size:12px;color:#A32D2D;margin-top:7px;display:none}
-#screen-admin{min-height:100vh;background:#f4f4f2}
-.admin-header{background:#fff;border-bottom:0.5px solid rgba(0,0,0,.07);padding:11px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;position:sticky;top:0;z-index:10}
-.admin-logo-row{display:flex;align-items:center;gap:8px}
-.admin-logo-icon{width:29px;height:29px;background:#EEEDFE;border-radius:7px;display:flex;align-items:center;justify-content:center;color:#4b45a1;font-size:14px}
-.admin-title{font-size:13px;font-weight:700;color:#4b45a1}
-.admin-nav{display:flex;gap:4px;flex-wrap:wrap}
-.atab{padding:6px 11px;border-radius:7px;border:0.5px solid rgba(0,0,0,.1);background:transparent;font-size:12px;cursor:pointer;color:#666;display:flex;align-items:center;gap:4px}
-.atab.active{background:#EEEDFE;color:#3C3489;border-color:#b8b5e8}
-.atab:hover:not(.active){background:#f0f0ee}
-.admin-body{max-width:980px;margin:0 auto;padding:14px}
-.apanel{display:none}.apanel.active{display:block}
-.card{background:#fff;border:0.5px solid rgba(0,0,0,.07);border-radius:11px}
-.card-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:0.5px solid rgba(0,0,0,.06)}
-.card-title{font-size:12px;font-weight:700;color:#444;display:flex;align-items:center;gap:5px}
-.card-body{padding:13px}
-.form-grid{display:grid;grid-template-columns:155px 1fr 1fr auto;gap:7px;align-items:end}
-.fl{display:flex;flex-direction:column;gap:3px}
-.fl label{font-size:11px;color:#999;font-weight:700;letter-spacing:.03em}
-.addbtn{padding:10px 13px;background:#4b45a1;color:#fff;border:none;border-radius:8px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;height:40px;white-space:nowrap}
-.addbtn:hover{opacity:.9}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th{padding:8px 12px;text-align:left;font-size:11px;font-weight:700;color:#999;border-bottom:0.5px solid rgba(0,0,0,.06);background:#f9f9f7;letter-spacing:.03em}
-td{padding:9px 12px;border-bottom:0.5px solid rgba(0,0,0,.04)}
-tr:last-child td{border-bottom:none}
-tr:hover td{background:#fafaf9}
-.delbtn{width:25px;height:25px;border-radius:5px;border:0.5px solid rgba(0,0,0,.1);background:transparent;cursor:pointer;color:#bbb;transition:all .15s}
-.delbtn:hover{background:#FCEBEB;color:#A32D2D;border-color:transparent}
-.empty-row td{text-align:center;padding:24px;color:#ccc;font-size:12px}
-.upload-zone{border:1.5px dashed rgba(0,0,0,.12);border-radius:9px;padding:20px;text-align:center;cursor:pointer;transition:all .15s;margin-bottom:11px}
-.upload-zone:hover,.upload-zone.drag{border-color:#4b45a1;background:#EEEDFE18}
-.upload-icon{font-size:24px;color:#ccc;margin-bottom:5px}
-.upload-text{font-size:13px;color:#888}
-.upload-sub{font-size:11px;color:#ccc;margin-top:2px}
-.upload-ok{background:#E1F5EE;border:0.5px solid #9FE1CB;border-radius:7px;padding:9px 12px;font-size:12px;color:#0F6E56;display:none;margin-bottom:9px}
-.format-box{background:#f9f9f7;border:0.5px solid rgba(0,0,0,.06);border-radius:7px;padding:11px;font-size:12px;color:#777;line-height:1.8}
-.format-box code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:3px;font-size:11px;font-family:monospace}
-.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:11px}
-.scard{background:#fff;border:0.5px solid rgba(0,0,0,.07);border-radius:9px;padding:11px 13px}
-.scard-label{font-size:11px;color:#999;font-weight:700;letter-spacing:.03em;margin-bottom:3px}
-.scard-val{font-size:21px;font-weight:800}
-.filter-bar{display:flex;gap:6px;margin-bottom:9px;flex-wrap:wrap;align-items:center}
-.fbtn{padding:5px 11px;border-radius:13px;border:0.5px solid rgba(0,0,0,.1);background:transparent;font-size:12px;cursor:pointer;color:#777;font-weight:500}
-.fbtn.fall{background:#111;color:#fff;border-color:#111}
-.fbtn.fa{background:#EEEDFE;color:#4b45a1;border-color:#b8b5e8}
-.fbtn.fb{background:#E1F5EE;color:#0F6E56;border-color:#9FE1CB}
-.fbtn.fc{background:#FFF3E0;color:#E65100;border-color:#FFCC80}
-.day-sel{display:flex;gap:4px;margin-left:auto}
-.dbtn{padding:4px 10px;border-radius:12px;border:0.5px solid rgba(0,0,0,.1);background:transparent;font-size:11px;cursor:pointer;color:#999}
-.dbtn.active{background:#111;color:#fff;border-color:#111}
-.check-cell{text-align:center}
-.dot-ok{display:inline-block;width:20px;height:20px;border-radius:50%;background:#E1F5EE;color:#0F6E56;font-size:12px;line-height:20px;font-weight:700}
-.dot-no{display:inline-block;width:20px;height:20px;border-radius:50%;background:#f0f0ee;color:#ccc;font-size:12px;line-height:20px}
-.exp-row{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:0.5px solid rgba(0,0,0,.05)}
-.exp-row:last-child{border-bottom:none}
-.exp-name{font-size:13px;font-weight:600}
-.exp-sub{font-size:11px;color:#bbb;margin-top:1px}
-.dlbtn{padding:6px 11px;background:#E6F1FB;color:#0C447C;border:0.5px solid #B5D4F4;border-radius:7px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;font-weight:600}
-.dlbtn:hover{background:#B5D4F4}
-.sheets-notice{background:#E8F5E9;border:0.5px solid #A5D6A7;border-radius:9px;padding:13px 15px;font-size:12px;color:#2E7D32;line-height:1.7;margin-bottom:11px}
-.code-block{background:#1e1b4b;border-radius:9px;padding:16px;font-family:monospace;font-size:12px;color:#c8c6ff;line-height:1.9;overflow-x:auto;white-space:pre;margin:10px 0}
-@media(max-width:580px){
-  .qr-pair{flex-direction:column;gap:14px}
-  .form-grid{grid-template-columns:1fr 1fr}
-  .stats-grid{grid-template-columns:1fr 1fr}
-  .logo-bar-right img{height:20px}
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 CMK 아츠클래스 교사연수 안내 & 체크인</title>
+    <style>
+        :root {
+            --primary-bg: #EAEBFC;
+            --main-purple: #9295F7;
+            --dark-blue: #23297A;
+            --text-dark: #1F2253;
+            --white: #ffffff;
+            --warning-red: #D9383A;
+            --light-purple: #F4F5FF;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--primary-bg);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* [추가] 중앙 상단 안내 바로가기 배너 구역 */
+        .top-banner-container {
+            max-width: 850px;
+            width: 100%;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .banner-trigger-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #23297A 0%, #9295F7 100%);
+            color: var(--white);
+            border: none;
+            padding: 16px 20px;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(35, 41, 122, 0.2);
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .banner-trigger-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(35, 41, 122, 0.3);
+            background: linear-gradient(135deg, #1A1F5E 0%, #7E82E6 100%);
+        }
+
+        .banner-trigger-btn .arrow-icon {
+            font-size: 12px;
+            transition: transform 0.3s;
+        }
+
+        .banner-trigger-btn.active .arrow-icon {
+            transform: rotate(180deg);
+        }
+
+        /* 본문 메인 컨테이너 */
+        .container {
+            background-color: var(--white);
+            max-width: 850px;
+            width: 100%;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            overflow: hidden;
+            padding: 40px 30px;
+            position: relative;
+        }
+
+        /* -------------------------------------------------------------
+           [기존 체크인 기능 관련 가상 스타일 영역]
+           기존 페이지에 있던 고유한 체크인 UI 디자인 CSS가 있다면 이곳에 유지해 주세요.
+        ------------------------------------------------------------- */
+        .checkin-section-box {
+            margin-top: 20px;
+            padding: 30px 20px;
+            border: 2px dashed var(--main-purple);
+            border-radius: 20px;
+            text-align: center;
+            background-color: #FAF6FF;
+        }
+        .checkin-section-box h2 {
+            font-size: 20px;
+            color: var(--dark-blue);
+            margin-bottom: 10px;
+        }
+        /* ------------------------------------------------------------- */
+
+        /* 상단 우측 3사 로고 구역 */
+        .top-logos {
+            position: absolute;
+            top: 25px;
+            right: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .logo-foundation { font-size: 15px; font-weight: 800; color: var(--dark-blue); }
+        .logo-sub { font-size: 11.5px; font-weight: 700; color: #777; }
+        .logo-divider { width: 1px; height: 12px; background-color: #DDD; }
+
+        /* 상단 헤더 */
+        .header { margin: 35px 0 25px 0; text-align: left; }
+        .main-title { font-size: 24px; font-weight: 800; color: var(--dark-blue); line-height: 1.3; }
+        .main-title span { color: var(--main-purple); }
+
+        /* 경고 배너 */
+        .warning-banner {
+            background-color: #FFF0F0; border: 1px solid #FCAEAE; color: var(--warning-red);
+            padding: 12px; border-radius: 12px; text-align: center; font-weight: 700; font-size: 14px; margin-bottom: 25px;
+        }
+
+        /* [핵심] 상세 안내 내용 전체 박스 (기본 숨김 -> 상단 버튼 클릭시 슬라이드 다운) */
+        #detailed-info-wrapper {
+            display: none;
+            margin-bottom: 30px;
+            border-bottom: 3px double var(--main-purple);
+            padding-bottom: 25px;
+        }
+
+        /* 아코디언 컴포넌트 */
+        .accordion-item { border: 1px solid #E2E4FF; border-radius: 16px; margin-bottom: 15px; overflow: hidden; background-color: var(--white); }
+        .accordion-header {
+            background-color: var(--light-purple); padding: 18px 20px; font-size: 17px; font-weight: 700; color: var(--dark-blue);
+            cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; transition: background 0.2s;
+        }
+        .accordion-header:hover { background-color: #E6E8FF; }
+        .accordion-header::after { content: '▼'; font-size: 12px; color: var(--dark-blue); transition: transform 0.3s; }
+        .accordion-item.active .accordion-header::after { transform: rotate(180deg); }
+        .accordion-content { display: none; padding: 20px; border-top: 1px solid #E2E4FF; background-color: var(--white); }
+        .accordion-item.active .accordion-content { display: block; }
+
+        /* 체크리스트 스타일 */
+        .checklist-group { list-style: none; }
+        .checklist-item { display: flex; align-items: flex-start; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #F0F1FF; }
+        .checklist-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .checklist-item input[type="checkbox"] { margin-right: 12px; margin-top: 5px; width: 18px; height: 18px; accent-color: var(--dark-blue); cursor: pointer; }
+        .checklist-text strong { color: var(--dark-blue); display: block; font-size: 15px; }
+        .checklist-highlight { color: var(--warning-red); font-weight: 800; }
+        .checklist-text span { font-size: 13px; color: #555; }
+
+        /* 개요 인포 그리드 */
+        .info-grid { display: grid; grid-template-columns: 100px 1fr; row-gap: 12px; font-size: 15px; }
+        .info-label { font-weight: bold; color: var(--dark-blue); }
+
+        /* 내부 탭 구조 */
+        .tab-menu { display: flex; gap: 6px; margin-bottom: 15px; }
+        .tab-btn {
+            flex: 1; padding: 12px; border: 1px solid #E2E4FF; background-color: #FAF6FF; color: var(--dark-blue);
+            font-weight: 700; font-size: 14px; border-radius: 8px; cursor: pointer; text-align: center;
+        }
+        .tab-btn.active { background-color: var(--dark-blue); color: var(--white); border-color: var(--dark-blue); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* 테이블 구조 */
+        .table-wrapper { overflow-x: auto; border-radius: 12px; border: 1px solid #E2E4FF; margin-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; min-width: 680px; }
+        th, td { padding: 11px 13px; border-bottom: 1px solid #E2E4FF; border-right: 1px solid #F0F1FF; }
+        th { background-color: #F4F5FF; color: var(--dark-blue); font-weight: 700; }
+        td.day-cell { font-weight: 700; background-color: #FAF6FF; width: 85px; text-align: center; color: var(--dark-blue); }
+        .time-cell { color: #555; font-weight: 600; width: 105px; text-align: center; }
+        .break-row { background-color: #F9FAFF; color: #666; font-size: 12px; font-weight: 600; }
+        .subject-text { font-weight: 700; color: var(--dark-blue); }
+        .desc-text { font-size: 12px; color: #555; margin-top: 2px; display: block; }
+
+        /* 공간 안내 스타일 */
+        .space-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+        .space-card { background-color: #F9FAFF; border: 1px solid #E2E4FF; padding: 15px; border-radius: 10px; }
+        .space-card.highlight-card { background-color: #FFFDF5; border: 1px solid #F3E2B4; }
+        .space-title { font-weight: 700; color: var(--dark-blue); margin-bottom: 6px; font-size: 14px; }
+        .space-title span { color: #E67E22; font-size: 12px; margin-left: 5px; }
+        .space-desc { font-size: 13px; color: #555; line-height: 1.4; }
+
+        /* 안내 박스 및 리스트 */
+        .notice-box { background-color: #FFF9E6; border: 1px solid #FFEAA7; padding: 12px 15px; border-radius: 10px; font-size: 13px; font-weight: 700; color: #826200; margin-top: 15px; }
+        .sub-section-title { font-size: 15px; font-weight: 700; color: var(--dark-blue); margin: 18px 0 8px 0; }
+        .route-list { padding-left: 20px; font-size: 14px; color: #444; }
+
+        /* 버튼 구조 */
+        .map-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px; }
+        .map-btn { text-align: center; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 13px; display: inline-flex; justify-content: center; align-items: center; gap: 6px; }
+        .btn-kakao { background-color: #FEE500; color: #191919; }
+        .btn-naver { background-color: #03C75A; color: #ffffff; }
+        .btn-talk { background-color: #3C1E1E; color: #FFCD00; grid-column: span 2; margin-top: 5px; }
+        .talk-tip { grid-column: span 2; text-align: center; font-size: 12px; color: #666; margin-top: -2px; font-weight: 600; }
+
+        .contact-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed #EAEAEA; font-size: 14px; }
+        .contact-item:last-child { border-bottom: none; }
+        .contact-label { font-weight: 600; }
+        .contact-value { font-weight: 700; color: var(--dark-blue); }
+
+        /* 하단 푸터 */
+        .footer-info { margin-top: 35px; padding-top: 20px; border-top: 1px solid #EAEAEA; text-align: center; font-size: 12px; color: #888; }
+    </style>
 </head>
 <body>
-<div class="logo-bar">
-  <div class="logo-bar-left">
-    <div class="lb-title">2026 CMK 아츠클래스</div>
-    <div class="lb-sub">예술교사 연수 출석 시스템</div>
-  </div>
-  <div class="logo-bar-right">
-    <img src="data:image/png;base64,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" alt="현대차 정몽구 재단">
-    <div class="logo-sep"></div>
-    <img src="data:image/png;base64,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" alt="JUMP">
-    <div class="logo-sep"></div>
-    <img src="data:image/jpeg;base64,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" alt="Artis">
-  </div>
-</div>
-<div id="screen-track">
-  <div class="track-header">
-    <div><div class="th-title">출석 프로그램을 선택하세요</div></div>
-    <div><div class="th-date" id="t-date"></div><div class="th-time" id="t-time"></div></div>
-  </div>
-  <div class="ssb ssb-closed" id="ssb">
-    <div class="ssb-dot"></div>
-    <div>
-      <div class="ssb-text" id="ssb-text">출석 확인 시간이 아닙니다</div>
-      <div class="ssb-sub">오전 08:30–09:30 / 오후 12:30–13:30</div>
-    </div>
-  </div>
-  <div class="track-pick-area">
-    <div class="track-pick-title">프로그램 선택</div>
-    <div class="track-cards">
-      <div class="track-pick-card tc-a" onclick="selectTrack(0)">
-        <div><div class="tc-name">신규교사 프로그램</div><div class="tc-count" id="tc-cnt-0">참여자 0명</div></div>
-        <div class="tc-arrow"><i class="ti ti-chevron-right"></i></div>
-      </div>
-      <div class="track-pick-card tc-b" onclick="selectTrack(1)">
-        <div><div class="tc-name">알럼나이교사 프로그램</div><div class="tc-count" id="tc-cnt-1">참여자 0명</div></div>
-        <div class="tc-arrow"><i class="ti ti-chevron-right"></i></div>
-      </div>
-      <div class="track-pick-card tc-c" onclick="selectTrack(2)">
-        <div><div class="tc-name">한국멘토연수 프로그램</div><div class="tc-count" id="tc-cnt-2">참여자 0명</div></div>
-        <div class="tc-arrow"><i class="ti ti-chevron-right"></i></div>
-      </div>
-    </div>
-  </div>
-  <div class="track-footer">
-    <div class="tf-note">주최 현대차 정몽구 재단 · 주관 JUMP · 교육 Artis</div>
-    <div class="tf-right">
-      <div class="day-nav">
-        <button class="day-nav-btn" onclick="changeDay(-1)"><i class="ti ti-chevron-left"></i></button>
-        <span class="day-nav-label" id="day-label">1일차</span>
-        <button class="day-nav-btn" onclick="changeDay(1)"><i class="ti ti-chevron-right"></i></button>
-      </div>
-      <button class="tf-btn" onclick="showScreen('login')"><i class="ti ti-lock"></i> 관리자</button>
-    </div>
-  </div>
+
+<div class="top-banner-container">
+    <button class="banner-trigger-btn" id="toggle-info-btn" onclick="toggleDetailedInfo()">
+        🚀 [필독 안내] 2026 CMK 아츠클래스 교사연수 상세 안내문 보기 <span class="arrow-icon">▼</span>
+    </button>
 </div>
 
-<div id="screen-qr" class="hidden">
-  <div class="qr-header">
-    <div class="qh-left">
-      <button class="qh-back" onclick="showScreen('track')"><i class="ti ti-arrow-left"></i></button>
-      <span class="qh-badge" id="qh-badge"></span>
-      <span class="qh-day" id="qh-day"></span>
+<div class="container">
+    <div class="top-logos">
+        <span class="logo-foundation">현대차 정몽구 재단</span>
+        <span class="logo-divider"></span>
+        <span class="logo-sub">JUMP</span>
+        <span class="logo-divider"></span>
+        <span class="logo-sub">Artis</span>
     </div>
-    <div class="qh-time-r" id="qh-time"></div>
-  </div>
-  <div class="qr-notice" id="qr-notice"></div>
-  <div class="qr-main">
-    <div class="qr-pair">
-      <div class="qr-panel qr-am" id="qrp-am">
-        <div class="qr-lbl"><i class="ti ti-sun"></i> 오전 출석</div>
-        <div class="qr-time-tag">08:30 – 09:30</div>
-        <div class="qr-title" id="qr-am-title"></div>
-        <div class="qr-sub" id="qr-am-sub"></div>
-        <div class="qr-img-wrap"><div id="qr-img-am"></div></div>
-        <div class="qr-note">QR 스캔 → 이름 선택 → 출석 완료</div>
-      </div>
-      <div class="qr-panel qr-pm" id="qrp-pm">
-        <div class="qr-lbl"><i class="ti ti-sun-high"></i> 오후 출석</div>
-        <div class="qr-time-tag">12:30 – 13:30</div>
-        <div class="qr-title" id="qr-pm-title"></div>
-        <div class="qr-sub" id="qr-pm-sub"></div>
-        <div class="qr-img-wrap"><div id="qr-img-pm"></div></div>
-        <div class="qr-note">QR 스캔 → 이름 선택 → 출석 완료</div>
-      </div>
-    </div>
-  </div>
-</div>
 
-<div id="screen-checkin" class="hidden">
-  <div class="ci-card" id="ci-card"></div>
-</div>
+    <div class="header">
+        <h1 class="main-title">2026 CMK 아츠클래스 교사연수 <span>참여교사 안내 & 체크인</span></h1>
+    </div>
 
-<div id="screen-login" class="hidden">
-  <div class="login-card">
-    <div class="login-icon"><i class="ti ti-lock"></i></div>
-    <div class="login-title">관리자 로그인</div>
-    <div class="login-sub">관리자 비밀번호를 입력하세요</div>
-    <input type="password" id="pw-input" placeholder="비밀번호" onkeydown="if(event.key==='Enter')doLogin()" style="margin-bottom:10px">
-    <div style="display:flex;gap:8px">
-      <button class="btn btn-ghost" onclick="showScreen('track')" style="flex:1">취소</button>
-      <button class="btn btn-primary" onclick="doLogin()" style="flex:1"><i class="ti ti-arrow-right"></i> 로그인</button>
+    <div class="warning-banner">
+        ⚠️ 본 페이지는 선발된 참여 교사 전용 안내 공간입니다. 외부 유출을 절대 금합니다.
     </div>
-    <div class="login-err" id="login-err">비밀번호가 틀렸습니다</div>
-  </div>
-</div>
 
-<div id="screen-admin" class="hidden">
-  <div class="admin-header">
-    <div class="admin-logo-row">
-      <div class="admin-logo-icon"><i class="ti ti-settings"></i></div>
-      <div class="admin-title">관리자 · 2026 CMK 아츠클래스</div>
-    </div>
-    <div class="admin-nav">
-      <button class="atab active" onclick="adminTab('roster')"><i class="ti ti-users"></i> 명단</button>
-      <button class="atab" onclick="adminTab('attendance')"><i class="ti ti-checklist"></i> 출석 현황</button>
-      <button class="atab" onclick="adminTab('export')"><i class="ti ti-download"></i> 내보내기</button>
-      <button class="atab" onclick="adminTab('sheets')"><i class="ti ti-brand-google"></i> 구글 시트</button>
-      <button class="atab" onclick="showScreen('track')" style="margin-left:4px"><i class="ti ti-layout-dashboard"></i> 디스플레이</button>
-      <button class="atab" onclick="doLogout()"><i class="ti ti-logout"></i> 로그아웃</button>
-    </div>
-  </div>
-  <div class="admin-body">
-    <div class="apanel active" id="panel-roster">
-      <div class="card" style="margin-bottom:11px">
-        <div class="card-head"><div class="card-title"><i class="ti ti-file-spreadsheet"></i> 엑셀로 명단 불러오기</div></div>
-        <div class="card-body">
-          <div class="upload-ok" id="upload-ok"></div>
-          <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()"
-            ondragover="event.preventDefault();this.classList.add('drag')"
-            ondragleave="this.classList.remove('drag')"
-            ondrop="event.preventDefault();this.classList.remove('drag');handleFile(event.dataTransfer.files[0])">
-            <div class="upload-icon"><i class="ti ti-upload"></i></div>
-            <div class="upload-text">클릭하거나 파일을 드래그하세요</div>
-            <div class="upload-sub">.xlsx / .xls / .csv 지원</div>
-          </div>
-          <input type="file" id="file-input" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleFile(this.files[0])">
-          <div class="format-box">
-            <strong>📋 엑셀 형식</strong> — 1행 헤더: <code>이름</code> <code>소속</code> <code>트랙</code><br>
-            트랙 열 값: <code>신규교사</code> · <code>알럼나이교사</code> · <code>한국멘토연수</code>
-          </div>
-        </div>
-      </div>
-      <div class="card" style="margin-bottom:11px">
-        <div class="card-head"><div class="card-title"><i class="ti ti-user-plus"></i> 직접 추가</div></div>
-        <div class="card-body">
-          <div class="form-grid">
-            <div class="fl"><label>트랙</label>
-              <select id="inp-track">
-                <option value="0">신규교사 프로그램</option>
-                <option value="1">알럼나이교사 프로그램</option>
-                <option value="2">한국멘토연수 프로그램</option>
-              </select>
+
+    <div id="detailed-info-wrapper">
+        
+        <div class="accordion-item active">
+            <div class="accordion-header" onclick="toggleAccordion(this)">📋 참여교사 체크리스트 (연수 전 필수 확인)</div>
+            <div class="accordion-content">
+                <ul class="checklist-group">
+                    <li class="checklist-item">
+                        <input type="checkbox" id="check1">
+                        <div class="checklist-text">
+                            <strong>이동 지원(셔틀버스) 탑승 여부 최종 확정 및 수정 <span class="checklist-highlight">[~7/24(금)까지]</span></strong>
+                            <span>탑승 노선 변경이나 자차 이동으로의 전환은 기한 내에만 가능합니다. (문의: 운영사무국 📞 02-2088-6366)</span>
+                        </div>
+                    </li>
+                    <li class="checklist-item">
+                        <input type="checkbox" id="check2">
+                        <div class="checklist-text">
+                            <strong>개인 편한 복장 및 운동화 준비</strong>
+                            <span>연극, 음악, 움직임 등의 신체 활동 위주 세션이 많으므로 반드시 활동하기 편한 의류를 착용해 주세요.</span>
+                        </div>
+                    </li>
+                    <li class="checklist-item">
+                        <input type="checkbox" id="check3">
+                        <div class="checklist-text">
+                            <strong>개인 세면도구 및 상비약 지참</strong>
+                            <span>호텔 기본 비품 외 개인 건강 관리에 필요한 상비약이나 위생용품을 개별 지참해 주시기 바랍니다.</span>
+                        </div>
+                    </li>
+                </ul>
             </div>
-            <div class="fl"><label>이름 *</label><input id="inp-name" placeholder="홍길동" onkeydown="if(event.key==='Enter')addP()"></div>
-            <div class="fl"><label>소속</label><input id="inp-org" placeholder="OO학교" onkeydown="if(event.key==='Enter')addP()"></div>
-            <button class="addbtn" onclick="addP()"><i class="ti ti-plus"></i> 추가</button>
-          </div>
         </div>
-      </div>
-      <div class="card">
-        <div class="card-head">
-          <div class="card-title"><i class="ti ti-list"></i> 등록된 참여자 <span id="p-total-badge" style="font-size:11px;background:#f0f0ee;color:#888;padding:2px 8px;border-radius:9px;margin-left:4px">0명</span></div>
-          <button class="btn btn-ghost" style="font-size:11px;padding:5px 9px" onclick="clearAll()"><i class="ti ti-trash"></i> 전체 삭제</button>
-        </div>
-        <table><thead><tr><th>트랙</th><th>이름</th><th>소속</th><th></th></tr></thead>
-        <tbody id="p-tbody"></tbody></table>
-      </div>
-    </div>
 
-    <div class="apanel" id="panel-attendance">
-      <div class="stats-grid" id="att-stats"></div>
-      <div class="filter-bar">
-        <button class="fbtn fall" onclick="setFilter(-1,this,'all')">전체</button>
-        <button class="fbtn" onclick="setFilter(0,this,'a')">신규교사</button>
-        <button class="fbtn" onclick="setFilter(1,this,'b')">알럼나이교사</button>
-        <button class="fbtn" onclick="setFilter(2,this,'c')">한국멘토연수</button>
-        <div class="day-sel" id="day-sel-att"></div>
-      </div>
-      <div class="card" style="overflow:auto">
-        <table><thead><tr id="att-head"></tr></thead><tbody id="att-body"></tbody></table>
-      </div>
-    </div>
-
-    <div class="apanel" id="panel-export">
-      <div class="card" style="margin-bottom:11px">
-        <div class="card-head"><div class="card-title"><i class="ti ti-table-export"></i> 출석 데이터 다운로드</div></div>
-        <div class="exp-row"><div><div class="exp-name">전체 출석 현황</div><div class="exp-sub">모든 프로그램 · 일차별 오전/오후</div></div><button class="dlbtn" onclick="exportAll()"><i class="ti ti-download"></i> 전체</button></div>
-        <div class="exp-row"><div><div class="exp-name">신규교사 프로그램</div></div><button class="dlbtn" onclick="exportTrack(0)"><i class="ti ti-download"></i> 다운로드</button></div>
-        <div class="exp-row"><div><div class="exp-name">알럼나이교사 프로그램</div></div><button class="dlbtn" onclick="exportTrack(1)"><i class="ti ti-download"></i> 다운로드</button></div>
-        <div class="exp-row"><div><div class="exp-name">한국멘토연수 프로그램</div></div><button class="dlbtn" onclick="exportTrack(2)"><i class="ti ti-download"></i> 다운로드</button></div>
-      </div>
-      <div class="card">
-        <div class="card-head"><div class="card-title"><i class="ti ti-chart-bar"></i> 출석률 요약</div></div>
-        <div id="exp-summary" style="padding:4px 0"></div>
-      </div>
-    </div>
-
-    <div class="apanel" id="panel-sheets">
-      <div class="card" style="margin-bottom:11px">
-        <div class="card-head"><div class="card-title"><i class="ti ti-brand-google"></i> Google Sheets 실시간 연동</div></div>
-        <div class="card-body">
-          <div class="sheets-notice">참여자가 QR 체크인할 때마다 구글 시트에 자동으로 기록됩니다. Apps Script 웹앱 URL을 아래에 입력하세요.</div>
-          <div class="fl" style="margin-bottom:10px">
-            <label>Apps Script 웹앱 URL</label>
-            <input type="url" id="sheets-url" placeholder="https://script.google.com/macros/s/.../exec" oninput="saveSheetsURL()">
-          </div>
-          <div style="display:flex;gap:8px;margin-bottom:18px;align-items:center">
-            <button class="btn btn-primary" style="font-size:13px" onclick="testSheets()"><i class="ti ti-send"></i> 테스트 전송</button>
-            <span id="sheets-test-result" style="font-size:12px;color:#888"></span>
-          </div>
-          <div style="background:#f9f9f7;border:0.5px solid rgba(0,0,0,.07);border-radius:9px;padding:16px">
-            <div style="font-size:13px;font-weight:700;color:#444;margin-bottom:12px">📋 Apps Script 설정 방법</div>
-            <div style="font-size:12px;color:#666;line-height:2">
-              <strong>1.</strong> <a href="https://sheets.new" target="_blank" style="color:#4b45a1">sheets.new</a> 에서 새 구글 시트 열기<br>
-              <strong>2.</strong> 메뉴 → <strong>확장 프로그램 → Apps Script</strong><br>
-              <strong>3.</strong> 아래 코드 전체를 붙여넣고 저장 (Ctrl+S)
+        <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)">ℹ️ 4박 5일 연수 개요</div>
+            <div class="accordion-content">
+                <div class="info-grid">
+                    <div class="info-label">연수 기간</div>
+                    <div class="info-value">2026. 8. 3. (월) — 8. 7. (금) [4박 5일]</div>
+                    <div class="info-label">연수 장소</div>
+                    <div class="info-value">블룸비스타 호텔앤컨퍼런스 (경기 양평)</div>
+                    <div class="info-label">교육 기획</div>
+                    <div class="info-value">영국 Artis</div>
+                </div>
             </div>
-            <div class="code-block">function doPost(e) {
-  const sheet = SpreadsheetApp
-    .getActiveSpreadsheet()
-    .getActiveSheet();
-
-  // 첫 실행 시 헤더 자동 생성
-  if (sheet.getLastRow() === 0) {
-    sheet.appendRow([
-      '기록시각', '체크인시각', '이름', '소속',
-      '프로그램', '일차', '세션'
-    ]);
-  }
-
-  const data = JSON.parse(e.postData.contents);
-
-  sheet.appendRow([
-    new Date(),
-    data.timestamp,
-    data.name,
-    data.org,
-    data.track,
-    data.day,
-    data.session
-  ]);
-
-  return ContentService
-    .createTextOutput(JSON.stringify({result:'ok'}))
-    .setMimeType(ContentService.MimeType.JSON);
-}</div>
-            <div style="font-size:12px;color:#666;line-height:2">
-              <strong>4.</strong> 상단 <strong>배포 → 새 배포</strong> 클릭<br>
-              <strong>5.</strong> 유형: <strong>웹 앱</strong> 선택<br>
-              <strong>6.</strong> 다음 사용자로 실행: <strong>나 (내 계정)</strong><br>
-              &nbsp;&nbsp;&nbsp;&nbsp;액세스 권한: <strong>모든 사용자 (익명 포함)</strong><br>
-              <strong>7.</strong> <strong>배포</strong> → 권한 허용 → 웹앱 URL 복사<br>
-              <strong>8.</strong> 위 URL 입력란에 붙여넣기 후 <strong>테스트 전송</strong>
-            </div>
-          </div>
         </div>
-      </div>
+
+        <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)">📅 프로그램별 상세 시간표 (1일차 ~ 5일차 전정)</div>
+            <div class="accordion-content">
+                <div class="tab-menu">
+                    <button class="tab-btn active" onclick="openTab(event, 'tab1')">신규교사 프로그램</button>
+                    <button class="tab-btn" onclick="openTab(event, 'tab2')">알럼나이교사 프로그램</button>
+                    <button class="tab-btn" onclick="openTab(event, 'tab3')">한국 멘토연수 프로그램</button>
+                </div>
+
+                <div id="tab1" class="tab-content active">
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr><th>일자</th><th>시간</th><th>주제</th><th>활동 내용</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td class="day-cell" rowspan="6">8/3(월)<br>1일차</td><td class="time-cell">14:00-15:45</td><td><span class="subject-text">Whole course introductions</span><br>전체 프로그램 소개</td><td><span class="desc-text">Artis와 창의적 교사 프로그램 소개 / 멘토 미팅</span></td></tr>
+                                <tr class="break-row"><td class="time-cell">15:45-16:00</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">16:00-17:00</td><td><span class="subject-text">Full course activity</span><br>전체 프로그램 활동 / 연극 개발</td><td><span class="desc-text">소개 및 학습 요구 사항과 기대 사항 / 앙상블 공연</span></td></tr>
+                                <tr><td class="time-cell">17:00-18:00</td><td><span class="subject-text">Music development</span><br>음악 개발</td><td><span class="desc-text">주변 소리 탐색 / 도형 악보 제작</span></td></tr>
+                                <tr class="break-row"><td class="time-cell">18:00-18:15</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">18:15-19:15</td><td><span class="subject-text">Movement development</span><br>움직임 개발</td><td><span class="desc-text">함께 이동 / 그룹 댄스 촉진</span></td></tr>
+                                
+                                <tr><td class="day-cell" rowspan="11">8/4(화)<br>2일차</td><td class="time-cell">08:45-09:00</td><td>전체 입문 활동</td><td>Full introductory activity</td></tr>
+                                <tr><td class="time-cell">09:00-10:30</td><td><span class="subject-text">Music development</span><br>음악 개발</td><td>Internalising pulse / Eurhythmics</td></tr>
+                                <tr class="break-row"><td class="time-cell">10:30-10:45</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">10:45-12:15</td><td><span class="subject-text">Movement development</span><br>움직임 개발</td><td>움직임 특질 탐색 및 시작점 탐구</td></tr>
+                                <tr class="break-row"><td class="time-cell">12:15-13:15</td><td colspan="2">LUNCH 점심 식사</td></tr>
+                                <tr><td class="time-cell">13:15-14:45</td><td><span class="subject-text">Drama development</span><br>연극 개발 활동</td><td>이야기 구축: 연극을 통한 구조와 내러티브</td></tr>
+                                <tr class="break-row"><td class="time-cell">14:45-15:15</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">15:15-16:15</td><td><span class="subject-text">Mentoring session</span><br>멘토 세션</td><td>회고 / 일일 분석 및 Artis 접근 방식 분석</td></tr>
+                                <tr class="break-row"><td class="time-cell">16:15-16:30</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">16:30-18:15</td><td><span class="subject-text">Mentoring session</span><br>멘토 세션 (개별)</td><td>과제 3 소개 및 초기 계획 수립</td></tr>
+                                <tr><td class="time-cell">18:15-18:30</td><td>마지막 활동</td><td>Full end of day activity</td></tr>
+
+                                <tr><td class="day-cell" rowspan="11">8/5(수)<br>3일차</td><td class="time-cell">08:45-09:00</td><td>전체 시작 활동</td><td>Full introductory activity</td></tr>
+                                <tr><td class="time-cell">09:00-10:30</td><td><span class="subject-text">Delivering an Artis session</span><br>Artis 세션 진행</td><td>움직임 진행 슈퍼 히어로 시뮬레이션</td></tr>
+                                <tr class="break-row"><td class="time-cell">10:30-10:45</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">10:45-12:15</td><td><span class="subject-text">Delivering an Artis session</span><br>Artis 세션 진행</td><td>총체적 접근 방식: 이미지에 응답하기</td></tr>
+                                <tr class="break-row"><td class="time-cell">12:15-13:15</td><td colspan="2">LUNCH 점심 식사</td></tr>
+                                <tr><td class="time-cell">13:15-14:45</td><td><span class="subject-text">Movement development</span><br>움직임 개발</td><td>움직임 프레임워크 및 모범 사례 촉진</td></tr>
+                                <tr class="break-row"><td class="time-cell">14:45-15:00</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">15:00-16:15</td><td><span class="subject-text">Mentoring session</span><br>멘토 세션</td><td>Artis 접근 방식에 대한 종합 회고</td></tr>
+                                <tr class="break-row"><td class="time-cell">16:15-16:30</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">16:30-17:30</td><td><span class="subject-text">Mentoring session</span><br>멘토 세션</td><td>과제 3 집중 계획 및 구성</td></tr>
+                                <tr><td class="time-cell">17:30-17:45</td><td>마지막 활동</td><td>Full end of day activity</td></tr>
+
+                                <tr><td class="day-cell" rowspan="11">8/6(목)<br>4일차</td><td class="time-cell">08:45-09:00</td><td>전체 소개 활동</td><td>한국 멘토 교사가 주도하는 오프닝 세션</td></tr>
+                                <tr><td class="time-cell">09:00-10:30</td><td><span class="subject-text">Movement development</span><br>움직임 개발</td><td>공연 창작 의자 듀엣 (Chair duets)</td></tr>
+                                <tr class="break-row"><td class="time-cell">10:30-10:45</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">10:45-12:15</td><td><span class="subject-text">Drama development</span><br>연극 개발 활동</td><td>이야기를 통한 탐구: 텍스트에 활기 불어넣기</td></tr>
+                                <tr class="break-row"><td class="time-cell">12:15-13:15</td><td colspan="2">LUNCH 점심 식사</td></tr>
+                                <tr><td class="time-cell">13:15-14:45</td><td><span class="subject-text">Using film / media</span><br>영상/미디어 활용</td><td>영상에 응답 및 교과과정 내 영화 활용법 탐색</td></tr>
+                                <tr class="break-row"><td class="time-cell">14:45-15:00</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">15:00-16:30</td><td><span class="subject-text">Using film / media</span><br>영상/미디어 활용</td><td>영화 창작 프로젝트 진행: 장르와 줄거리 구성</td></tr>
+                                <tr class="break-row"><td class="time-cell">16:30-16:45</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">16:45-18:30</td><td><span class="subject-text">Mentoring session</span><br>멘토 세션</td><td>과제 3: 결과물 공유 및 실천 발표</td></tr>
+                                <tr><td class="time-cell">18:30-18:45</td><td>마지막 활동</td><td>한국 멘토가 리드하는 데일리 랩업 활동</td></tr>
+
+                                <tr><td class="day-cell" rowspan="4">8/7(금)<br>5일차</td><td class="time-cell">08:45-09:00</td><td>전체 시작 활동</td><td>Full introductory activity</td></tr>
+                                <tr><td class="time-cell">09:00-10:30</td><td><span class="subject-text">Mentoring session</span><br>멘토 세션</td><td>과제 3 발전 계획 개선 수립 완료</td></tr>
+                                <tr class="break-row"><td class="time-cell">10:30-10:45</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">10:45-12:15</td><td><span class="subject-text">Plenary & Reflection</span><br>전체 회의 및 프로그램 회고</td><td>모든 프로그램 마무리 및 퇴소 준비 (12:15-13:15 퇴소 후 이동)</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="tab2" class="tab-content">
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr><th>일자</th><th>시간</th><th>주제</th><th>활동 내용</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td class="day-cell" rowspan="6">8/3(월)<br>1일차</td><td class="time-cell">14:00-15:45</td><td><span class="subject-text">Intro to Alumni</span><br>동문 프로그램 소개</td><td>Artis 작업 경험 공유 및 당해 연도 세부 요구사항 도출</td></tr>
+                                <tr class="break-row"><td class="time-cell">15:45-16:00</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">16:00-17:00</td><td><span class="subject-text">Artis Core Skills</span><br>핵심 기술 프레임워크</td><td>실제 활동 기반 가치, 기술 및 교육 목표 탐구 1</td></tr>
+                                <tr><td class="time-cell">17:00-18:00</td><td><span class="subject-text">Artis Core Skills 2</span><br>핵심 기술 프레임워크 2</td><td>실제 활동 기반 가치, 기술 및 교육 목표 탐구 2</td></tr>
+                                <tr class="break-row"><td class="time-cell">18:00-18:15</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">18:15-19:15</td><td><span class="subject-text">Framework Analysis</span><br>학습 프레임워크 분석</td><td>비디오 예시 분석 및 시각 자료 피드백 워크숍</td></tr>
+                                
+                                <tr><td class="day-cell" rowspan="11">8/4(화)<br>2일차</td><td class="time-cell">08:45-09:00</td><td>전체 입문 활동</td><td>Full introductory activity</td></tr>
+                                <tr><td class="time-cell">09:00-10:30</td><td><span class="subject-text">Movement development</span><br>움직임 개발</td><td>Moving Maths (움직이는 수학 융합)</td></tr>
+                                <tr class="break-row"><td class="time-cell">10:30-10:45</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">10:45-12:15</td><td><span class="subject-text">Drama development</span><br>연극 개발 활동</td><td>연극 기법을 활용한 내러티브 이야기 입체 탐구</td></tr>
+                                <tr class="break-row"><td class="time-cell">12:15-13:15</td><td colspan="2">LUNCH 점심</td></tr>
+                                <tr><td class="time-cell">13:15-14:45</td><td><span class="subject-text">Music development</span><br>음악 개발</td><td>고급 리듬 레이어링 및 멜로디 창작 세션</td></tr>
+                                <tr class="break-row"><td class="time-cell">14:45-15:15</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">15:15-16:15</td><td><span class="subject-text">Mentoring session</span><br>멘토 세션</td><td>일일 활동 요약 질문 및 현장 아이디어 고도화</td></tr>
+                                <tr class="break-row"><td class="time-cell">16:15-16:30</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">16:30-18:15</td><td><span class="subject-text">Mentor meetings</span><br>그룹 멘토링 미팅</td><td>세션 적용 기법 분석 및 현장 딜레마 케이스 스터디</td></tr>
+                                <tr><td class="time-cell">18:15-18:30</td><td>마지막 활동</td><td>Full end of day activity</td></tr>
+
+                                <tr><td class="day-cell" rowspan="11">8/5(수)<br>3일차</td><td class="time-cell">08:45-09:00</td><td>전체 시작 활동</td><td>Full introductory activity</td></tr>
+                                <tr><td class="time-cell">09:00-10:30</td><td><span class="subject-text">Delivering Session 1</span><br>세션 실전 진행 1</td><td>Classroom management (예술융합수업 교실 관리 솔루션)</td></tr>
+                                <tr class="break-row"><td class="time-cell">10:30-10:45</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">10:45-12:15</td><td><span class="subject-text">Delivering Session 2</span><br>세션 실전 진행 2</td><td>Embedding a learning framework (학습 프레임워크 설계)</td></tr>
+                                <tr class="break-row"><td class="time-cell">12:15-13:15</td><td colspan="2">LUNCH 점심</td></tr>
+                                <tr><td class="time-cell">13:15-14:45</td><td><span class="subject-text">Delivering Session 3</span><br>세션 실전 진행 3</td><td>Practical application (실제 교수법 필드 적용 설계)</td></tr>
+                                <tr class="break-row"><td class="time-cell">14:45-15:00</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">15:00-16:15</td><td><span class="subject-text">Group Task 1</span><br>그룹 창작 프로젝트 1</td><td>앙상블 창의성을 활용한 퍼포먼스 구상 및 연출 연습</td></tr>
+                                <tr class="break-row"><td class="time-cell">16:15-16:30</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">16:30-17:30</td><td><span class="subject-text">Mentoring session</span><br>멘토 세션</td><td>피드백 전략 조율 및 질의응답 회의</td></tr>
+                                <tr><td class="time-cell">17:30-17:45</td><td>마지막 활동</td><td>Full end of day activity</td></tr>
+
+                                <tr><td class="day-cell" rowspan="11">8/6(목)<br>4일차</td><td class="time-cell">08:45-09:00</td><td>전체 소개 활동</td><td>한국 멘토 주도 오프닝 연계 세션</td></tr>
+                                <tr><td class="time-cell">09:00-10:30</td><td><span class="subject-text">Group Delivery 1</span><br>그룹 발표 및 피드백 1</td><td>A그룹 메인 실습 평가 및 크리틱</td></tr>
+                                <tr class="break-row"><td class="time-cell">10:30-10:45</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">10:45-12:15</td><td><span class="subject-text">Group Delivery 2</span><br>그룹 발표 및 피드백 2</td><td>B그룹 메인 실습 평가 및 크리틱</td></tr>
+                                <tr class="break-row"><td class="time-cell">12:15-13:15</td><td colspan="2">LUNCH 점심</td></tr>
+                                <tr><td class="time-cell">13:15-14:45</td><td><span class="subject-text">Group Delivery 3</span><br>그룹 발표 및 피드백 3</td><td>C그룹 메인 실습 평가 및 크리틱</td></tr>
+                                <tr class="break-row"><td class="time-cell">14:45-15:00</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">15:00-16:30</td><td><span class="subject-text">Group Task 2</span><br>그룹 창작 프로젝트 2</td><td>자극 매개체 활용 앙상블 퍼포먼스 최종 고도화</td></tr>
+                                <tr class="break-row"><td class="time-cell">16:30-16:45</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">16:45-18:30</td><td><span class="subject-text">Personal Objective</span><br>개별 피어 멘토링</td><td>과제 3 실행 계획 최종 포뮬레이션 도출</td></tr>
+                                <tr><td class="time-cell">18:30-18:45</td><td>마지막 활동</td><td>한국 멘토 진행 데일리 세션</td></tr>
+
+                                <tr><td class="day-cell" rowspan="4">8/7(금)<br>5일차</td><td class="time-cell">08:45-09:00</td><td>전체 시작 활동</td><td>Full introductory activity</td></tr>
+                                <tr><td class="time-cell">09:00-10:30</td><td><span class="subject-text">Group Task 3</span><br>프로젝트 3 최종 리허설</td><td>Rehearsing and refining (퍼포먼스 연출 시연 및 최종 다듬기)</td></tr>
+                                <tr class="break-row"><td class="time-cell">10:30-10:45</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">10:45-12:15</td><td><span class="subject-text">Plenary & Reflection</span><br>종합 반성 및 수료식</td><td>동문 네트워크 구축 방안 논의 및 최종 출발 (12:15-13:15)</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="tab3" class="tab-content">
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr><th>일자</th><th>시간</th><th>주제</th><th>활동 내용</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td class="day-cell" rowspan="6">8/3(월)<br>1일차</td><td class="time-cell">14:00-15:45</td><td><span class="subject-text">Mentor course introductions</span><br>멘토 프로그램 소개</td><td>전체 연수 안내 연계 및 멘토링의 교육적 효과성 분석</td></tr>
+                                <tr class="break-row"><td class="time-cell">15:45-16:00</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">16:00-17:00</td><td><span class="subject-text">Expectations & Tasks</span><br>목표 설정</td><td>멘토 활동 기대치 관리 및 향후 세션 관찰 작업 배정</td></tr>
+                                <tr><td class="time-cell">17:00-18:00</td><td><span class="subject-text">Observe (관찰 실습)</span></td><td>소리 탐색과 도형 악보 세션 현장 밀착 관찰 진행</td></tr>
+                                <tr class="break-row"><td class="time-cell">18:00-18:15</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">18:15-19:15</td><td><span class="subject-text">Mentoring session</span><br>디브리핑 세션</td><td>관찰 텍스트 및 로그 기록을 바탕으로 분석 및 팀별 회고</td></tr>
+                                
+                                <tr><td class="day-cell" rowspan="11">8/4(화)<br>2일차</td><td class="time-cell">08:45-09:00</td><td>전체 입문 활동</td><td>Full introductory activity</td></tr>
+                                <tr><td class="time-cell">09:00-10:30</td><td><span class="subject-text">Common criteria 1</span><br>공통 평가기준 구축 1</td><td>전일 수업 관찰 로그 분석을 통한 지표 공통점 도출</td></tr>
+                                <tr class="break-row"><td class="time-cell">10:30-10:45</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">10:45-12:15</td><td><span class="subject-text">Common criteria 2</span><br>공통 평가기준 구축 2</td><td>창의예술교사 정량·정성 평가 매트릭스 아이디어 회의</td></tr>
+                                <tr class="break-row"><td class="time-cell">12:15-13:15</td><td colspan="2">LUNCH 점심</td></tr>
+                                <tr><td class="time-cell">13:15-14:45</td><td><span class="subject-text">Common criteria 3</span><br>공통 평가기준 고안 완료</td><td>예술강사 평가용 표준 프레임워크 최종 고안</td></tr>
+                                <tr class="break-row"><td class="time-cell">14:45-15:00</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">15:00-16:15</td><td><span class="subject-text">Growth Mindset Theory</span><br>성장 마인드셋 이론</td><td>교사 피드백의 핵심 가치: 성장 마인드셋의 교육학적 배경</td></tr>
+                                <tr class="break-row"><td class="time-cell">16:15-16:30</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">16:30-18:15</td><td><span class="subject-text">Growth Mindset Application</span><br>마인드셋 심화 실습</td><td>현장 적용 사례별 가상의 교사 저항 극복 워크숍</td></tr>
+                                <tr><td class="time-cell">18:15-18:30</td><td><span class="subject-text">Model Mentor attributes</span><br>우수 멘토 속성 공유</td><td>효과적인 피어 멘토가 되기 위한 자질 리스트 정립</td></tr>
+
+                                <tr><td class="day-cell" rowspan="11">8/5(수)<br>3일차</td><td class="time-cell">08:45-09:00</td><td>전체 입문 활동</td><td>Full introductory activity</td></tr>
+                                <tr><td class="time-cell">09:00-10:30</td><td><span class="subject-text">Leading PD 1</span><br>전문성 개발(PD) 리드 1</td><td>안정감 있고 성공적인 피드백 세션 빌딩 핵심 요소 분석</td></tr>
+                                <tr class="break-row"><td class="time-cell">10:30-10:45</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">10:45-12:15</td><td><span class="subject-text">Leading PD 2</span><br>전문성 개발(PD) 리드 2</td><td>멘토링 모범 실천 사례 케이스 분석 및 아카이브화</td></tr>
+                                <tr class="break-row"><td class="time-cell">12:15-13:15</td><td colspan="2">LUNCH 점심</td></tr>
+                                <tr><td class="time-cell">13:15-14:45</td><td><span class="subject-text">Mindset in Practice</span><br>성장 마인드셋 언어 개발</td><td>교사 관찰 피드백 기록용 스크립트 작성 및 교정</td></tr>
+                                <tr class="break-row"><td class="time-cell">14:45-15:00</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">15:00-16:15</td><td><span class="subject-text">Effective Communication</span><br>소통 스킬 고도화</td><td>Clean Language 기법 및 NLP 구조 연계 피드백 스킬 연습</td></tr>
+                                <tr class="break-row"><td class="time-cell">16:15-16:30</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">16:30-17:30</td><td><span class="subject-text">Designing Activities</span><br>활동 설계 세션</td><td>전체 코호트와 공유할 4-5일차 오프닝 세션 액티비티 기획</td></tr>
+                                <tr><td class="time-cell">17:30-17:45</td><td>일과 마무리 활동</td><td>Full end of day activity</td></tr>
+
+                                <tr><td class="day-cell" rowspan="11">8/6(목)<br>4일차</td><td class="time-cell">08:45-09:00</td><td>전체 소개 활동</td><td>한국 멘토 주도의 전체 액티비티 현장 시연 진행</td></tr>
+                                <tr><td class="time-cell">09:00-10:30</td><td><span class="subject-text">Reflection on Delivery</span><br>수업 실천 리뷰</td><td>오전 시연 활동 피드백 분석 및 보안점 수정 패치</td></tr>
+                                <tr class="break-row"><td class="time-cell">10:30-10:45</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">10:45-12:15</td><td><span class="subject-text">Observe & Apply</span><br>기준표 기반 실제 관찰</td><td>자체 제작 표준 공통 기준표를 사용한 타 분반 교사 수업 분석</td></tr>
+                                <tr class="break-row"><td class="time-cell">12:15-13:15</td><td colspan="2">LUNCH 점심</td></tr>
+                                <tr><td class="time-cell">13:15-14:45</td><td><span class="subject-text">Feedback Application</span><br>피드백 임상 적용</td><td>관찰 교사를 대상으로 실제 일대일 피드백 클리닉 진행</td></tr>
+                                <tr class="break-row"><td class="time-cell">14:45-15:00</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">15:00-16:30</td><td><span class="subject-text">Post-Course Plan</span><br>연수 후 계획 수립</td><td>연수 수료 이후 학교 현장 복귀 시 적용 가능한 로드맵 구축</td></tr>
+                                <tr class="break-row"><td class="time-cell">16:30-16:45</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">16:45-18:30</td><td><span class="subject-text">Final Rehearsal</span><br>클로징 세션 기획</td><td>5일차 전체 교사 연계 마무리 세션 컴포지션 시뮬레이션</td></tr>
+                                <tr><td class="time-cell">18:30-18:45</td><td>마지막 활동</td><td>한국 멘토 진행 데일리 세션 마무리</td></tr>
+
+                                <tr><td class="day-cell" rowspan="4">8/7(금)<br>5일차</td><td class="time-cell">08:45-09:00</td><td>전체 입문 활동</td><td>Full introductory activity</td></tr>
+                                <tr><td class="time-cell">09:00-10:30</td><td><span class="subject-text">Mentoring Finalization</span><br>최종 멘토링 랩업</td><td>Next steps 논의 및 전 프로그램 종합 평가 설문</td></tr>
+                                <tr class="break-row"><td class="time-cell">10:30-10:45</td><td colspan="2">BREAK 휴식</td></tr>
+                                <tr><td class="time-cell">10:45-12:15</td><td><span class="subject-text">Course Reflection & Closing</span><br>전체 피드백 공유 및 종료</td><td>Artis 멘토단과의 파이널 인사이트 공유 후 퇴소 (12:15-13:15)</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)">🏢 프로그램별 세부 연수 공간 및 식사 장소 안내</div>
+            <div class="accordion-content">
+                <div class="space-grid">
+                    <div class="space-card">
+                        <div class="space-title">신규교사 프로그램 분반실</div>
+                        <div class="space-desc"><strong>아산홀</strong><br>📍 C동 1층<br>신규 교사 전용 음악·연극·움직임 교육 및 멘토링 주무대입니다.</div>
+                    </div>
+                    <div class="space-card">
+                        <div class="space-title">알럼나이교사 프로그램 분반실</div>
+                        <div class="space-desc"><strong>중강의장 1</strong><br>📍 A동 1층<br>알럼나이(동문) 심화 예술융합 세션 및 토론이 운영되는 강의실입니다.</div>
+                    </div>
+                    <div class="space-card">
+                        <div class="space-title">한국 멘토연수 프로그램 분반실</div>
+                        <div class="space-desc"><strong>중강의장 2</strong><br>📍 A동 1층<br>한국 멘토진의 평가 기준 정립 및 소통 스킬 연수 전용 실습장입니다.</div>
+                    </div>
+                    <div class="space-card highlight-card">
+                        <div class="space-title">식사 장소 <span>💡 이동 Tip</span></div>
+                        <div class="space-desc"><strong>Bistro B</strong><br>📍 D동 지하 1층<br><span style="color:#D35400; font-weight:700;">※ 블룸비스타 호텔의 지하 1층과 지상 1층은 완벽히 연결되어 있어 원활한 동선 이동이 가능합니다.</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)">📍 이동 지원 안내 & 차량 내비게이션 바로 연동</div>
+            <div class="accordion-content">
+                <p style="font-weight: 700; margin-bottom: 5px; color: var(--dark-blue);">🏢 블룸비스타 호텔앤컨퍼런스</p>
+                <p style="font-size: 14px; color: #555; margin-bottom: 15px;">경기도 양평군 강하면 강남로 316</p>
+
+                <div class="sub-section-title">🚌 1. 입소일 이동 지원 버스 (8월 3일 월요일)</div>
+                <ul class="route-list">
+                    <li><strong>서울역 승차</strong> : 낮 12시 정시 출발 (연수 프로그램 준비 셔틀)</li>
+                    <li><strong>잠실역 승차</strong> : 오후 1시 정시 출발 (연수 프로그램 준비 셔틀)</li>
+                </ul>
+
+                <div class="sub-section-title">🚌 2. 퇴소일 이동 지원 버스 (8월 7일 금요일)</div>
+                <ul class="route-list">
+                    <li><strong>잠실역 하차 노선</strong> : 오후 2시 블룸비스타 출발 및 도착 예정</li>
+                    <li><strong>서울역 하차 노선</strong> : 오후 3시 블룸비스타 출발 및 도착 예정</li>
+                </ul>
+
+                <div class="sub-section-title">🚗 3. 개인 자차 차량 이용 이동 시</div>
+                <p class="route-list" style="list-style:none; padding-left:0; font-size:13px;">
+                    차량 운전 시 아래의 원클릭 버튼을 터치하시면 **목적지가 '블룸비스타'로 자동 지정**되어 길 안내가 시작되며, 연수 기간 내 전용 주차장을 무료로 이용하실 수 있습니다.
+                </p>
+
+                <div class="notice-box">
+                    🔔 이동 지원 버스 탑승 여부 및 승하차 노선 정보의 최종 수정 기한은 7/24(금)까지입니다. 기한 마감 이후에는 배차 확정으로 인해 변경이 불가능합니다.
+                </div>
+
+                <div class="map-buttons">
+                    <a href="https://map.kakao.com/link/search/블룸비스타" class="map-btn btn-kakao" target="_blank">📲 카카오맵 목적지 바로 연결</a>
+                    <a href="https://map.naver.com/v5/search/블룸비스타" class="map-btn btn-naver" target="_blank">📲 네이버지도 목적지 바로 연결</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)">🚨 응급 대응 비상 연락망 및 공식 카카오톡 채널</div>
+            <div class="accordion-content">
+                <div class="contact-item">
+                    <span class="contact-label">운영사무국 (JUMP 담당자)</span>
+                    <span class="contact-value">📱 010-4127-2057</span>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-label">운영사무국 대표 유선 연락처</span>
+                    <span class="contact-value">☎️ 02-2088-6366</span>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-label">블룸비스타 프런트 통합 상황실</span>
+                    <span class="contact-value">📞 031-770-8800</span>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-label">인근 대형 병원 (양평병원 응급의료센터)</span>
+                    <span class="contact-value">🚑 031-770-5000</span>
+                </div>
+                
+                <div class="sub-section-title" style="margin-top:20px;">💬 실시간 1:1 채팅 문의</div>
+                <div class="map-buttons" style="margin-top:5px;">
+                    <a href="http://pf.kakao.com/_Htxbyxj" class="map-btn btn-talk" target="_blank">💬 아츠클래스 공식 카카오톡 채널로 문의하기</a>
+                    <div class="talk-tip">※ 친구추가 후, '대화하기'를 누르시면 1:1 채팅이 가능합니다.</div>
+                </div>
+            </div>
+        </div>
+
     </div>
-  </div>
+    <div class="checkin-section-box">
+        <h2>👋 연수 참여교사 현장 체크인 구역</h2>
+        <p style="font-size:14px; color:#666; margin-bottom: 20px;">숙소 배정 및 바코드/QR 태깅 체크인 모듈 등의 기존 기능이 실행되는 영역입니다.</p>
+        </div>
+
+
+    <div class="footer-info">
+        <p>© 2026 HYUNDAI MOTOR CHUNG MONG-KOO FOUNDATION · JUMP · ARTIS. ALL RIGHTS RESERVED.</p>
+    </div>
 </div>
 
 <script>
-const ADMIN_PW = '1234';
-const DAYS = 5;
-const TRACKS = [
-  {name:'신규교사 프로그램',     short:'신규교사',    badge:['#EEEDFE','#4b45a1'], qbadge:'badge-a'},
-  {name:'알럼나이교사 프로그램', short:'알럼나이교사', badge:['#E1F5EE','#0F6E56'], qbadge:'badge-b'},
-  {name:'한국멘토연수 프로그램', short:'한국멘토연수', badge:['#FFF3E0','#E65100'], qbadge:'badge-c'}
-];
-const TRACK_KEYS = ['신규교사','알럼나이교사','한국멘토연수'];
-const SESSIONS = [
-  {key:'am', label:'오전 출석', short:'오전', icon:'ti-sun',      startH:8, startM:30, endH:9,  endM:30},
-  {key:'pm', label:'오후 출석', short:'오후', icon:'ti-sun-high', startH:12,startM:30, endH:13, endM:30}
-];
-
-let ps=[], att={}, curDay=1, curTrack=0, attFilter=-1, attDay=1;
-
-function uid(){return Math.random().toString(36).slice(2,9)}
-function save(){try{localStorage.setItem('rs_ps',JSON.stringify(ps));localStorage.setItem('rs_att',JSON.stringify(att));}catch(e){}}
-function loadData(){try{const p=localStorage.getItem('rs_ps');const a=localStorage.getItem('rs_att');if(p)ps=JSON.parse(p);if(a)att=JSON.parse(a);}catch(e){}}
-function getSheetsURL(){return localStorage.getItem('rs_sheets_url')||'';}
-function saveSheetsURL(){localStorage.setItem('rs_sheets_url',document.getElementById('sheets-url').value.trim());}
-
-function getActiveSession(){
-  const n=new Date(), tot=n.getHours()*60+n.getMinutes();
-  for(const s of SESSIONS){if(tot>=s.startH*60+s.startM && tot<s.endH*60+s.endM)return s;}
-  return null;
-}
-
-const ALL=['track','qr','checkin','login','admin'];
-function showScreen(id){
-  ALL.forEach(s=>{const el=document.getElementById('screen-'+s);if(el)el.classList.add('hidden');});
-  document.getElementById('screen-'+id).classList.remove('hidden');
-  if(id==='track') updateTrackCounts();
-  if(id==='admin'){adminTab('roster');renderRoster();renderAttPanel();renderExport();loadSheetsURL();}
-}
-
-function checkURLMode(){
-  const p=new URLSearchParams(location.search);
-  const t=p.get('t'),s=p.get('s'),d=p.get('d');
-  if((s==='am'||s==='pm')&&t!==null){
-    curTrack=parseInt(t);curDay=d?parseInt(d):1;
-    showScreen('checkin');renderCheckin(curTrack,s,curDay);return true;
-  }
-  return false;
-}
-
-function pad2(n){return n.toString().padStart(2,'0');}
-
-function tickClock(){
-  const n=new Date();
-  const days=['일','월','화','수','목','금','토'];
-  const ds=n.getFullYear()+'.'+pad2(n.getMonth()+1)+'.'+pad2(n.getDate())+' ('+days[n.getDay()]+')';
-  const ts=pad2(n.getHours())+':'+pad2(n.getMinutes())+':'+pad2(n.getSeconds());
-  const dEl=document.getElementById('t-date');if(dEl)dEl.textContent=ds;
-  const tEl=document.getElementById('t-time');if(tEl)tEl.textContent=ts;
-  const qhEl=document.getElementById('qh-time');if(qhEl)qhEl.textContent=ts;
-
-  const active=getActiveSession();
-  const ssb=document.getElementById('ssb');
-  const ssbText=document.getElementById('ssb-text');
-  if(ssb&&ssbText){
-    ssb.className='ssb '+(active?(active.key==='am'?'ssb-am':'ssb-pm'):'ssb-closed');
-    ssbText.textContent=active?active.label+' 진행 중 ('+pad2(active.startH)+':'+pad2(active.startM)+' – '+pad2(active.endH)+':'+pad2(active.endM)+')':'출석 확인 시간이 아닙니다';
-  }
-  const amP=document.getElementById('qrp-am'),pmP=document.getElementById('qrp-pm');
-  if(amP&&pmP){
-    amP.className='qr-panel qr-am'+(active&&active.key==='am'?' active-now':' inactive');
-    pmP.className='qr-panel qr-pm'+(active&&active.key==='pm'?' active-now':' inactive');
-    const notice=document.getElementById('qr-notice');
-    if(notice){
-      if(!active){notice.className='qr-notice qn-closed';notice.innerHTML='<i class="ti ti-clock"></i> 현재 출석 확인 시간이 아닙니다 · 오전 08:30–09:30 / 오후 12:30–13:30';}
-      else if(active.key==='am'){notice.className='qr-notice qn-am';notice.innerHTML='<i class="ti ti-sun"></i> 오전 출석 진행 중 (08:30–09:30) — 오전 QR코드를 스캔하세요';}
-      else{notice.className='qr-notice qn-pm';notice.innerHTML='<i class="ti ti-sun-high"></i> 오후 출석 진행 중 (12:30–13:30) — 오후 QR코드를 스캔하세요';}
+    // [추가] 상단 클릭 시 상세 안내 페이지 슬라이드 온/오프 제어 스크립트
+    function toggleDetailedInfo() {
+        const infoWrapper = document.getElementById("detailed-info-wrapper");
+        const toggleBtn = document.getElementById("toggle-info-btn");
+        
+        if (infoWrapper.style.display === "none" || infoWrapper.style.display === "") {
+            infoWrapper.style.display = "block";
+            toggleBtn.classList.add("active");
+            toggleBtn.innerHTML = '🚀 [확인 완료] 상세 안내문 접고 체크인 화면으로 가기 <span class="arrow-icon">▲</span>';
+        } else {
+            infoWrapper.style.display = "none";
+            toggleBtn.classList.remove("active");
+            toggleBtn.innerHTML = '🚀 [필독 안내] 2026 CMK 아츠클래스 교사연수 상세 안내문 보기 <span class="arrow-icon">▼</span>';
+        }
     }
-  }
-}
 
-function updateTrackCounts(){
-  TRACKS.forEach((_,i)=>document.getElementById('tc-cnt-'+i).textContent='참여자 '+ps.filter(p=>p.track===i).length+'명');
-  document.getElementById('day-label').textContent=curDay+'일차';
-}
-function changeDay(d){curDay=Math.max(1,Math.min(DAYS,curDay+d));document.getElementById('day-label').textContent=curDay+'일차';}
+    // 아코디언 컴포넌트 제어
+    function toggleAccordion(element) {
+        const item = element.parentElement;
+        item.classList.toggle("active");
+    }
 
-function selectTrack(ti){
-  curTrack=ti;
-  const tr=TRACKS[ti];
-  document.getElementById('qh-badge').textContent=tr.name;
-  document.getElementById('qh-badge').className='qh-badge '+tr.qbadge;
-  document.getElementById('qh-day').textContent=curDay+'일차';
-  const base=location.origin+location.pathname;
-  SESSIONS.forEach(ses=>{
-    document.getElementById('qr-'+ses.key+'-title').textContent=tr.short;
-    document.getElementById('qr-'+ses.key+'-sub').textContent=curDay+'일차 '+ses.label;
-    const el=document.getElementById('qr-img-'+ses.key);el.innerHTML='';
-    const url=base+'?t='+ti+'&s='+ses.key+'&d='+curDay;
-    try{new QRCode(el,{text:url,width:150,height:150,colorDark:'#111',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M});}
-    catch(e){el.textContent=url;}
-  });
-  showScreen('qr');
-}
-
-function renderCheckin(ti,ses,day){
-  const card=document.getElementById('ci-card');
-  const tr=TRACKS[ti];
-  const sesObj=SESSIONS.find(s=>s.key===ses);
-  const deviceKey='ci_'+ti+'_d'+day+'_'+ses;
-  const alreadyName=localStorage.getItem(deviceKey);
-  const active=getActiveSession();
-  const isTimeOk=active&&active.key===ses;
-
-  if(alreadyName){
-    card.className='ci-card';
-    card.innerHTML=`<div style="text-align:center;padding:8px 0">
-      <div class="ci-already-icon"><i class="ti ti-checkbox"></i></div>
-      <div style="font-size:19px;font-weight:800;margin-bottom:6px">이미 출석 완료</div>
-      <div style="font-size:15px;font-weight:700;margin-bottom:4px">${alreadyName}님</div>
-      <div style="font-size:12px;color:#aaa;margin-bottom:13px">${day}일차 ${sesObj?sesObj.label:''} 출석이 기록되어 있습니다</div>
-      <span class="tbadge" style="background:${tr.badge[0]};color:${tr.badge[1]}">${tr.name}</span>
-    </div>`;
-    return;
-  }
-  if(!isTimeOk){
-    const otherSes=active&&active.key!==ses?active:null;
-    const msg=otherSes
-      ?`현재는 <strong>${otherSes.label}</strong> 시간입니다.<br>이 QR코드는 <strong>${sesObj?sesObj.label:''}</strong> 전용입니다.`
-      :'지금은 출석 확인 시간이 아닙니다.';
-    card.className='ci-card ci-closed';
-    card.innerHTML=`<div class="ci-closed-box">
-      <div class="ci-closed-icon"><i class="ti ti-clock-off"></i></div>
-      <div class="ci-closed-title">출석 확인<br>시간이 아닙니다</div>
-      <div class="ci-closed-msg">${msg}</div>
-      <div class="ci-closed-times">
-        <strong>오전 출석</strong> &nbsp;08:30 – 09:30<br>
-        <strong>오후 출석</strong> &nbsp;12:30 – 13:30
-      </div>
-    </div>`;
-    return;
-  }
-  card.className='ci-card ci-'+ses;
-  const pts=ps.filter(p=>p.track===ti);
-  card.innerHTML=`
-    <div class="ci-top">
-      <div class="ci-icon"><i class="ti ${sesObj?sesObj.icon:'ti-check'}"></i></div>
-      <div class="ci-session-tag">${sesObj?sesObj.label.toUpperCase():''}</div>
-      <div class="ci-track-name">${tr.name}</div>
-      <div class="ci-daydate">${day}일차 · ${sesObj?pad2(sesObj.startH)+':'+pad2(sesObj.startM)+' – '+pad2(sesObj.endH)+':'+pad2(sesObj.endM):''}</div>
-    </div>
-    <div class="ci-fields">
-      <div>
-        <div class="field-label">이름 선택</div>
-        <select id="ci-name">
-          <option value="">— 이름을 찾아 선택하세요 —</option>
-          ${pts.map(p=>`<option value="${p.id}">${p.name}${p.org?' ('+p.org+')':''}</option>`).join('')}
-        </select>
-      </div>
-    </div>
-    <button class="ci-submit" ${!pts.length?'disabled':''} onclick="submitCheckin(${ti},'${ses}',${day},'${deviceKey}')">
-      <i class="ti ti-check"></i> 출석 확인
-    </button>`;
-}
-
-function submitCheckin(ti,ses,day,deviceKey){
-  const pid=document.getElementById('ci-name').value;
-  if(!pid){alert('이름을 선택해 주세요');return;}
-  const active=getActiveSession();
-  if(!active||active.key!==ses){alert('출석 확인 시간이 아닙니다');location.reload();return;}
-  const p=ps.find(x=>x.id===pid);if(!p)return;
-  att[pid+'_d'+day+'_'+ses]=true;save();
-  localStorage.setItem(deviceKey,p.name);
-
-  // ── 구글 시트 전송 ──
-  const sheetsURL=getSheetsURL();
-  if(sheetsURL){
-    const sesObj=SESSIONS.find(s=>s.key===ses);
-    fetch(sheetsURL,{
-      method:'POST', mode:'no-cors',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        name:p.name, org:p.org||'',
-        track:TRACKS[ti].name,
-        day:day+'일차',
-        session:sesObj?sesObj.label:'',
-        timestamp:new Date().toLocaleString('ko-KR')
-      })
-    }).catch(()=>{});
-  }
-
-  const tr=TRACKS[ti];const sesObj=SESSIONS.find(s=>s.key===ses);
-  document.getElementById('ci-card').innerHTML=`
-    <div style="text-align:center;padding:8px 0">
-      <div class="ci-done-icon"><i class="ti ti-circle-check"></i></div>
-      <div style="font-size:19px;font-weight:800;margin-bottom:4px">출석 완료!</div>
-      <div style="font-size:16px;font-weight:700;margin-bottom:3px">${p.name}</div>
-      <div style="font-size:13px;color:#aaa;margin-bottom:12px">${p.org||''}</div>
-      <span class="tbadge" style="background:${tr.badge[0]};color:${tr.badge[1]};margin-bottom:8px">${tr.name}</span>
-      <div style="font-size:12px;color:#bbb;margin-top:10px">${day}일차 ${sesObj?sesObj.label:''} 완료</div>
-    </div>`;
-}
-
-let loggedIn=false;
-function doLogin(){
-  const pw=document.getElementById('pw-input').value;
-  if(pw===ADMIN_PW){loggedIn=true;document.getElementById('pw-input').value='';document.getElementById('login-err').style.display='none';showScreen('admin');}
-  else document.getElementById('login-err').style.display='block';
-}
-function doLogout(){loggedIn=false;showScreen('track');}
-
-function adminTab(id){
-  document.querySelectorAll('.apanel').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.atab').forEach(b=>b.classList.remove('active'));
-  document.getElementById('panel-'+id).classList.add('active');
-  const idx={roster:0,attendance:1,export:2,sheets:3};
-  if(idx[id]!==undefined) document.querySelectorAll('.atab')[idx[id]].classList.add('active');
-  if(id==='attendance') renderAttPanel();
-  if(id==='export') renderExport();
-}
-
-function loadSheetsURL(){
-  const el=document.getElementById('sheets-url');if(el)el.value=getSheetsURL();
-}
-function testSheets(){
-  const url=getSheetsURL();const res=document.getElementById('sheets-test-result');
-  if(!url){res.textContent='⚠ URL을 먼저 입력해 주세요';res.style.color='#E65100';return;}
-  res.textContent='전송 중...';res.style.color='#888';
-  fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({name:'테스트',org:'테스트소속',track:'신규교사 프로그램',day:'테스트',session:'오전 출석',timestamp:new Date().toLocaleString('ko-KR')})
-  }).then(()=>{res.textContent='✓ 전송 완료 — 구글 시트에서 확인하세요';res.style.color='#0F6E56';})
-    .catch(()=>{res.textContent='✓ 전송 시도 완료 (no-cors)';res.style.color='#0F6E56';});
-}
-
-function handleFile(file){
-  if(!file)return;
-  const reader=new FileReader();
-  reader.onload=e=>{
-    try{
-      const wb=XLSX.read(e.target.result,{type:'array'});
-      const ws=wb.Sheets[wb.SheetNames[0]];
-      const rows=XLSX.utils.sheet_to_json(ws,{header:1});
-      let added=0,skipped=0;
-      for(let i=1;i<rows.length;i++){
-        const r=rows[i];if(!r||r.length<1)continue;
-        const name=(r[0]||'').toString().trim();
-        const org=(r[1]||'').toString().trim();
-        const trackStr=(r[2]||'').toString().trim();
-        if(!name){skipped++;continue;}
-        const ti=TRACK_KEYS.indexOf(trackStr);
-        if(ti===-1){skipped++;continue;}
-        ps.push({id:uid(),track:ti,name,org});added++;
-      }
-      save();renderRoster();
-      const ok=document.getElementById('upload-ok');
-      ok.style.display='block';
-      ok.innerHTML='<i class="ti ti-circle-check"></i> '+added+'명 추가 완료'+(skipped>0?' ('+skipped+'행 건너뜀)':'');
-      setTimeout(()=>ok.style.display='none',5000);
-    }catch(err){alert('파일 읽기 오류: '+err.message);}
-  };
-  reader.readAsArrayBuffer(file);
-}
-
-function renderRoster(){
-  const tbody=document.getElementById('p-tbody');
-  document.getElementById('p-total-badge').textContent=ps.length+'명';
-  if(!ps.length){tbody.innerHTML='<tr class="empty-row"><td colspan="4">참여자를 추가하거나 엑셀 파일을 업로드하세요</td></tr>';return;}
-  tbody.innerHTML=ps.map(p=>{
-    const [bg,fg]=TRACKS[p.track].badge;
-    return`<tr><td><span class="tbadge" style="background:${bg};color:${fg}">${TRACKS[p.track].short}</span></td>
-    <td style="font-weight:600">${p.name}</td><td style="color:#888">${p.org||'-'}</td>
-    <td><button class="delbtn" onclick="delP('${p.id}')"><i class="ti ti-trash" style="font-size:12px"></i></button></td></tr>`;
-  }).join('');
-}
-function addP(){
-  const t=parseInt(document.getElementById('inp-track').value);
-  const n=document.getElementById('inp-name').value.trim();
-  const o=document.getElementById('inp-org').value.trim();
-  if(!n){alert('이름을 입력해 주세요');return;}
-  ps.push({id:uid(),track:t,name:n,org:o});
-  document.getElementById('inp-name').value='';document.getElementById('inp-org').value='';
-  save();renderRoster();
-}
-function delP(id){ps=ps.filter(p=>p.id!==id);Object.keys(att).filter(k=>k.startsWith(id+'_')).forEach(k=>delete att[k]);save();renderRoster();}
-function clearAll(){if(!confirm('모든 참여자와 출석 데이터를 삭제할까요?'))return;ps=[];att={};save();renderRoster();}
-
-function renderAttPanel(){
-  const tot=ps.length;let am=0,pm=0;
-  ps.forEach(p=>{if(att[p.id+'_d'+attDay+'_am'])am++;if(att[p.id+'_d'+attDay+'_pm'])pm++;});
-  const rate=tot?Math.round((am+pm)/(tot*2)*100):0;
-  document.getElementById('att-stats').innerHTML=`
-    <div class="scard"><div class="scard-label">전체 인원</div><div class="scard-val" style="color:#4b45a1">${tot}</div></div>
-    <div class="scard"><div class="scard-label">${attDay}일차 오전</div><div class="scard-val" style="color:#E65100">${am}</div></div>
-    <div class="scard"><div class="scard-label">${attDay}일차 오후</div><div class="scard-val" style="color:#0F6E56">${pm}</div></div>
-    <div class="scard"><div class="scard-label">${attDay}일차 출석률</div><div class="scard-val" style="color:${rate>=80?'#0F6E56':rate>=60?'#E65100':'#A32D2D'}">${rate}%</div></div>`;
-  const ds=document.getElementById('day-sel-att');ds.innerHTML='';
-  for(let d=1;d<=DAYS;d++){
-    const b=document.createElement('button');b.className='dbtn'+(d===attDay?' active':'');b.textContent=d+'일차';
-    b.onclick=(dd=>()=>{attDay=dd;renderAttPanel();})(d);ds.appendChild(b);
-  }
-  renderAttTable();
-}
-function setFilter(f,btn,cls){
-  attFilter=f;
-  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('fall','fa','fb','fc'));
-  btn.classList.add(cls==='all'?'fall':'f'+cls);
-  renderAttTable();
-}
-function renderAttTable(){
-  const pts=attFilter===-1?ps:ps.filter(p=>p.track===attFilter);
-  const head=document.getElementById('att-head'),body=document.getElementById('att-body');
-  head.innerHTML='<th>#</th><th>트랙</th><th>이름</th><th>소속</th><th style="text-align:center">☀ 오전</th><th style="text-align:center">🌤 오후</th>';
-  if(!pts.length){body.innerHTML='<tr class="empty-row"><td colspan="6">해당 참여자가 없습니다</td></tr>';return;}
-  body.innerHTML=pts.map((p,i)=>{
-    const [bg,fg]=TRACKS[p.track].badge;
-    const am=att[p.id+'_d'+attDay+'_am'],pm=att[p.id+'_d'+attDay+'_pm'];
-    return`<tr><td style="color:#bbb">${i+1}</td>
-      <td><span class="tbadge" style="background:${bg};color:${fg}">${TRACKS[p.track].short}</span></td>
-      <td style="font-weight:600">${p.name}</td><td style="color:#888">${p.org||'-'}</td>
-      <td class="check-cell"><span class="${am?'dot-ok':'dot-no'}">${am?'✓':'·'}</span></td>
-      <td class="check-cell"><span class="${pm?'dot-ok':'dot-no'}">${pm?'✓':'·'}</span></td></tr>`;
-  }).join('');
-}
-
-function renderExport(){
-  let h='<table style="width:100%;font-size:13px;border-collapse:collapse"><thead><tr style="border-bottom:0.5px solid rgba(0,0,0,.07)"><th style="padding:9px 14px;text-align:left;font-size:11px;color:#999;font-weight:700">트랙</th><th style="padding:9px 14px;text-align:right;font-size:11px;color:#999;font-weight:700">인원</th><th style="padding:9px 14px;text-align:right;font-size:11px;color:#999;font-weight:700">누적 출석</th><th style="padding:9px 14px;text-align:right;font-size:11px;color:#999;font-weight:700">출석률</th></tr></thead><tbody>';
-  [0,1,2].forEach(t=>{
-    const pts=ps.filter(p=>p.track===t);
-    const total=pts.length*DAYS*2;
-    const done=pts.reduce((a,p)=>{for(let d=1;d<=DAYS;d++){if(att[p.id+'_d'+d+'_am'])a++;if(att[p.id+'_d'+d+'_pm'])a++;}return a;},0);
-    const rate=total?Math.round(done/total*100):0;
-    const [bg,fg]=TRACKS[t].badge;const rc=rate>=80?'#0F6E56':rate>=60?'#E65100':'#A32D2D';
-    h+=`<tr style="border-bottom:0.5px solid rgba(0,0,0,.04)"><td style="padding:10px 14px"><span class="tbadge" style="background:${bg};color:${fg}">${TRACKS[t].short}</span></td><td style="padding:10px 14px;text-align:right">${pts.length}명</td><td style="padding:10px 14px;text-align:right">${done}/${total}</td><td style="padding:10px 14px;text-align:right;font-weight:800;color:${rc}">${rate}%</td></tr>`;
-  });
-  document.getElementById('exp-summary').innerHTML=h+'</tbody></table>';
-}
-function buildRows(filter){
-  const hdr=['트랙','이름','소속'];
-  for(let d=1;d<=DAYS;d++){hdr.push(d+'일차 오전',d+'일차 오후');}
-  const rows=[hdr];
-  const pts=filter===undefined?ps:ps.filter(p=>p.track===filter);
-  pts.forEach(p=>{
-    const r=[TRACKS[p.track].name,p.name,p.org||''];
-    for(let d=1;d<=DAYS;d++){r.push(att[p.id+'_d'+d+'_am']?'O':'',att[p.id+'_d'+d+'_pm']?'O':'');}
-    rows.push(r);
-  });return rows;
-}
-function exportAll(){doXls(buildRows(),'전체_출석현황');}
-function exportTrack(t){doXls(buildRows(t),TRACKS[t].short+'_출석현황');}
-function doXls(rows,name){
-  const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rows),'출석');
-  XLSX.writeFile(wb,name+'.xlsx');
-}
-
-loadData();
-setInterval(tickClock,1000);
-tickClock();
-if(!checkURLMode()) showScreen('track');
+    // 시간표 탭 메뉴 제어
+    function openTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].classList.remove("active");
+        }
+        tablinks = document.getElementsByClassName("tab-btn");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].classList.remove("active");
+        }
+        document.getElementById(tabName).classList.add("active");
+        evt.currentTarget.classList.add("active");
+        evt.stopPropagation(); // 아코디언 버블링 방지
+    }
 </script>
+
 </body>
 </html>
