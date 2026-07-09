@@ -3,302 +3,278 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2026 CMK 아츠클래스 교사연수 체크인</title>
+    <title>2026 CMK 아츠클래스 교사연수 출석체크</title>
+    
+    <!-- 🔒 보안: 검색엔진(구글, 네이버 등) 검색 및 수집 차단 -->
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="naverbot" content="noindex, nofollow">
+
+    <!-- QR 스캐너 오픈소스 라이브러리 로드 -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
+
     <style>
-        /* 기존 디자인 아이덴티티 컬러 매칭 */
         :root {
-            --primary-bg: #EAEBFC;
+            --bg-gradient: linear-gradient(135deg, #EAEBFC 0%, #C8CDFA 100%);
             --main-purple: #9295F7;
             --dark-blue: #23297A;
             --text-dark: #1F2253;
             --white: #ffffff;
-            --light-purple: #F4F5FF;
+            --glass-bg: rgba(255, 255, 255, 0.85);
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; }
 
+        /* 🖥️ 한 화면에 스크롤 없이 고정 (Flex 뷰포트 레이아웃) */
         body {
-            background-color: var(--primary-bg);
+            background: var(--bg-gradient);
             color: var(--text-dark);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .app-wrapper {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            width: 100%;
+            max-width: 460px;
+            height: 100%;
+            max-height: 820px;
+            border-radius: 28px;
+            box-shadow: 0 15px 35px rgba(35, 41, 122, 0.15);
             padding: 20px;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
+            justify-content: space-between;
+            position: relative;
         }
 
-        /* [추가] 중앙 상단 안내 페이지 바로가기 배너 */
-        .top-banner-wrapper {
-            max-width: 800px;
-            width: 100%;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .banner-link-btn {
-            display: block;
-            width: 100%;
-            background: linear-gradient(135deg, var(--dark-blue) 0%, var(--main-purple) 100%);
+        /* 공통 시간 안내 박스 (박스 외부 상단 배치) */
+        .global-time-notice {
+            background: var(--dark-blue);
             color: var(--white);
-            text-decoration: none;
-            padding: 15px 20px;
             border-radius: 14px;
-            font-size: 15px;
-            font-weight: 800;
-            box-shadow: 0 4px 15px rgba(35, 41, 122, 0.2);
-            transition: all 0.2s ease-in-out;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-around;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .time-item span { color: #FFEAA7; margin-left: 4px; }
+
+        /* 헤더 및 다이내믹 인사말 */
+        .header { text-align: center; margin-bottom: 12px; }
+        .header h1 { font-size: 20px; color: var(--dark-blue); font-weight: 800; }
+        .greeting-box {
+            font-size: 16px; font-weight: 800; color: var(--main-purple);
+            margin-top: 4px; min-height: 24px;
         }
 
-        .banner-link-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(35, 41, 122, 0.3);
-            filter: brightness(1.1);
+        /* 메인 기능 컨테이너 (출석 확인이 메인) */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 12px;
         }
 
-        /* 메인 컨테이너 (원래 디자인 유지) */
-        .container {
-            background-color: var(--white);
-            max-width: 800px;
+        /* QR 스캐너 구역 */
+        .qr-container {
             width: 100%;
-            border-radius: 24px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            padding: 40px 30px;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .header h1 {
-            font-size: 24px;
-            color: var(--dark-blue);
-            font-weight: 800;
-        }
-
-        .header h1 span {
-            color: var(--main-purple);
-        }
-
-        /* [추가] 프로그램별 체크인 섹션 및 기존 디자인 레이아웃 */
-        .program-section {
-            margin-bottom: 25px;
-            border: 2px solid #E2E4FF;
+            aspect-ratio: 1.2;
+            background: #000;
             border-radius: 16px;
             overflow: hidden;
-            background-color: var(--white);
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.6);
         }
+        #reader { width: 100%; height: 100%; }
 
-        .program-title {
-            background-color: var(--light-purple);
-            padding: 15px 20px;
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--dark-blue);
-            border-bottom: 1px solid #E2E4FF;
+        /* 수동 입력 폼 */
+        .manual-form {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            gap: 6px;
+        }
+        .input-field {
+            flex: 1; padding: 12px; border: 2px solid #CCD0FF;
+            border-radius: 10px; font-size: 14px; font-weight: 600; outline: none;
+        }
+        .input-field:focus { border-color: var(--main-purple); }
+        .submit-btn {
+            background: var(--dark-blue); color: var(--white); border: none;
+            padding: 0 18px; border-radius: 10px; font-weight: 700; cursor: pointer;
         }
 
-        .program-title .badge {
-            background-color: var(--dark-blue);
-            color: white;
-            font-size: 11px;
-            padding: 4px 8px;
-            border-radius: 20px;
-        }
-
-        .program-body {
-            padding: 20px;
-        }
-
-        /* [추가] 오전/오후 출석 확인 시간 표시 타임라인 */
-        .time-info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 15px;
-        }
-
-        .time-box {
-            background-color: #FAF6FF;
-            border: 1px solid #E2E4FF;
+        /* 하단 고정: 참여교사 안내사항 바로가기 구역 */
+        .footer-notice-banner {
+            background: #ffffff;
+            border: 1.5px solid var(--main-purple);
+            border-radius: 14px;
             padding: 12px;
-            border-radius: 10px;
             text-align: center;
+            margin-top: 12px;
+        }
+        .notice-link {
+            color: var(--dark-blue); font-size: 13px; font-weight: 800; text-decoration: none;
+            display: flex; justify-content: center; align-items: center; gap: 4px;
         }
 
-        .time-box.afternoon {
-            background-color: #FFFDF5;
-            border: 1px solid #F3E2B4;
+        /* 시스템 알림 피드백 레이어 */
+        .status-overlay {
+            position: absolute; top: 20px; left: 20px; right: 20px;
+            padding: 12px; border-radius: 12px; text-align: center;
+            font-weight: 800; font-size: 14px; display: none; z-index: 10;
         }
+        .success { background: #E8F8F5; color: #117A65; border: 1px solid #A3E4D7; }
+        .error { background: #FADBD8; color: #78281F; border: 1px solid #F5B7B1; }
 
-        .time-label {
-            font-size: 12px;
-            font-weight: 700;
-            color: #666;
-            margin-bottom: 2px;
-        }
-
-        .time-value {
-            font-size: 15px;
-            font-weight: 800;
-            color: var(--dark-blue);
-        }
-
-        .time-box.afternoon .time-value {
-            color: #C0392B;
-        }
-
-        /* 기존 체크인 입력 폼/버튼 구역 스타일 (원래 사용하시던 스타일로 대체 가능) */
-        .checkin-form-group {
-            display: flex;
-            gap: 8px;
-        }
-
-        .checkin-input {
-            flex: 1;
-            padding: 12px 15px;
-            border: 1px solid #CCD0FF;
-            border-radius: 8px;
-            font-size: 14px;
-            outline: none;
-        }
-
-        .checkin-input:focus {
-            border-color: var(--main-purple);
-        }
-
-        .checkin-btn {
-            background-color: var(--main-purple);
-            color: white;
-            border: none;
-            padding: 0 20px;
-            border-radius: 8px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .checkin-btn:hover {
-            background-color: var(--dark-blue);
-        }
-
-        .footer {
-            margin-top: 30px;
-            text-align: center;
-            font-size: 11px;
-            color: #888;
+        /* 관리자 히든 버튼 */
+        .admin-trigger {
+            position: absolute; bottom: 8px; right: 15px; font-size: 10px; color: #AAA; cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-<!-- [1] 중앙 상단: 클릭 시 상세 안내 페이지로 새 창 이동하는 배너 -->
-<div class="top-banner-wrapper">
-    <a href="상세안내_페이지_파일명.html" target="_blank" class="banner-link-btn">
-        📢 [필독] 2026 CMK 아츠클래스 교사연수 상세 안내문 확인하기 (클릭) ↗
-    </a>
-</div>
+<div class="app-wrapper">
+    <!-- 시스템 상태 메시지창 -->
+    <div id="status-box" class="status-overlay"></div>
 
-<!-- 메인 컨테이너 (원래 디자인 템플릿 구조) -->
-<div class="container">
+    <!-- ⏰ [요청 반영] 공통 출석 확인 시간 외부 상단 안내 -->
+    <div class="global-time-notice">
+        <div class="time-item">☀️ 오전 출석<span>08:30 ~ 08:45</span></div>
+        <div class="time-item">🌙 오후 출석<span>13:00 ~ 13:15</span></div>
+    </div>
+
+    <!-- 상단 헤더 및 시간별 인사말 -->
     <div class="header">
-        <h1>2026 CMK 아츠클래스 <span>교사연수 체크인</span></h1>
+        <h1>2026 CMK 아츠클래스</h1>
+        <!-- 💬 [요청 반영] 아침/오후 다이내믹 자동 인사말 박스 -->
+        <div id="greeting" class="greeting-box">안녕하세요!</div>
     </div>
 
-    <!-- =================================================================
-         [2] 프로그램별 체크인 구역 + 오전/오후 출석 시간 표시
-         ================================================================= -->
-    
-    <!-- 분반 1: 신규교사 프로그램 -->
-    <div class="program-section">
-        <div class="program-title">
-            <span>🌱 신규교사 프로그램 체크인</span>
-            <span class="badge">아산홀 (C동 1층)</span>
+    <!-- 메인: 출석 확인 구역 -->
+    <div class="main-content">
+        <!-- 📸 [요청 반영] QR 코드 스캐너 카메라 뷰어 -->
+        <div class="qr-container">
+            <div id="reader"></div>
         </div>
-        <div class="program-body">
-            <!-- 출석 확인 시간 -->
-            <div class="time-info-grid">
-                <div class="time-box">
-                    <div class="time-label">☀️ 오전 출석 확인</div>
-                    <div class="time-value">08:30 ~ 08:45</div>
-                </div>
-                <div class="time-box afternoon">
-                    <div class="time-label">🌙 오후 출석 확인</div>
-                    <div class="time-value">13:00 ~ 13:15</div>
-                </div>
-            </div>
-            <!-- 기존 체크인 연동 구역 -->
-            <div class="checkin-form-group">
-                <input type="text" class="checkin-input" placeholder="이름 또는 고유번호를 입력하세요.">
-                <button class="checkin-btn" onclick="alert('신규교사 체크인이 완료되었습니다.')">확인</button>
-            </div>
+
+        <!-- 수동 입력 병행 스페이스 -->
+        <div class="manual-form">
+            <input type="text" id="teacher-name" class="input-field" placeholder="이름을 직접 입력하셔도 됩니다.">
+            <button class="submit-btn" onclick="processCheckIn(document.getElementById('teacher-name').value)">확인</button>
         </div>
     </div>
 
-    <!-- 분반 2: 알럼나이교사 프로그램 -->
-    <div class="program-section">
-        <div class="program-title">
-            <span>✨ 알럼나이(동문)교사 프로그램 체크인</span>
-            <span class="badge">중강의장 1 (A동 1층)</span>
-        </div>
-        <div class="program-body">
-            <!-- 출석 확인 시간 -->
-            <div class="time-info-grid">
-                <div class="time-box">
-                    <div class="time-label">☀️ 오전 출석 확인</div>
-                    <div class="time-value">08:30 ~ 08:45</div>
-                </div>
-                <div class="time-box afternoon">
-                    <div class="time-label">🌙 오후 출석 확인</div>
-                    <div class="time-value">13:00 ~ 13:15</div>
-                </div>
-            </div>
-            <!-- 기존 체크인 연동 구역 -->
-            <div class="checkin-form-group">
-                <input type="text" class="checkin-input" placeholder="이름 또는 고유번호를 입력하세요.">
-                <button class="checkin-btn" onclick="alert('알럼나이교사 체크인이 완료되었습니다.')">확인</button>
-            </div>
-        </div>
+    <!-- ⬇️ [요청 반영] 참여교사 안내사항 하단 이동 및 클릭 시 상세 이동 배너 -->
+    <div class="footer-notice-banner">
+        <a href="상세안내_페이지_파일명.html" target="_blank" class="notice-link">
+            ℹ️ 연수 상세 안내사항(시간표/장소) 확인하기 ↗
+        </a>
     </div>
 
-    <!-- 분반 3: 한국 멘토연수 프로그램 -->
-    <div class="program-section">
-        <div class="program-title">
-            <span>👑 한국 멘토연수 프로그램 체크인</span>
-            <span class="badge">중강의장 2 (A동 1층)</span>
-        </div>
-        <div class="program-body">
-            <!-- 출석 확인 시간 -->
-            <div class="time-info-grid">
-                <div class="time-box">
-                    <div class="time-label">☀️ 오전 출석 확인</div>
-                    <div class="time-value">08:30 ~ 08:45</div>
-                </div>
-                <div class="time-box afternoon">
-                    <div class="time-label">🌙 오후 출석 확인</div>
-                    <div class="time-value">13:00 ~ 13:15</div>
-                </div>
-            </div>
-            <!-- 기존 체크인 연동 구역 -->
-            <div class="checkin-form-group">
-                <input type="text" class="checkin-input" placeholder="이름 또는 고유번호를 입력하세요.">
-                <button class="checkin-btn" onclick="alert('멘토교사 체크인이 완료되었습니다.')">확인</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="footer">
-        <p>© 2026 HYUNDAI MOTOR CHUNG MONG-KOO FOUNDATION. All Rights Reserved.</p>
-    </div>
+    <!-- 비밀번호 관리자 트리거 -->
+    <div class="admin-trigger" onclick="openAdmin()">Admin</div>
 </div>
+
+<script>
+    // 📊 구글 스프레드시트 배포 웹앱 URL (설정 필요)
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/💡여기에_구글_웹앱_URL을_넣으세요/exec";
+
+    // 📋 출석 명단 데이터 아카이브 내장 (프로그램 자동 분반용)
+    const roster = [
+        { name: "김영학", program: "신규교사 프로그램", school: "대구율하초등학교" },
+        { name: "김재진", program: "신규교사 프로그램", school: "고흥동초등학교" },
+        { name: "남종한", program: "신규교사 프로그램", school: "금정초등학교" },
+        { name: "박상우", program: "신규교사 프로그램", school: "순천왕운초등학교" },
+        { name: "박준우", program: "신규교사 프로그램", school: "근흥초등학교" }
+        // ... 생략된 다른 교사 데이터는 하단 가이드를 참조하여 채워 넣거나 구글시트에서 자동 매칭하도록 설정 가능합니다.
+    ];
+
+    // ⏰ 1. 실시간 다이내믹 인사말 기능 적용 (오전/오후 분기)
+    function setDynamicGreeting() {
+        const hour = new Date().getHours();
+        const greetingEl = document.getElementById("greeting");
+        if (hour < 12) {
+            greetingEl.innerText = "☀️ 굿모닝! 반갑습니다.";
+        } else {
+            greetingEl.innerText = "🌙 굿 애프터눈! 반갑습니다.";
+        }
+    }
+    setDynamicGreeting();
+
+    // 📸 2. QR 스캐너 연동 구동 라이브러리 실행
+    function onScanSuccess(decodedText, decodedResult) {
+        // QR코드 스캔 성공 시, 내용(텍스트 또는 이름)을 파싱하여 출석 전송 함수로 토스
+        processCheckIn(decodedText);
+    }
+
+    const html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 220 });
+    html5QrcodeScanner.render(onScanSuccess);
+
+    // 🚀 3. 핵심: 구글 시트로 출석 데이터 전송 및 피드백 처리
+    function processCheckIn(inputData) {
+        if (!inputData.trim()) return;
+
+        const statusBox = document.getElementById("status-box");
+        
+        // 내장 명단에서 데이터 탐색 및 프로그램 정보 매칭
+        const matchedUser = roster.find(user => user.name === inputData.trim());
+        const programName = matchedUser ? matchedUser.program : "미등록/타분반 교사";
+        const schoolName = matchedUser ? matchedUser.school : "확인 필요";
+
+        // 출석 기록 시각 계산
+        const now = new Date();
+        const checkTime = now.toLocaleTimeString();
+        const checkType = now.getHours() < 12 ? "오전" : "오후";
+
+        // 알림 표시
+        statusBox.style.display = "block";
+        statusBox.className = "status-overlay success";
+        statusBox.innerText = `⏳ [${inputData}] 전송 중...`;
+
+        // 구글 스프레드시트로 연동 데이터 비동기 POST 전송
+        fetch(GOOGLE_SCRIPT_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                name: inputData,
+                program: programName,
+                school: schoolName,
+                type: checkType,
+                time: checkTime
+            })
+        }).then(() => {
+            statusBox.className = "status-overlay success";
+            statusBox.innerHTML = `✅ 출석 완료!<br>${inputData} 선생님 (${programName})`;
+            document.getElementById('teacher-name').value = "";
+            setTimeout(() => { statusBox.style.display = "none"; }, 4000);
+        }).catch(err => {
+            statusBox.className = "status-overlay error";
+            statusBox.innerText = `❌ 전송 실패 (네트워크를 확인하세요.)`;
+        });
+    }
+
+    // 🔒 4. 관리자 모드 잠금 설정 (0729)
+    function openAdmin() {
+        const password = prompt("관리자 비밀번호를 입력하세요:");
+        if (password === "0729") {
+            // 구글 스프레드시트 원본 링크 주소로 리다이렉트 이동
+            window.open("https://docs.google.com/spreadsheets/d/1MEo1Czm4-scAAVHU-LDkaOHJAYWJvPEQIMeoIxVAkTU/edit?gid=28953154#gid=28953154", "_blank");
+        } else if (password !== null) {
+            alert("비밀번호가 일치하지 않습니다.");
+        }
+    }
+</script>
 
 </body>
 </html>
