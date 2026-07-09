@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2026 CMK 아츠클래스 교사연수 안내 & 체크인</title>
+    <title>2026 CMK 아츠클래스 교사연수 체크인</title>
     <style>
+        /* 기존 디자인 아이덴티티 컬러 매칭 */
         :root {
             --primary-bg: #EAEBFC;
             --main-purple: #9295F7;
             --dark-blue: #23297A;
             --text-dark: #1F2253;
             --white: #ffffff;
-            --warning-red: #D9383A;
             --light-purple: #F4F5FF;
         }
 
@@ -19,13 +19,12 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
         body {
             background-color: var(--primary-bg);
             color: var(--text-dark);
-            line-height: 1.6;
             padding: 20px;
             display: flex;
             flex-direction: column;
@@ -33,582 +32,273 @@
             min-height: 100vh;
         }
 
-        /* [추가] 중앙 상단 안내 바로가기 배너 구역 */
-        .top-banner-container {
-            max-width: 850px;
+        /* [추가] 중앙 상단 안내 페이지 바로가기 배너 */
+        .top-banner-wrapper {
+            max-width: 800px;
             width: 100%;
             margin-bottom: 20px;
             text-align: center;
         }
 
-        .banner-trigger-btn {
+        .banner-link-btn {
+            display: block;
             width: 100%;
-            background: linear-gradient(135deg, #23297A 0%, #9295F7 100%);
+            background: linear-gradient(135deg, var(--dark-blue) 0%, var(--main-purple) 100%);
             color: var(--white);
-            border: none;
-            padding: 16px 20px;
-            border-radius: 16px;
-            font-size: 16px;
+            text-decoration: none;
+            padding: 15px 20px;
+            border-radius: 14px;
+            font-size: 15px;
             font-weight: 800;
-            cursor: pointer;
             box-shadow: 0 4px 15px rgba(35, 41, 122, 0.2);
-            transition: all 0.3s ease;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
+            transition: all 0.2s ease-in-out;
         }
 
-        .banner-trigger-btn:hover {
+        .banner-link-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(35, 41, 122, 0.3);
-            background: linear-gradient(135deg, #1A1F5E 0%, #7E82E6 100%);
+            filter: brightness(1.1);
         }
 
-        .banner-trigger-btn .arrow-icon {
-            font-size: 12px;
-            transition: transform 0.3s;
-        }
-
-        .banner-trigger-btn.active .arrow-icon {
-            transform: rotate(180deg);
-        }
-
-        /* 본문 메인 컨테이너 */
+        /* 메인 컨테이너 (원래 디자인 유지) */
         .container {
             background-color: var(--white);
-            max-width: 850px;
+            max-width: 800px;
             width: 100%;
-            border-radius: 30px;
+            border-radius: 24px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            overflow: hidden;
             padding: 40px 30px;
-            position: relative;
         }
 
-        /* -------------------------------------------------------------
-           [기존 체크인 기능 관련 가상 스타일 영역]
-           기존 페이지에 있던 고유한 체크인 UI 디자인 CSS가 있다면 이곳에 유지해 주세요.
-        ------------------------------------------------------------- */
-        .checkin-section-box {
-            margin-top: 20px;
-            padding: 30px 20px;
-            border: 2px dashed var(--main-purple);
-            border-radius: 20px;
+        .header {
             text-align: center;
-            background-color: #FAF6FF;
-        }
-        .checkin-section-box h2 {
-            font-size: 20px;
-            color: var(--dark-blue);
-            margin-bottom: 10px;
-        }
-        /* ------------------------------------------------------------- */
-
-        /* 상단 우측 3사 로고 구역 */
-        .top-logos {
-            position: absolute;
-            top: 25px;
-            right: 30px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .logo-foundation { font-size: 15px; font-weight: 800; color: var(--dark-blue); }
-        .logo-sub { font-size: 11.5px; font-weight: 700; color: #777; }
-        .logo-divider { width: 1px; height: 12px; background-color: #DDD; }
-
-        /* 상단 헤더 */
-        .header { margin: 35px 0 25px 0; text-align: left; }
-        .main-title { font-size: 24px; font-weight: 800; color: var(--dark-blue); line-height: 1.3; }
-        .main-title span { color: var(--main-purple); }
-
-        /* 경고 배너 */
-        .warning-banner {
-            background-color: #FFF0F0; border: 1px solid #FCAEAE; color: var(--warning-red);
-            padding: 12px; border-radius: 12px; text-align: center; font-weight: 700; font-size: 14px; margin-bottom: 25px;
-        }
-
-        /* [핵심] 상세 안내 내용 전체 박스 (기본 숨김 -> 상단 버튼 클릭시 슬라이드 다운) */
-        #detailed-info-wrapper {
-            display: none;
             margin-bottom: 30px;
-            border-bottom: 3px double var(--main-purple);
-            padding-bottom: 25px;
         }
 
-        /* 아코디언 컴포넌트 */
-        .accordion-item { border: 1px solid #E2E4FF; border-radius: 16px; margin-bottom: 15px; overflow: hidden; background-color: var(--white); }
-        .accordion-header {
-            background-color: var(--light-purple); padding: 18px 20px; font-size: 17px; font-weight: 700; color: var(--dark-blue);
-            cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; transition: background 0.2s;
+        .header h1 {
+            font-size: 24px;
+            color: var(--dark-blue);
+            font-weight: 800;
         }
-        .accordion-header:hover { background-color: #E6E8FF; }
-        .accordion-header::after { content: '▼'; font-size: 12px; color: var(--dark-blue); transition: transform 0.3s; }
-        .accordion-item.active .accordion-header::after { transform: rotate(180deg); }
-        .accordion-content { display: none; padding: 20px; border-top: 1px solid #E2E4FF; background-color: var(--white); }
-        .accordion-item.active .accordion-content { display: block; }
 
-        /* 체크리스트 스타일 */
-        .checklist-group { list-style: none; }
-        .checklist-item { display: flex; align-items: flex-start; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #F0F1FF; }
-        .checklist-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .checklist-item input[type="checkbox"] { margin-right: 12px; margin-top: 5px; width: 18px; height: 18px; accent-color: var(--dark-blue); cursor: pointer; }
-        .checklist-text strong { color: var(--dark-blue); display: block; font-size: 15px; }
-        .checklist-highlight { color: var(--warning-red); font-weight: 800; }
-        .checklist-text span { font-size: 13px; color: #555; }
-
-        /* 개요 인포 그리드 */
-        .info-grid { display: grid; grid-template-columns: 100px 1fr; row-gap: 12px; font-size: 15px; }
-        .info-label { font-weight: bold; color: var(--dark-blue); }
-
-        /* 내부 탭 구조 */
-        .tab-menu { display: flex; gap: 6px; margin-bottom: 15px; }
-        .tab-btn {
-            flex: 1; padding: 12px; border: 1px solid #E2E4FF; background-color: #FAF6FF; color: var(--dark-blue);
-            font-weight: 700; font-size: 14px; border-radius: 8px; cursor: pointer; text-align: center;
+        .header h1 span {
+            color: var(--main-purple);
         }
-        .tab-btn.active { background-color: var(--dark-blue); color: var(--white); border-color: var(--dark-blue); }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
 
-        /* 테이블 구조 */
-        .table-wrapper { overflow-x: auto; border-radius: 12px; border: 1px solid #E2E4FF; margin-bottom: 10px; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; min-width: 680px; }
-        th, td { padding: 11px 13px; border-bottom: 1px solid #E2E4FF; border-right: 1px solid #F0F1FF; }
-        th { background-color: #F4F5FF; color: var(--dark-blue); font-weight: 700; }
-        td.day-cell { font-weight: 700; background-color: #FAF6FF; width: 85px; text-align: center; color: var(--dark-blue); }
-        .time-cell { color: #555; font-weight: 600; width: 105px; text-align: center; }
-        .break-row { background-color: #F9FAFF; color: #666; font-size: 12px; font-weight: 600; }
-        .subject-text { font-weight: 700; color: var(--dark-blue); }
-        .desc-text { font-size: 12px; color: #555; margin-top: 2px; display: block; }
+        /* [추가] 프로그램별 체크인 섹션 및 기존 디자인 레이아웃 */
+        .program-section {
+            margin-bottom: 25px;
+            border: 2px solid #E2E4FF;
+            border-radius: 16px;
+            overflow: hidden;
+            background-color: var(--white);
+        }
 
-        /* 공간 안내 스타일 */
-        .space-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
-        .space-card { background-color: #F9FAFF; border: 1px solid #E2E4FF; padding: 15px; border-radius: 10px; }
-        .space-card.highlight-card { background-color: #FFFDF5; border: 1px solid #F3E2B4; }
-        .space-title { font-weight: 700; color: var(--dark-blue); margin-bottom: 6px; font-size: 14px; }
-        .space-title span { color: #E67E22; font-size: 12px; margin-left: 5px; }
-        .space-desc { font-size: 13px; color: #555; line-height: 1.4; }
+        .program-title {
+            background-color: var(--light-purple);
+            padding: 15px 20px;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--dark-blue);
+            border-bottom: 1px solid #E2E4FF;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-        /* 안내 박스 및 리스트 */
-        .notice-box { background-color: #FFF9E6; border: 1px solid #FFEAA7; padding: 12px 15px; border-radius: 10px; font-size: 13px; font-weight: 700; color: #826200; margin-top: 15px; }
-        .sub-section-title { font-size: 15px; font-weight: 700; color: var(--dark-blue); margin: 18px 0 8px 0; }
-        .route-list { padding-left: 20px; font-size: 14px; color: #444; }
+        .program-title .badge {
+            background-color: var(--dark-blue);
+            color: white;
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 20px;
+        }
 
-        /* 버튼 구조 */
-        .map-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px; }
-        .map-btn { text-align: center; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 13px; display: inline-flex; justify-content: center; align-items: center; gap: 6px; }
-        .btn-kakao { background-color: #FEE500; color: #191919; }
-        .btn-naver { background-color: #03C75A; color: #ffffff; }
-        .btn-talk { background-color: #3C1E1E; color: #FFCD00; grid-column: span 2; margin-top: 5px; }
-        .talk-tip { grid-column: span 2; text-align: center; font-size: 12px; color: #666; margin-top: -2px; font-weight: 600; }
+        .program-body {
+            padding: 20px;
+        }
 
-        .contact-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed #EAEAEA; font-size: 14px; }
-        .contact-item:last-child { border-bottom: none; }
-        .contact-label { font-weight: 600; }
-        .contact-value { font-weight: 700; color: var(--dark-blue); }
+        /* [추가] 오전/오후 출석 확인 시간 표시 타임라인 */
+        .time-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
 
-        /* 하단 푸터 */
-        .footer-info { margin-top: 35px; padding-top: 20px; border-top: 1px solid #EAEAEA; text-align: center; font-size: 12px; color: #888; }
+        .time-box {
+            background-color: #FAF6FF;
+            border: 1px solid #E2E4FF;
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .time-box.afternoon {
+            background-color: #FFFDF5;
+            border: 1px solid #F3E2B4;
+        }
+
+        .time-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #666;
+            margin-bottom: 2px;
+        }
+
+        .time-value {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--dark-blue);
+        }
+
+        .time-box.afternoon .time-value {
+            color: #C0392B;
+        }
+
+        /* 기존 체크인 입력 폼/버튼 구역 스타일 (원래 사용하시던 스타일로 대체 가능) */
+        .checkin-form-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .checkin-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #CCD0FF;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .checkin-input:focus {
+            border-color: var(--main-purple);
+        }
+
+        .checkin-btn {
+            background-color: var(--main-purple);
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .checkin-btn:hover {
+            background-color: var(--dark-blue);
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 11px;
+            color: #888;
+        }
     </style>
 </head>
 <body>
 
-<div class="top-banner-container">
-    <button class="banner-trigger-btn" id="toggle-info-btn" onclick="toggleDetailedInfo()">
-        🚀 [필독 안내] 2026 CMK 아츠클래스 교사연수 상세 안내문 보기 <span class="arrow-icon">▼</span>
-    </button>
+<!-- [1] 중앙 상단: 클릭 시 상세 안내 페이지로 새 창 이동하는 배너 -->
+<div class="top-banner-wrapper">
+    <a href="상세안내_페이지_파일명.html" target="_blank" class="banner-link-btn">
+        📢 [필독] 2026 CMK 아츠클래스 교사연수 상세 안내문 확인하기 (클릭) ↗
+    </a>
 </div>
 
+<!-- 메인 컨테이너 (원래 디자인 템플릿 구조) -->
 <div class="container">
-    <div class="top-logos">
-        <span class="logo-foundation">현대차 정몽구 재단</span>
-        <span class="logo-divider"></span>
-        <span class="logo-sub">JUMP</span>
-        <span class="logo-divider"></span>
-        <span class="logo-sub">Artis</span>
-    </div>
-
     <div class="header">
-        <h1 class="main-title">2026 CMK 아츠클래스 교사연수 <span>참여교사 안내 & 체크인</span></h1>
+        <h1>2026 CMK 아츠클래스 <span>교사연수 체크인</span></h1>
     </div>
 
-    <div class="warning-banner">
-        ⚠️ 본 페이지는 선발된 참여 교사 전용 안내 공간입니다. 외부 유출을 절대 금합니다.
+    <!-- =================================================================
+         [2] 프로그램별 체크인 구역 + 오전/오후 출석 시간 표시
+         ================================================================= -->
+    
+    <!-- 분반 1: 신규교사 프로그램 -->
+    <div class="program-section">
+        <div class="program-title">
+            <span>🌱 신규교사 프로그램 체크인</span>
+            <span class="badge">아산홀 (C동 1층)</span>
+        </div>
+        <div class="program-body">
+            <!-- 출석 확인 시간 -->
+            <div class="time-info-grid">
+                <div class="time-box">
+                    <div class="time-label">☀️ 오전 출석 확인</div>
+                    <div class="time-value">08:30 ~ 08:45</div>
+                </div>
+                <div class="time-box afternoon">
+                    <div class="time-label">🌙 오후 출석 확인</div>
+                    <div class="time-value">13:00 ~ 13:15</div>
+                </div>
+            </div>
+            <!-- 기존 체크인 연동 구역 -->
+            <div class="checkin-form-group">
+                <input type="text" class="checkin-input" placeholder="이름 또는 고유번호를 입력하세요.">
+                <button class="checkin-btn" onclick="alert('신규교사 체크인이 완료되었습니다.')">확인</button>
+            </div>
+        </div>
     </div>
 
-
-    <div id="detailed-info-wrapper">
-        
-        <div class="accordion-item active">
-            <div class="accordion-header" onclick="toggleAccordion(this)">📋 참여교사 체크리스트 (연수 전 필수 확인)</div>
-            <div class="accordion-content">
-                <ul class="checklist-group">
-                    <li class="checklist-item">
-                        <input type="checkbox" id="check1">
-                        <div class="checklist-text">
-                            <strong>이동 지원(셔틀버스) 탑승 여부 최종 확정 및 수정 <span class="checklist-highlight">[~7/24(금)까지]</span></strong>
-                            <span>탑승 노선 변경이나 자차 이동으로의 전환은 기한 내에만 가능합니다. (문의: 운영사무국 📞 02-2088-6366)</span>
-                        </div>
-                    </li>
-                    <li class="checklist-item">
-                        <input type="checkbox" id="check2">
-                        <div class="checklist-text">
-                            <strong>개인 편한 복장 및 운동화 준비</strong>
-                            <span>연극, 음악, 움직임 등의 신체 활동 위주 세션이 많으므로 반드시 활동하기 편한 의류를 착용해 주세요.</span>
-                        </div>
-                    </li>
-                    <li class="checklist-item">
-                        <input type="checkbox" id="check3">
-                        <div class="checklist-text">
-                            <strong>개인 세면도구 및 상비약 지참</strong>
-                            <span>호텔 기본 비품 외 개인 건강 관리에 필요한 상비약이나 위생용품을 개별 지참해 주시기 바랍니다.</span>
-                        </div>
-                    </li>
-                </ul>
-            </div>
+    <!-- 분반 2: 알럼나이교사 프로그램 -->
+    <div class="program-section">
+        <div class="program-title">
+            <span>✨ 알럼나이(동문)교사 프로그램 체크인</span>
+            <span class="badge">중강의장 1 (A동 1층)</span>
         </div>
-
-        <div class="accordion-item">
-            <div class="accordion-header" onclick="toggleAccordion(this)">ℹ️ 4박 5일 연수 개요</div>
-            <div class="accordion-content">
-                <div class="info-grid">
-                    <div class="info-label">연수 기간</div>
-                    <div class="info-value">2026. 8. 3. (월) — 8. 7. (금) [4박 5일]</div>
-                    <div class="info-label">연수 장소</div>
-                    <div class="info-value">블룸비스타 호텔앤컨퍼런스 (경기 양평)</div>
-                    <div class="info-label">교육 기획</div>
-                    <div class="info-value">영국 Artis</div>
+        <div class="program-body">
+            <!-- 출석 확인 시간 -->
+            <div class="time-info-grid">
+                <div class="time-box">
+                    <div class="time-label">☀️ 오전 출석 확인</div>
+                    <div class="time-value">08:30 ~ 08:45</div>
+                </div>
+                <div class="time-box afternoon">
+                    <div class="time-label">🌙 오후 출석 확인</div>
+                    <div class="time-value">13:00 ~ 13:15</div>
                 </div>
             </div>
-        </div>
-
-        <div class="accordion-item">
-            <div class="accordion-header" onclick="toggleAccordion(this)">📅 프로그램별 상세 시간표 (1일차 ~ 5일차 전정)</div>
-            <div class="accordion-content">
-                <div class="tab-menu">
-                    <button class="tab-btn active" onclick="openTab(event, 'tab1')">신규교사 프로그램</button>
-                    <button class="tab-btn" onclick="openTab(event, 'tab2')">알럼나이교사 프로그램</button>
-                    <button class="tab-btn" onclick="openTab(event, 'tab3')">한국 멘토연수 프로그램</button>
-                </div>
-
-                <div id="tab1" class="tab-content active">
-                    <div class="table-wrapper">
-                        <table>
-                            <thead>
-                                <tr><th>일자</th><th>시간</th><th>주제</th><th>활동 내용</th></tr>
-                            </thead>
-                            <tbody>
-                                <tr><td class="day-cell" rowspan="6">8/3(월)<br>1일차</td><td class="time-cell">14:00-15:45</td><td><span class="subject-text">Whole course introductions</span><br>전체 프로그램 소개</td><td><span class="desc-text">Artis와 창의적 교사 프로그램 소개 / 멘토 미팅</span></td></tr>
-                                <tr class="break-row"><td class="time-cell">15:45-16:00</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">16:00-17:00</td><td><span class="subject-text">Full course activity</span><br>전체 프로그램 활동 / 연극 개발</td><td><span class="desc-text">소개 및 학습 요구 사항과 기대 사항 / 앙상블 공연</span></td></tr>
-                                <tr><td class="time-cell">17:00-18:00</td><td><span class="subject-text">Music development</span><br>음악 개발</td><td><span class="desc-text">주변 소리 탐색 / 도형 악보 제작</span></td></tr>
-                                <tr class="break-row"><td class="time-cell">18:00-18:15</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">18:15-19:15</td><td><span class="subject-text">Movement development</span><br>움직임 개발</td><td><span class="desc-text">함께 이동 / 그룹 댄스 촉진</span></td></tr>
-                                
-                                <tr><td class="day-cell" rowspan="11">8/4(화)<br>2일차</td><td class="time-cell">08:45-09:00</td><td>전체 입문 활동</td><td>Full introductory activity</td></tr>
-                                <tr><td class="time-cell">09:00-10:30</td><td><span class="subject-text">Music development</span><br>음악 개발</td><td>Internalising pulse / Eurhythmics</td></tr>
-                                <tr class="break-row"><td class="time-cell">10:30-10:45</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">10:45-12:15</td><td><span class="subject-text">Movement development</span><br>움직임 개발</td><td>움직임 특질 탐색 및 시작점 탐구</td></tr>
-                                <tr class="break-row"><td class="time-cell">12:15-13:15</td><td colspan="2">LUNCH 점심 식사</td></tr>
-                                <tr><td class="time-cell">13:15-14:45</td><td><span class="subject-text">Drama development</span><br>연극 개발 활동</td><td>이야기 구축: 연극을 통한 구조와 내러티브</td></tr>
-                                <tr class="break-row"><td class="time-cell">14:45-15:15</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">15:15-16:15</td><td><span class="subject-text">Mentoring session</span><br>멘토 세션</td><td>회고 / 일일 분석 및 Artis 접근 방식 분석</td></tr>
-                                <tr class="break-row"><td class="time-cell">16:15-16:30</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">16:30-18:15</td><td><span class="subject-text">Mentoring session</span><br>멘토 세션 (개별)</td><td>과제 3 소개 및 초기 계획 수립</td></tr>
-                                <tr><td class="time-cell">18:15-18:30</td><td>마지막 활동</td><td>Full end of day activity</td></tr>
-
-                                <tr><td class="day-cell" rowspan="11">8/5(수)<br>3일차</td><td class="time-cell">08:45-09:00</td><td>전체 시작 활동</td><td>Full introductory activity</td></tr>
-                                <tr><td class="time-cell">09:00-10:30</td><td><span class="subject-text">Delivering an Artis session</span><br>Artis 세션 진행</td><td>움직임 진행 슈퍼 히어로 시뮬레이션</td></tr>
-                                <tr class="break-row"><td class="time-cell">10:30-10:45</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">10:45-12:15</td><td><span class="subject-text">Delivering an Artis session</span><br>Artis 세션 진행</td><td>총체적 접근 방식: 이미지에 응답하기</td></tr>
-                                <tr class="break-row"><td class="time-cell">12:15-13:15</td><td colspan="2">LUNCH 점심 식사</td></tr>
-                                <tr><td class="time-cell">13:15-14:45</td><td><span class="subject-text">Movement development</span><br>움직임 개발</td><td>움직임 프레임워크 및 모범 사례 촉진</td></tr>
-                                <tr class="break-row"><td class="time-cell">14:45-15:00</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">15:00-16:15</td><td><span class="subject-text">Mentoring session</span><br>멘토 세션</td><td>Artis 접근 방식에 대한 종합 회고</td></tr>
-                                <tr class="break-row"><td class="time-cell">16:15-16:30</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">16:30-17:30</td><td><span class="subject-text">Mentoring session</span><br>멘토 세션</td><td>과제 3 집중 계획 및 구성</td></tr>
-                                <tr><td class="time-cell">17:30-17:45</td><td>마지막 활동</td><td>Full end of day activity</td></tr>
-
-                                <tr><td class="day-cell" rowspan="11">8/6(목)<br>4일차</td><td class="time-cell">08:45-09:00</td><td>전체 소개 활동</td><td>한국 멘토 교사가 주도하는 오프닝 세션</td></tr>
-                                <tr><td class="time-cell">09:00-10:30</td><td><span class="subject-text">Movement development</span><br>움직임 개발</td><td>공연 창작 의자 듀엣 (Chair duets)</td></tr>
-                                <tr class="break-row"><td class="time-cell">10:30-10:45</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">10:45-12:15</td><td><span class="subject-text">Drama development</span><br>연극 개발 활동</td><td>이야기를 통한 탐구: 텍스트에 활기 불어넣기</td></tr>
-                                <tr class="break-row"><td class="time-cell">12:15-13:15</td><td colspan="2">LUNCH 점심 식사</td></tr>
-                                <tr><td class="time-cell">13:15-14:45</td><td><span class="subject-text">Using film / media</span><br>영상/미디어 활용</td><td>영상에 응답 및 교과과정 내 영화 활용법 탐색</td></tr>
-                                <tr class="break-row"><td class="time-cell">14:45-15:00</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">15:00-16:30</td><td><span class="subject-text">Using film / media</span><br>영상/미디어 활용</td><td>영화 창작 프로젝트 진행: 장르와 줄거리 구성</td></tr>
-                                <tr class="break-row"><td class="time-cell">16:30-16:45</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">16:45-18:30</td><td><span class="subject-text">Mentoring session</span><br>멘토 세션</td><td>과제 3: 결과물 공유 및 실천 발표</td></tr>
-                                <tr><td class="time-cell">18:30-18:45</td><td>마지막 활동</td><td>한국 멘토가 리드하는 데일리 랩업 활동</td></tr>
-
-                                <tr><td class="day-cell" rowspan="4">8/7(금)<br>5일차</td><td class="time-cell">08:45-09:00</td><td>전체 시작 활동</td><td>Full introductory activity</td></tr>
-                                <tr><td class="time-cell">09:00-10:30</td><td><span class="subject-text">Mentoring session</span><br>멘토 세션</td><td>과제 3 발전 계획 개선 수립 완료</td></tr>
-                                <tr class="break-row"><td class="time-cell">10:30-10:45</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">10:45-12:15</td><td><span class="subject-text">Plenary & Reflection</span><br>전체 회의 및 프로그램 회고</td><td>모든 프로그램 마무리 및 퇴소 준비 (12:15-13:15 퇴소 후 이동)</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div id="tab2" class="tab-content">
-                    <div class="table-wrapper">
-                        <table>
-                            <thead>
-                                <tr><th>일자</th><th>시간</th><th>주제</th><th>활동 내용</th></tr>
-                            </thead>
-                            <tbody>
-                                <tr><td class="day-cell" rowspan="6">8/3(월)<br>1일차</td><td class="time-cell">14:00-15:45</td><td><span class="subject-text">Intro to Alumni</span><br>동문 프로그램 소개</td><td>Artis 작업 경험 공유 및 당해 연도 세부 요구사항 도출</td></tr>
-                                <tr class="break-row"><td class="time-cell">15:45-16:00</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">16:00-17:00</td><td><span class="subject-text">Artis Core Skills</span><br>핵심 기술 프레임워크</td><td>실제 활동 기반 가치, 기술 및 교육 목표 탐구 1</td></tr>
-                                <tr><td class="time-cell">17:00-18:00</td><td><span class="subject-text">Artis Core Skills 2</span><br>핵심 기술 프레임워크 2</td><td>실제 활동 기반 가치, 기술 및 교육 목표 탐구 2</td></tr>
-                                <tr class="break-row"><td class="time-cell">18:00-18:15</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">18:15-19:15</td><td><span class="subject-text">Framework Analysis</span><br>학습 프레임워크 분석</td><td>비디오 예시 분석 및 시각 자료 피드백 워크숍</td></tr>
-                                
-                                <tr><td class="day-cell" rowspan="11">8/4(화)<br>2일차</td><td class="time-cell">08:45-09:00</td><td>전체 입문 활동</td><td>Full introductory activity</td></tr>
-                                <tr><td class="time-cell">09:00-10:30</td><td><span class="subject-text">Movement development</span><br>움직임 개발</td><td>Moving Maths (움직이는 수학 융합)</td></tr>
-                                <tr class="break-row"><td class="time-cell">10:30-10:45</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">10:45-12:15</td><td><span class="subject-text">Drama development</span><br>연극 개발 활동</td><td>연극 기법을 활용한 내러티브 이야기 입체 탐구</td></tr>
-                                <tr class="break-row"><td class="time-cell">12:15-13:15</td><td colspan="2">LUNCH 점심</td></tr>
-                                <tr><td class="time-cell">13:15-14:45</td><td><span class="subject-text">Music development</span><br>음악 개발</td><td>고급 리듬 레이어링 및 멜로디 창작 세션</td></tr>
-                                <tr class="break-row"><td class="time-cell">14:45-15:15</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">15:15-16:15</td><td><span class="subject-text">Mentoring session</span><br>멘토 세션</td><td>일일 활동 요약 질문 및 현장 아이디어 고도화</td></tr>
-                                <tr class="break-row"><td class="time-cell">16:15-16:30</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">16:30-18:15</td><td><span class="subject-text">Mentor meetings</span><br>그룹 멘토링 미팅</td><td>세션 적용 기법 분석 및 현장 딜레마 케이스 스터디</td></tr>
-                                <tr><td class="time-cell">18:15-18:30</td><td>마지막 활동</td><td>Full end of day activity</td></tr>
-
-                                <tr><td class="day-cell" rowspan="11">8/5(수)<br>3일차</td><td class="time-cell">08:45-09:00</td><td>전체 시작 활동</td><td>Full introductory activity</td></tr>
-                                <tr><td class="time-cell">09:00-10:30</td><td><span class="subject-text">Delivering Session 1</span><br>세션 실전 진행 1</td><td>Classroom management (예술융합수업 교실 관리 솔루션)</td></tr>
-                                <tr class="break-row"><td class="time-cell">10:30-10:45</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">10:45-12:15</td><td><span class="subject-text">Delivering Session 2</span><br>세션 실전 진행 2</td><td>Embedding a learning framework (학습 프레임워크 설계)</td></tr>
-                                <tr class="break-row"><td class="time-cell">12:15-13:15</td><td colspan="2">LUNCH 점심</td></tr>
-                                <tr><td class="time-cell">13:15-14:45</td><td><span class="subject-text">Delivering Session 3</span><br>세션 실전 진행 3</td><td>Practical application (실제 교수법 필드 적용 설계)</td></tr>
-                                <tr class="break-row"><td class="time-cell">14:45-15:00</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">15:00-16:15</td><td><span class="subject-text">Group Task 1</span><br>그룹 창작 프로젝트 1</td><td>앙상블 창의성을 활용한 퍼포먼스 구상 및 연출 연습</td></tr>
-                                <tr class="break-row"><td class="time-cell">16:15-16:30</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">16:30-17:30</td><td><span class="subject-text">Mentoring session</span><br>멘토 세션</td><td>피드백 전략 조율 및 질의응답 회의</td></tr>
-                                <tr><td class="time-cell">17:30-17:45</td><td>마지막 활동</td><td>Full end of day activity</td></tr>
-
-                                <tr><td class="day-cell" rowspan="11">8/6(목)<br>4일차</td><td class="time-cell">08:45-09:00</td><td>전체 소개 활동</td><td>한국 멘토 주도 오프닝 연계 세션</td></tr>
-                                <tr><td class="time-cell">09:00-10:30</td><td><span class="subject-text">Group Delivery 1</span><br>그룹 발표 및 피드백 1</td><td>A그룹 메인 실습 평가 및 크리틱</td></tr>
-                                <tr class="break-row"><td class="time-cell">10:30-10:45</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">10:45-12:15</td><td><span class="subject-text">Group Delivery 2</span><br>그룹 발표 및 피드백 2</td><td>B그룹 메인 실습 평가 및 크리틱</td></tr>
-                                <tr class="break-row"><td class="time-cell">12:15-13:15</td><td colspan="2">LUNCH 점심</td></tr>
-                                <tr><td class="time-cell">13:15-14:45</td><td><span class="subject-text">Group Delivery 3</span><br>그룹 발표 및 피드백 3</td><td>C그룹 메인 실습 평가 및 크리틱</td></tr>
-                                <tr class="break-row"><td class="time-cell">14:45-15:00</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">15:00-16:30</td><td><span class="subject-text">Group Task 2</span><br>그룹 창작 프로젝트 2</td><td>자극 매개체 활용 앙상블 퍼포먼스 최종 고도화</td></tr>
-                                <tr class="break-row"><td class="time-cell">16:30-16:45</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">16:45-18:30</td><td><span class="subject-text">Personal Objective</span><br>개별 피어 멘토링</td><td>과제 3 실행 계획 최종 포뮬레이션 도출</td></tr>
-                                <tr><td class="time-cell">18:30-18:45</td><td>마지막 활동</td><td>한국 멘토 진행 데일리 세션</td></tr>
-
-                                <tr><td class="day-cell" rowspan="4">8/7(금)<br>5일차</td><td class="time-cell">08:45-09:00</td><td>전체 시작 활동</td><td>Full introductory activity</td></tr>
-                                <tr><td class="time-cell">09:00-10:30</td><td><span class="subject-text">Group Task 3</span><br>프로젝트 3 최종 리허설</td><td>Rehearsing and refining (퍼포먼스 연출 시연 및 최종 다듬기)</td></tr>
-                                <tr class="break-row"><td class="time-cell">10:30-10:45</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">10:45-12:15</td><td><span class="subject-text">Plenary & Reflection</span><br>종합 반성 및 수료식</td><td>동문 네트워크 구축 방안 논의 및 최종 출발 (12:15-13:15)</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div id="tab3" class="tab-content">
-                    <div class="table-wrapper">
-                        <table>
-                            <thead>
-                                <tr><th>일자</th><th>시간</th><th>주제</th><th>활동 내용</th></tr>
-                            </thead>
-                            <tbody>
-                                <tr><td class="day-cell" rowspan="6">8/3(월)<br>1일차</td><td class="time-cell">14:00-15:45</td><td><span class="subject-text">Mentor course introductions</span><br>멘토 프로그램 소개</td><td>전체 연수 안내 연계 및 멘토링의 교육적 효과성 분석</td></tr>
-                                <tr class="break-row"><td class="time-cell">15:45-16:00</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">16:00-17:00</td><td><span class="subject-text">Expectations & Tasks</span><br>목표 설정</td><td>멘토 활동 기대치 관리 및 향후 세션 관찰 작업 배정</td></tr>
-                                <tr><td class="time-cell">17:00-18:00</td><td><span class="subject-text">Observe (관찰 실습)</span></td><td>소리 탐색과 도형 악보 세션 현장 밀착 관찰 진행</td></tr>
-                                <tr class="break-row"><td class="time-cell">18:00-18:15</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">18:15-19:15</td><td><span class="subject-text">Mentoring session</span><br>디브리핑 세션</td><td>관찰 텍스트 및 로그 기록을 바탕으로 분석 및 팀별 회고</td></tr>
-                                
-                                <tr><td class="day-cell" rowspan="11">8/4(화)<br>2일차</td><td class="time-cell">08:45-09:00</td><td>전체 입문 활동</td><td>Full introductory activity</td></tr>
-                                <tr><td class="time-cell">09:00-10:30</td><td><span class="subject-text">Common criteria 1</span><br>공통 평가기준 구축 1</td><td>전일 수업 관찰 로그 분석을 통한 지표 공통점 도출</td></tr>
-                                <tr class="break-row"><td class="time-cell">10:30-10:45</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">10:45-12:15</td><td><span class="subject-text">Common criteria 2</span><br>공통 평가기준 구축 2</td><td>창의예술교사 정량·정성 평가 매트릭스 아이디어 회의</td></tr>
-                                <tr class="break-row"><td class="time-cell">12:15-13:15</td><td colspan="2">LUNCH 점심</td></tr>
-                                <tr><td class="time-cell">13:15-14:45</td><td><span class="subject-text">Common criteria 3</span><br>공통 평가기준 고안 완료</td><td>예술강사 평가용 표준 프레임워크 최종 고안</td></tr>
-                                <tr class="break-row"><td class="time-cell">14:45-15:00</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">15:00-16:15</td><td><span class="subject-text">Growth Mindset Theory</span><br>성장 마인드셋 이론</td><td>교사 피드백의 핵심 가치: 성장 마인드셋의 교육학적 배경</td></tr>
-                                <tr class="break-row"><td class="time-cell">16:15-16:30</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">16:30-18:15</td><td><span class="subject-text">Growth Mindset Application</span><br>마인드셋 심화 실습</td><td>현장 적용 사례별 가상의 교사 저항 극복 워크숍</td></tr>
-                                <tr><td class="time-cell">18:15-18:30</td><td><span class="subject-text">Model Mentor attributes</span><br>우수 멘토 속성 공유</td><td>효과적인 피어 멘토가 되기 위한 자질 리스트 정립</td></tr>
-
-                                <tr><td class="day-cell" rowspan="11">8/5(수)<br>3일차</td><td class="time-cell">08:45-09:00</td><td>전체 입문 활동</td><td>Full introductory activity</td></tr>
-                                <tr><td class="time-cell">09:00-10:30</td><td><span class="subject-text">Leading PD 1</span><br>전문성 개발(PD) 리드 1</td><td>안정감 있고 성공적인 피드백 세션 빌딩 핵심 요소 분석</td></tr>
-                                <tr class="break-row"><td class="time-cell">10:30-10:45</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">10:45-12:15</td><td><span class="subject-text">Leading PD 2</span><br>전문성 개발(PD) 리드 2</td><td>멘토링 모범 실천 사례 케이스 분석 및 아카이브화</td></tr>
-                                <tr class="break-row"><td class="time-cell">12:15-13:15</td><td colspan="2">LUNCH 점심</td></tr>
-                                <tr><td class="time-cell">13:15-14:45</td><td><span class="subject-text">Mindset in Practice</span><br>성장 마인드셋 언어 개발</td><td>교사 관찰 피드백 기록용 스크립트 작성 및 교정</td></tr>
-                                <tr class="break-row"><td class="time-cell">14:45-15:00</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">15:00-16:15</td><td><span class="subject-text">Effective Communication</span><br>소통 스킬 고도화</td><td>Clean Language 기법 및 NLP 구조 연계 피드백 스킬 연습</td></tr>
-                                <tr class="break-row"><td class="time-cell">16:15-16:30</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">16:30-17:30</td><td><span class="subject-text">Designing Activities</span><br>활동 설계 세션</td><td>전체 코호트와 공유할 4-5일차 오프닝 세션 액티비티 기획</td></tr>
-                                <tr><td class="time-cell">17:30-17:45</td><td>일과 마무리 활동</td><td>Full end of day activity</td></tr>
-
-                                <tr><td class="day-cell" rowspan="11">8/6(목)<br>4일차</td><td class="time-cell">08:45-09:00</td><td>전체 소개 활동</td><td>한국 멘토 주도의 전체 액티비티 현장 시연 진행</td></tr>
-                                <tr><td class="time-cell">09:00-10:30</td><td><span class="subject-text">Reflection on Delivery</span><br>수업 실천 리뷰</td><td>오전 시연 활동 피드백 분석 및 보안점 수정 패치</td></tr>
-                                <tr class="break-row"><td class="time-cell">10:30-10:45</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">10:45-12:15</td><td><span class="subject-text">Observe & Apply</span><br>기준표 기반 실제 관찰</td><td>자체 제작 표준 공통 기준표를 사용한 타 분반 교사 수업 분석</td></tr>
-                                <tr class="break-row"><td class="time-cell">12:15-13:15</td><td colspan="2">LUNCH 점심</td></tr>
-                                <tr><td class="time-cell">13:15-14:45</td><td><span class="subject-text">Feedback Application</span><br>피드백 임상 적용</td><td>관찰 교사를 대상으로 실제 일대일 피드백 클리닉 진행</td></tr>
-                                <tr class="break-row"><td class="time-cell">14:45-15:00</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">15:00-16:30</td><td><span class="subject-text">Post-Course Plan</span><br>연수 후 계획 수립</td><td>연수 수료 이후 학교 현장 복귀 시 적용 가능한 로드맵 구축</td></tr>
-                                <tr class="break-row"><td class="time-cell">16:30-16:45</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">16:45-18:30</td><td><span class="subject-text">Final Rehearsal</span><br>클로징 세션 기획</td><td>5일차 전체 교사 연계 마무리 세션 컴포지션 시뮬레이션</td></tr>
-                                <tr><td class="time-cell">18:30-18:45</td><td>마지막 활동</td><td>한국 멘토 진행 데일리 세션 마무리</td></tr>
-
-                                <tr><td class="day-cell" rowspan="4">8/7(금)<br>5일차</td><td class="time-cell">08:45-09:00</td><td>전체 입문 활동</td><td>Full introductory activity</td></tr>
-                                <tr><td class="time-cell">09:00-10:30</td><td><span class="subject-text">Mentoring Finalization</span><br>최종 멘토링 랩업</td><td>Next steps 논의 및 전 프로그램 종합 평가 설문</td></tr>
-                                <tr class="break-row"><td class="time-cell">10:30-10:45</td><td colspan="2">BREAK 휴식</td></tr>
-                                <tr><td class="time-cell">10:45-12:15</td><td><span class="subject-text">Course Reflection & Closing</span><br>전체 피드백 공유 및 종료</td><td>Artis 멘토단과의 파이널 인사이트 공유 후 퇴소 (12:15-13:15)</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+            <!-- 기존 체크인 연동 구역 -->
+            <div class="checkin-form-group">
+                <input type="text" class="checkin-input" placeholder="이름 또는 고유번호를 입력하세요.">
+                <button class="checkin-btn" onclick="alert('알럼나이교사 체크인이 완료되었습니다.')">확인</button>
             </div>
         </div>
-
-        <div class="accordion-item">
-            <div class="accordion-header" onclick="toggleAccordion(this)">🏢 프로그램별 세부 연수 공간 및 식사 장소 안내</div>
-            <div class="accordion-content">
-                <div class="space-grid">
-                    <div class="space-card">
-                        <div class="space-title">신규교사 프로그램 분반실</div>
-                        <div class="space-desc"><strong>아산홀</strong><br>📍 C동 1층<br>신규 교사 전용 음악·연극·움직임 교육 및 멘토링 주무대입니다.</div>
-                    </div>
-                    <div class="space-card">
-                        <div class="space-title">알럼나이교사 프로그램 분반실</div>
-                        <div class="space-desc"><strong>중강의장 1</strong><br>📍 A동 1층<br>알럼나이(동문) 심화 예술융합 세션 및 토론이 운영되는 강의실입니다.</div>
-                    </div>
-                    <div class="space-card">
-                        <div class="space-title">한국 멘토연수 프로그램 분반실</div>
-                        <div class="space-desc"><strong>중강의장 2</strong><br>📍 A동 1층<br>한국 멘토진의 평가 기준 정립 및 소통 스킬 연수 전용 실습장입니다.</div>
-                    </div>
-                    <div class="space-card highlight-card">
-                        <div class="space-title">식사 장소 <span>💡 이동 Tip</span></div>
-                        <div class="space-desc"><strong>Bistro B</strong><br>📍 D동 지하 1층<br><span style="color:#D35400; font-weight:700;">※ 블룸비스타 호텔의 지하 1층과 지상 1층은 완벽히 연결되어 있어 원활한 동선 이동이 가능합니다.</span></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="accordion-item">
-            <div class="accordion-header" onclick="toggleAccordion(this)">📍 이동 지원 안내 & 차량 내비게이션 바로 연동</div>
-            <div class="accordion-content">
-                <p style="font-weight: 700; margin-bottom: 5px; color: var(--dark-blue);">🏢 블룸비스타 호텔앤컨퍼런스</p>
-                <p style="font-size: 14px; color: #555; margin-bottom: 15px;">경기도 양평군 강하면 강남로 316</p>
-
-                <div class="sub-section-title">🚌 1. 입소일 이동 지원 버스 (8월 3일 월요일)</div>
-                <ul class="route-list">
-                    <li><strong>서울역 승차</strong> : 낮 12시 정시 출발 (연수 프로그램 준비 셔틀)</li>
-                    <li><strong>잠실역 승차</strong> : 오후 1시 정시 출발 (연수 프로그램 준비 셔틀)</li>
-                </ul>
-
-                <div class="sub-section-title">🚌 2. 퇴소일 이동 지원 버스 (8월 7일 금요일)</div>
-                <ul class="route-list">
-                    <li><strong>잠실역 하차 노선</strong> : 오후 2시 블룸비스타 출발 및 도착 예정</li>
-                    <li><strong>서울역 하차 노선</strong> : 오후 3시 블룸비스타 출발 및 도착 예정</li>
-                </ul>
-
-                <div class="sub-section-title">🚗 3. 개인 자차 차량 이용 이동 시</div>
-                <p class="route-list" style="list-style:none; padding-left:0; font-size:13px;">
-                    차량 운전 시 아래의 원클릭 버튼을 터치하시면 **목적지가 '블룸비스타'로 자동 지정**되어 길 안내가 시작되며, 연수 기간 내 전용 주차장을 무료로 이용하실 수 있습니다.
-                </p>
-
-                <div class="notice-box">
-                    🔔 이동 지원 버스 탑승 여부 및 승하차 노선 정보의 최종 수정 기한은 7/24(금)까지입니다. 기한 마감 이후에는 배차 확정으로 인해 변경이 불가능합니다.
-                </div>
-
-                <div class="map-buttons">
-                    <a href="https://map.kakao.com/link/search/블룸비스타" class="map-btn btn-kakao" target="_blank">📲 카카오맵 목적지 바로 연결</a>
-                    <a href="https://map.naver.com/v5/search/블룸비스타" class="map-btn btn-naver" target="_blank">📲 네이버지도 목적지 바로 연결</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="accordion-item">
-            <div class="accordion-header" onclick="toggleAccordion(this)">🚨 응급 대응 비상 연락망 및 공식 카카오톡 채널</div>
-            <div class="accordion-content">
-                <div class="contact-item">
-                    <span class="contact-label">운영사무국 (JUMP 담당자)</span>
-                    <span class="contact-value">📱 010-4127-2057</span>
-                </div>
-                <div class="contact-item">
-                    <span class="contact-label">운영사무국 대표 유선 연락처</span>
-                    <span class="contact-value">☎️ 02-2088-6366</span>
-                </div>
-                <div class="contact-item">
-                    <span class="contact-label">블룸비스타 프런트 통합 상황실</span>
-                    <span class="contact-value">📞 031-770-8800</span>
-                </div>
-                <div class="contact-item">
-                    <span class="contact-label">인근 대형 병원 (양평병원 응급의료센터)</span>
-                    <span class="contact-value">🚑 031-770-5000</span>
-                </div>
-                
-                <div class="sub-section-title" style="margin-top:20px;">💬 실시간 1:1 채팅 문의</div>
-                <div class="map-buttons" style="margin-top:5px;">
-                    <a href="http://pf.kakao.com/_Htxbyxj" class="map-btn btn-talk" target="_blank">💬 아츠클래스 공식 카카오톡 채널로 문의하기</a>
-                    <div class="talk-tip">※ 친구추가 후, '대화하기'를 누르시면 1:1 채팅이 가능합니다.</div>
-                </div>
-            </div>
-        </div>
-
     </div>
-    <div class="checkin-section-box">
-        <h2>👋 연수 참여교사 현장 체크인 구역</h2>
-        <p style="font-size:14px; color:#666; margin-bottom: 20px;">숙소 배정 및 바코드/QR 태깅 체크인 모듈 등의 기존 기능이 실행되는 영역입니다.</p>
+
+    <!-- 분반 3: 한국 멘토연수 프로그램 -->
+    <div class="program-section">
+        <div class="program-title">
+            <span>👑 한국 멘토연수 프로그램 체크인</span>
+            <span class="badge">중강의장 2 (A동 1층)</span>
         </div>
+        <div class="program-body">
+            <!-- 출석 확인 시간 -->
+            <div class="time-info-grid">
+                <div class="time-box">
+                    <div class="time-label">☀️ 오전 출석 확인</div>
+                    <div class="time-value">08:30 ~ 08:45</div>
+                </div>
+                <div class="time-box afternoon">
+                    <div class="time-label">🌙 오후 출석 확인</div>
+                    <div class="time-value">13:00 ~ 13:15</div>
+                </div>
+            </div>
+            <!-- 기존 체크인 연동 구역 -->
+            <div class="checkin-form-group">
+                <input type="text" class="checkin-input" placeholder="이름 또는 고유번호를 입력하세요.">
+                <button class="checkin-btn" onclick="alert('멘토교사 체크인이 완료되었습니다.')">확인</button>
+            </div>
+        </div>
+    </div>
 
-
-    <div class="footer-info">
-        <p>© 2026 HYUNDAI MOTOR CHUNG MONG-KOO FOUNDATION · JUMP · ARTIS. ALL RIGHTS RESERVED.</p>
+    <div class="footer">
+        <p>© 2026 HYUNDAI MOTOR CHUNG MONG-KOO FOUNDATION. All Rights Reserved.</p>
     </div>
 </div>
-
-<script>
-    // [추가] 상단 클릭 시 상세 안내 페이지 슬라이드 온/오프 제어 스크립트
-    function toggleDetailedInfo() {
-        const infoWrapper = document.getElementById("detailed-info-wrapper");
-        const toggleBtn = document.getElementById("toggle-info-btn");
-        
-        if (infoWrapper.style.display === "none" || infoWrapper.style.display === "") {
-            infoWrapper.style.display = "block";
-            toggleBtn.classList.add("active");
-            toggleBtn.innerHTML = '🚀 [확인 완료] 상세 안내문 접고 체크인 화면으로 가기 <span class="arrow-icon">▲</span>';
-        } else {
-            infoWrapper.style.display = "none";
-            toggleBtn.classList.remove("active");
-            toggleBtn.innerHTML = '🚀 [필독 안내] 2026 CMK 아츠클래스 교사연수 상세 안내문 보기 <span class="arrow-icon">▼</span>';
-        }
-    }
-
-    // 아코디언 컴포넌트 제어
-    function toggleAccordion(element) {
-        const item = element.parentElement;
-        item.classList.toggle("active");
-    }
-
-    // 시간표 탭 메뉴 제어
-    function openTab(evt, tabName) {
-        var i, tabcontent, tablinks;
-        tabcontent = document.getElementsByClassName("tab-content");
-        for (i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].classList.remove("active");
-        }
-        tablinks = document.getElementsByClassName("tab-btn");
-        for (i = 0; i < tablinks.length; i++) {
-            tablinks[i].classList.remove("active");
-        }
-        document.getElementById(tabName).classList.add("active");
-        evt.currentTarget.classList.add("active");
-        evt.stopPropagation(); // 아코디언 버블링 방지
-    }
-</script>
 
 </body>
 </html>
