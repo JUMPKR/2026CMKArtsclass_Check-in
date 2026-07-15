@@ -662,11 +662,10 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
         <div class="sub">8/3(월) ~ 8/7(금) · 블룸비스타 호텔앤컨퍼런스</div>
     </div>
 
-    <div class="notice-banner" id="noticeBanner" style="display:none"></div>
-
-    <!-- 공지 팝업 -->
-    <div class="modal-overlay" id="noticeModal" style="display:none">
-        <div class="modal-card">
+    <!-- 공지 팝업 (배경 클릭 또는 ✕로 닫기) -->
+    <div class="modal-overlay" id="noticeModal" style="display:none" onclick="if(event.target===this)closeNoticeModal()">
+        <div class="modal-card" style="position:relative">
+            <button onclick="closeNoticeModal()" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:18px;font-weight:800;color:#999;cursor:pointer">✕</button>
             <div class="modal-ico">📢</div>
             <h3>공지사항</h3>
             <p id="noticeModalText"></p>
@@ -830,7 +829,7 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
                 <div class="info-value">현대차 정몽구 재단</div>
                 <div class="info-label">주관</div>
                 <div class="info-value">사단법인 점프</div>
-                <div class="info-label">연수 기획</div>
+                <div class="info-label">연수 콘텐츠</div>
                 <div class="info-value">영국 Artis</div>
             </div>
         </div>
@@ -907,7 +906,7 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
                 </div>
             </div>
 
-            <!-- 2. 알럼나이 프로그램 -->
+            <!-- 2. 알럼나이교사 프로그램 -->
             <div id="tab2" class="tab-content">
                 <div class="table-wrapper">
                     <table>
@@ -968,7 +967,7 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
                 </div>
             </div>
 
-            <!-- 3. 한국 멘토연수 프로그램 -->
+            <!-- 3. 한국멘토연수 프로그램 -->
             <div id="tab3" class="tab-content">
                 <div class="table-wrapper">
                     <table>
@@ -1810,8 +1809,8 @@ async function renderSettings() {
         </div>
 
         <div class="set-block">
-            <h3>📢 공지 배너</h3>
-            <div class="desc">입력하면 홈 화면과 참여자 안내 페이지 상단에 노란 배너로 표시됩니다. 비우고 저장하면 배너가 사라집니다.</div>
+            <h3>📢 공지 팝업</h3>
+            <div class="desc">입력하면 참여자가 앱을 열 때 팝업 창으로 표시됩니다. 참여자는 ✕ 또는 확인 버튼으로 닫을 수 있습니다. 비우고 저장하면 팝업이 뜨지 않습니다.</div>
             <textarea class="guide-editor" id="noticeIpt" style="min-height:70px;font-family:inherit;font-size:13.5px">${notice.replace(/</g, "&lt;")}</textarea>
             <div style="margin-top:10px"><button class="btn-ghost" onclick="saveNotice()">공지 저장</button>
             <span class="msg" id="noticeMsg" style="display:inline-block;margin:0 0 0 8px;padding:6px 12px"></span></div>
@@ -1875,17 +1874,13 @@ async function resetGuide() {
     flashMsg("guideMsg", true, "원본으로 복원되었습니다");
 }
 
-/* 공지 배너 + 최초 1회 팝업 */
+/* 공지: 앱을 열 때 팝업으로 1회 표시 (닫기 가능) */
 function applyNotice(text) {
-    const b = document.getElementById("noticeBanner");
-    if (text) {
-        b.style.display = "block"; b.textContent = "📢 " + text;
-        if (!noticePopupShown) {
-            noticePopupShown = true;
-            document.getElementById("noticeModalText").textContent = text;
-            document.getElementById("noticeModal").style.display = "flex";
-        }
-    } else b.style.display = "none";
+    if (text && !noticePopupShown) {
+        noticePopupShown = true;
+        document.getElementById("noticeModalText").textContent = text;
+        document.getElementById("noticeModal").style.display = "flex";
+    }
 }
 
 /* 명단 수정본 적용 (관리자에서 참여자 정보를 고친 경우) */
