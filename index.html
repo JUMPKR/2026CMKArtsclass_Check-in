@@ -1975,19 +1975,21 @@ function applyRosterOverrides(ov) {
         if (ROSTER[i]) Object.assign(ROSTER[i], ov[idx]);
     });
 }
-async function loadSharedContent() {
-    try {
-        const ro = await store.get("roster-ov", true);
-        if (ro && ro.value) applyRosterOverrides(JSON.parse(ro.value));
-    } catch (e) {}
-    try {
-        const n = await store.get("notice-banner", true);
-        applyNotice(n && n.value ? n.value : "");
-    } catch (e) {}
-    try {
-        const g = await store.get("guide-html", true);
-        if (g && g.value) document.getElementById("guideContent").innerHTML = g.value;
-    } catch (e) {}
+function loadSharedContent() {
+    // 세 요청을 서로 기다리지 않고 독립적으로 처리합니다.
+    // 특히 공지 배너는 값이 작아 가장 먼저 끝나므로, 용량이 큰 안내 페이지 로딩을
+    // 기다리지 않고 곧바로 반영되어야 팝업이 늦게 뜨지 않습니다.
+    store.get("notice-banner", true)
+        .then(n => applyNotice(n && n.value ? n.value : ""))
+        .catch(() => {});
+
+    store.get("roster-ov", true)
+        .then(ro => { if (ro && ro.value) applyRosterOverrides(JSON.parse(ro.value)); })
+        .catch(() => {});
+
+    store.get("guide-html", true)
+        .then(g => { if (g && g.value) document.getElementById("guideContent").innerHTML = g.value; })
+        .catch(() => {});
 }
 
 /* 체크리스트 → 이동 지원 안내 바로가기 */
