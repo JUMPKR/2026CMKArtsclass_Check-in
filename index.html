@@ -663,6 +663,7 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
         </div>
         <h1>2026 CMK <span>아츠클래스</span> 교사연수 체크인 &amp; 안내</h1>
         <div class="sub">8/3(월) ~ 8/7(금) · 블룸비스타 호텔앤컨퍼런스</div>
+        <div class="notice-banner" id="guideNoticeBanner" style="display:none"></div>
     </div>
 
     <div class="storage-warn" id="storageWarn">⚠️ 미리보기 모드입니다. 백엔드(Apps Script URL)가 아직 연결되지 않아 체크인 데이터가 이 브라우저에만 임시 저장되고 저장되지 않습니다.
@@ -769,9 +770,6 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
     <div class="warning-banner">
         ⚠️ 본 페이지는 선발된 참여 교사 전용 안내 공간입니다. 외부 유출을 절대 금합니다.
     </div>
-
-    <!-- 공지사항 배너 (관리자가 등록하면 여기에 바로 표시) -->
-    <div class="notice-banner" id="guideNoticeBanner" style="display:none"></div>
 
     
 
@@ -1368,6 +1366,7 @@ function switchView(v) {
     document.querySelectorAll(".view").forEach(el => el.classList.toggle("active", el.id === "view-" + v));
     window.scrollTo(0, 0);
     try { sessionStorage.setItem("currentView", v); } catch (e) {}
+    updateNoticeVisibility();
 }
 function switchAdm(v) {
     document.querySelectorAll(".adm-tab").forEach(b => b.classList.toggle("active", b.dataset.adm === v));
@@ -1924,12 +1923,18 @@ async function resetGuide() {
     flashMsg("guideMsg", true, "원본으로 복원되었습니다");
 }
 
-/* 공지: 팝업 대신 안내 페이지 상단에 박스로 표시 (관리자 페이지에는 표시하지 않음) */
+/* 공지: 팝업 대신 고정 헤더에 박스로 상시 표시 (관리자 페이지에서만 숨김) */
+let currentNoticeText = "";
 function applyNotice(text) {
+    currentNoticeText = text || "";
+    updateNoticeVisibility();
+}
+function updateNoticeVisibility() {
     const el = document.getElementById("guideNoticeBanner");
     if (!el) return;
-    if (text) {
-        el.textContent = "📢 " + text;
+    const onAdmin = document.getElementById("view-admin").classList.contains("active");
+    if (currentNoticeText && !onAdmin) {
+        el.textContent = "📢 " + currentNoticeText;
         el.style.display = "block";
     } else {
         el.style.display = "none";
