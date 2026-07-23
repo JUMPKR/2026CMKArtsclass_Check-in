@@ -1200,7 +1200,7 @@ async function sha256(s) {
    Google Apps Script로 배포한 Web App(구글시트 연동)을 실제 백엔드로 사용합니다.
    설정 방법은 함께 제공하는 "체크인_백엔드_설정_가이드.md" 참고.
 */
-const BACKEND_URL = https://jumpkr.github.io/2026CMKArtsclass_Check-in/?action=list&prefix=
+const BACKEND_URL = "https://script.google.com/a/macros/jumpsp.org/s/AKfycbyk_Fvzg_IiJEPJk7iH_0-bvwhEp71kDSao6EhsQJz7Wxel3i-AXgsO-pJGowJnHHVnBQ/exec";
 const hasBackend = typeof BACKEND_URL === "string" && BACKEND_URL.indexOf("https://script.google.com") === 0;
 const memStore = new Map();
 if (!hasBackend) document.getElementById("storageWarn").style.display = "block";
