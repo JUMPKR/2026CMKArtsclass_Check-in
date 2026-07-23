@@ -1313,8 +1313,8 @@ const SES_SPLIT = 765; // 12:45 이전 = 오전 세션, 이후 = 오후 세션 (
 const DEFAULT_DAYCODE = "0709";
 let gateUnlocked = {}; // { "day-ses": true } — 이 화면에서 암구호 통과 여부
 
-/* 1일차 오전은 세션이 없음 */
-function sesExists(day, ses) { return !(day === 1 && ses === "am"); }
+/* 1일차 오전, 5일차(8/7) 오후는 세션이 없음 */
+function sesExists(day, ses) { return !(day === 1 && ses === "am") && !(day === 5 && ses === "pm"); }
 function windowFor(day, ses) { return day === 1 ? DAY1_WINDOW : WINDOWS[ses]; }
 function sesTitle(day, ses) { return day === 1 ? "입소 체크인" : SES_LABEL[ses] + " 체크인"; }
 
@@ -1329,6 +1329,9 @@ function computeSession() {
     if (state.day === 1) {
         state.ses = "pm"; // 입소일은 단일 세션 (오후로 기록)
         state.late = mins > DAY1_WINDOW.e;
+    } else if (state.day === 5) {
+        state.ses = "am"; // 종료일(8/7)은 오전 세션만 존재
+        state.late = mins > WINDOWS.am.e;
     } else {
         state.ses = mins < SES_SPLIT ? "am" : "pm";
         state.late = mins > WINDOWS[state.ses].e;   // 정규 시간 종료 후 = 지각
@@ -1866,7 +1869,7 @@ async function renderSettings() {
         if (d.d === 1) sesList.push({ day: 1, ses: "pm", label: `1일차 입소 (${d.date})` });
         else {
             sesList.push({ day: d.d, ses: "am", label: `${d.d}일차 오전 (${d.date})` });
-            sesList.push({ day: d.d, ses: "pm", label: `${d.d}일차 오후 (${d.date})` });
+            if (sesExists(d.d, "pm")) sesList.push({ day: d.d, ses: "pm", label: `${d.d}일차 오후 (${d.date})` });
         }
     });
     const [codes, noticeR, overR] = await Promise.all([
