@@ -1333,6 +1333,21 @@ async function openCheckin() {
     computeSession();
     renderSessionBanner();
     switchView("checkin");
+
+    // 서버 응답(이미 체크인했는지 확인)을 기다리는 동안 화면이 비어 보이지 않도록,
+    // 우선 이번 세션에서 암구호를 통과했는지 여부만으로 화면을 즉시 보여주고
+    // 이후 실제 서버 확인 결과로 필요하면 화면을 교체합니다.
+    const already = gateUnlocked[`${state.day}-${state.ses}`];
+    document.getElementById("ticket").classList.remove("show");
+    if (already) {
+        document.getElementById("gateBox").style.display = "none";
+        document.getElementById("checkinForm").style.display = "block";
+    } else {
+        document.getElementById("checkinForm").style.display = "none";
+        document.getElementById("gateBox").style.display = "block";
+        setTimeout(() => document.getElementById("gateIpt").focus(), 50);
+    }
+
     await refreshLockState();
 }
 
