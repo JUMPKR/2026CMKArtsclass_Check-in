@@ -673,7 +673,7 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
         </div>
     </div>
 
-    <div class="storage-warn" id="storageWarn">⚠️ 미리보기 모드입니다. Claude에서 아티팩트로 실행하거나 게시된 링크로 열면 실제 저장소에 연결됩니다.
+    <div class="storage-warn" id="storageWarn">⚠️ 미리보기 모드입니다. 백엔드(Apps Script URL)가 아직 연결되지 않아 체크인 데이터가 이 브라우저에만 임시 저장되고 저장되지 않습니다.
         <button onclick="this.parentElement.style.display='none'" style="float:right;background:none;border:none;font-weight:800;color:#8a6d1a;cursor:pointer">✕</button></div>
 
     <!-- ================= 홈 ================= -->
@@ -1195,28 +1195,68 @@ async function sha256(s) {
     return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
 }
 
-/* ===================== 저장소 (window.storage + 폴백) ===================== */
-const hasStorage = typeof window !== "undefined" && typeof window.storage !== "undefined";
+/* ===================== 저장소 (Google Sheets 백엔드 + 폴백) =====================
+   GitHub Pages 등 정적 호스팅에서는 window.storage가 없으므로,
+   Google Apps Script로 배포한 Web App(구글시트 연동)을 실제 백엔드로 사용합니다.
+   설정 방법은 함께 제공하는 "체크인_백엔드_설정_가이드.md" 참고.
+*/
+const BACKEND_URL = "여기에_배포한_Apps_Script_웹앱_URL을_붙여넣으세요";
+const hasBackend = typeof BACKEND_URL === "string" && BACKEND_URL.indexOf("https://script.google.com") === 0;
 const memStore = new Map();
-if (!hasStorage) document.getElementById("storageWarn").style.display = "block";
+if (!hasBackend) document.getElementById("storageWarn").style.display = "block";
+
+async function backendGet_(action, params) {
+    const qs = new URLSearchParams({ action, ...params }).toString();
+    const res = await fetch(`${BACKEND_URL}?${qs}`);
+    if (!res.ok) throw new Error("backend get failed: " + res.status);
+    return res.json();
+}
+async function backendPost_(payload) {
+    const res = await fetch(BACKEND_URL, {
+        method: "POST",
+        // text/plain 사용: Apps Script는 CORS preflight(OPTIONS)를 처리하지 못하므로,
+        // application/json 대신 simple request로 취급되는 text/plain으로 보냅니다.
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error("backend post failed: " + res.status);
+    return res.json();
+}
 
 const store = {
     async get(key, shared) {
-        if (hasStorage) { try { return await window.storage.get(key, !!shared); } catch (e) { return null; } }
+        if (hasBackend) {
+            try {
+                const data = await backendGet_("get", { key });
+                return data.result || null;
+            } catch (e) { console.error(e); return null; }
+        }
         return memStore.has(key) ? { key, value: memStore.get(key) } : null;
     },
     async set(key, value, shared) {
-        if (hasStorage) { try { return await window.storage.set(key, value, !!shared); } catch (e) { return null; } }
+        if (hasBackend) {
+            try {
+                await backendPost_({ action: "set", key, value, shared: !!shared });
+                return { key, value };
+            } catch (e) { console.error(e); return null; }
+        }
         memStore.set(key, value); return { key, value };
     },
     async delete(key, shared) {
-        if (hasStorage) { try { return await window.storage.delete(key, !!shared); } catch (e) { return null; } }
+        if (hasBackend) {
+            try {
+                await backendPost_({ action: "delete", key, shared: !!shared });
+                return { key, deleted: true };
+            } catch (e) { console.error(e); return null; }
+        }
         memStore.delete(key); return { key, deleted: true };
     },
     async list(prefix, shared) {
-        if (hasStorage) {
-            try { const r = await window.storage.list(prefix, !!shared); return (r && r.keys) ? r.keys : []; }
-            catch (e) { return []; }
+        if (hasBackend) {
+            try {
+                const data = await backendGet_("list", { prefix: prefix || "" });
+                return data.keys || [];
+            } catch (e) { console.error(e); return []; }
         }
         return [...memStore.keys()].filter(k => k.startsWith(prefix));
     }
