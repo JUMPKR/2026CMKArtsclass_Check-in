@@ -663,7 +663,6 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
         </div>
         <h1>2026 CMK <span>아츠클래스</span> 교사연수 체크인 &amp; 안내</h1>
         <div class="sub">8/3(월) ~ 8/7(금) · 블룸비스타 호텔앤컨퍼런스</div>
-        <div class="notice-banner" id="guideNoticeBanner" style="display:none"></div>
     </div>
 
     <div class="storage-warn" id="storageWarn">⚠️ 미리보기 모드입니다. 백엔드(Apps Script URL)가 아직 연결되지 않아 체크인 데이터가 이 브라우저에만 임시 저장되고 저장되지 않습니다.
@@ -671,6 +670,7 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
 
     <!-- ================= 홈 ================= -->
     <div class="view active" id="view-home">
+        <div class="notice-banner" id="guideNoticeBanner" style="display:none"></div>
         <div class="home-cards">
             <button class="home-card card-checkin" onclick="openCheckin()">
                 <span class="home-live" id="homeLive">지금 · 체크인</span>
@@ -1923,7 +1923,7 @@ async function resetGuide() {
     flashMsg("guideMsg", true, "원본으로 복원되었습니다");
 }
 
-/* 공지: 팝업 대신 고정 헤더에 박스로 상시 표시 (관리자 페이지에서만 숨김) */
+/* 공지: 팝업 대신 메인(홈) 화면 상단에 박스로 상시 표시 */
 let currentNoticeText = "";
 function applyNotice(text) {
     currentNoticeText = text || "";
@@ -1932,8 +1932,8 @@ function applyNotice(text) {
 function updateNoticeVisibility() {
     const el = document.getElementById("guideNoticeBanner");
     if (!el) return;
-    const onAdmin = document.getElementById("view-admin").classList.contains("active");
-    if (currentNoticeText && !onAdmin) {
+    const onHome = document.getElementById("view-home").classList.contains("active");
+    if (currentNoticeText && onHome) {
         el.textContent = "📢 " + currentNoticeText;
         el.style.display = "block";
     } else {
