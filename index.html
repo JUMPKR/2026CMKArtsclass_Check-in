@@ -1209,7 +1209,9 @@ async function backendGet_(action, params) {
     const qs = new URLSearchParams({ action, ...params }).toString();
     const res = await fetch(`${BACKEND_URL}?${qs}`);
     if (!res.ok) throw new Error("backend get failed: " + res.status);
-    return res.json();
+    const data = await res.json();
+    if (!data.ok) throw new Error("backend error: " + (data.error || "unknown"));
+    return data;
 }
 async function backendPost_(payload) {
     const res = await fetch(BACKEND_URL, {
@@ -1220,7 +1222,21 @@ async function backendPost_(payload) {
         body: JSON.stringify(payload),
     });
     if (!res.ok) throw new Error("backend post failed: " + res.status);
-    return res.json();
+    const data = await res.json();
+    if (!data.ok) throw new Error("backend error: " + (data.error || "unknown"));
+    return data;
+}
+// 쓰기(set/delete)는 원칙적으로 GET 방식을 사용합니다.
+// Apps Script 웹앱은 POST 요청이 내부 리다이렉트를 거치면서 크로스 도메인 환경에서
+// 종종 차단되거나 유실되는 경우가 있어, 실제로는 GET이 훨씬 안정적으로 동작합니다.
+// 다만 GET은 URL 길이 제한이 있어, 값이 큰 경우(예: 안내 페이지 전체 HTML)에만 POST를 사용합니다.
+const GET_SAFE_LIMIT = 1500;
+async function backendWrite_(payload) {
+    const valueLen = payload.value ? String(payload.value).length : 0;
+    if (valueLen <= GET_SAFE_LIMIT) {
+        return backendGet_(payload.action, payload);
+    }
+    return backendPost_(payload);
 }
 
 const store = {
@@ -1236,7 +1252,7 @@ const store = {
     async set(key, value, shared) {
         if (hasBackend) {
             try {
-                await backendPost_({ action: "set", key, value, shared: !!shared });
+                await backendWrite_({ action: "set", key, value, shared: !!shared });
                 return { key, value };
             } catch (e) { console.error(e); return null; }
         }
@@ -1245,7 +1261,7 @@ const store = {
     async delete(key, shared) {
         if (hasBackend) {
             try {
-                await backendPost_({ action: "delete", key, shared: !!shared });
+                await backendWrite_({ action: "delete", key, shared: !!shared });
                 return { key, deleted: true };
             } catch (e) { console.error(e); return null; }
         }
