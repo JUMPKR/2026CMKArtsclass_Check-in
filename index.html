@@ -1337,14 +1337,13 @@ function computeSession() {
 
 async function getDayCode(day, ses) {
     // 세션별 암구호 → 없으면 일자 공통 → 없으면 기본값
-    try {
-        const r1 = await store.get(`daycode:${day}:${ses}`, true);
-        if (r1 && r1.value) return String(r1.value);
-    } catch (e) {}
-    try {
-        const r2 = await store.get(`daycode:${day}`, true);
-        if (r2 && r2.value) return String(r2.value);
-    } catch (e) {}
+    // (두 조회를 동시에 보내서 순차 대기로 인한 지연을 줄입니다)
+    const [r1, r2] = await Promise.all([
+        store.get(`daycode:${day}:${ses}`, true).catch(() => null),
+        store.get(`daycode:${day}`, true).catch(() => null),
+    ]);
+    if (r1 && r1.value) return String(r1.value);
+    if (r2 && r2.value) return String(r2.value);
     return DEFAULT_DAYCODE;
 }
 
@@ -1870,11 +1869,12 @@ async function renderSettings() {
             sesList.push({ day: d.d, ses: "pm", label: `${d.d}일차 오후 (${d.date})` });
         }
     });
-    const codes = [];
-    for (const s of sesList) codes.push(await getDayCode(s.day, s.ses));
-    const noticeR = await store.get("notice-banner", true).catch(() => null);
+    const [codes, noticeR, overR] = await Promise.all([
+        Promise.all(sesList.map(s => getDayCode(s.day, s.ses))),
+        store.get("notice-banner", true).catch(() => null),
+        store.get("guide-html", true).catch(() => null),
+    ]);
     const notice = noticeR && noticeR.value ? noticeR.value : "";
-    const overR = await store.get("guide-html", true).catch(() => null);
     const guideHtml = overR && overR.value ? overR.value : document.getElementById("guideContent").innerHTML;
 
     wrap.innerHTML = `
