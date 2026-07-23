@@ -1360,6 +1360,7 @@ function closeNoticeModal() { document.getElementById("noticeModal").style.displ
 function switchView(v) {
     document.querySelectorAll(".view").forEach(el => el.classList.toggle("active", el.id === "view-" + v));
     window.scrollTo(0, 0);
+    try { sessionStorage.setItem("currentView", v); } catch (e) {}
 }
 function switchAdm(v) {
     document.querySelectorAll(".adm-tab").forEach(b => b.classList.toggle("active", b.dataset.adm === v));
@@ -1498,6 +1499,7 @@ async function tryUnlock() {
     if (ok) {
         document.getElementById("adminLock").style.display = "none";
         document.getElementById("adminBody").style.display = "block";
+        try { sessionStorage.setItem("adminUnlocked", "1"); } catch (e) {}
         loadAdmin();
     } else {
         m.className = "msg err"; m.textContent = "비밀번호가 올바르지 않습니다.";
@@ -1977,6 +1979,21 @@ fillProgSel();
 loadSharedContent(); // 공지 배너·수정된 안내 페이지 반영
 // 홈에 표시되는 현재 세션 배지를 1분마다 갱신
 setInterval(() => { computeSession(); renderSessionBanner(); }, 60000);
+
+/* 새로고침해도 마지막으로 보던 화면(특히 관리자 페이지)을 유지 */
+(function restoreView() {
+    let savedView = null, wasUnlocked = false;
+    try {
+        savedView = sessionStorage.getItem("currentView");
+        wasUnlocked = sessionStorage.getItem("adminUnlocked") === "1";
+    } catch (e) {}
+    if (savedView) switchView(savedView);
+    if (savedView === "admin" && wasUnlocked) {
+        document.getElementById("adminLock").style.display = "none";
+        document.getElementById("adminBody").style.display = "block";
+        loadAdmin();
+    }
+})();
 </script>
 </body>
 </html>
