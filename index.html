@@ -663,17 +663,6 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
         <div class="sub">8/3(월) ~ 8/7(금) · 블룸비스타 호텔앤컨퍼런스</div>
     </div>
 
-    <!-- 공지 팝업 (배경 클릭 또는 ✕로 닫기) -->
-    <div class="modal-overlay" id="noticeModal" style="display:none" onclick="if(event.target===this)closeNoticeModal()">
-        <div class="modal-card" style="position:relative">
-            <button onclick="closeNoticeModal()" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:18px;font-weight:800;color:#999;cursor:pointer">✕</button>
-            <div class="modal-ico">📢</div>
-            <h3>공지사항</h3>
-            <p id="noticeModalText"></p>
-            <button class="btn-primary" style="margin-top:16px" onclick="closeNoticeModal()">확인했습니다</button>
-        </div>
-    </div>
-
     <div class="storage-warn" id="storageWarn">⚠️ 미리보기 모드입니다. 백엔드(Apps Script URL)가 아직 연결되지 않아 체크인 데이터가 이 브라우저에만 임시 저장되고 저장되지 않습니다.
         <button onclick="this.parentElement.style.display='none'" style="float:right;background:none;border:none;font-weight:800;color:#8a6d1a;cursor:pointer">✕</button></div>
 
@@ -690,7 +679,7 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
             <button class="home-card" onclick="switchView('guide')">
                 <span class="ico">📖</span>
                 <span class="tit">참여자 안내</span>
-                <span class="desc">준비물 체크리스트, 일정표,<br>연수 공간·이동·비상 연락망 안내</span>
+                <span class="desc">일정표,<br>연수 공간·이동·비상 연락망 안내</span>
                 <span class="go">안내 보러 가기 →</span>
             </button>
         </div>
@@ -786,36 +775,10 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
         ⚠️ 본 페이지는 선발된 참여 교사 전용 안내 공간입니다. 외부 유출을 절대 금합니다.
     </div>
 
-    <!-- [1] 참여교사 체크리스트 (최상단 배치) -->
-    <div class="accordion-item active">
-        <div class="accordion-header" onclick="toggleAccordion(this)">📋 참여교사 체크리스트 (연수 전 필수 확인)</div>
-        <div class="accordion-content">
-            <ul class="checklist-group">
-                <li class="checklist-item">
-                    <span class="check-num">1</span>
-                    <div class="checklist-text">
-                        <strong>이동 지원(셔틀버스) 탑승 여부 최종 확정 및 수정 <span class="checklist-highlight">[~7/24(금)까지]</span></strong>
-                        <span>탑승 노선 변경이나 자차 이동으로의 전환은 기한 내에만 가능합니다. (문의: 운영사무국 📞 02-2088-6366)</span>
-                        <a href="#acc-transport" class="jump-link" onclick="goTransport(event)">🚌 이동 지원 안내 자세히 보기 →</a>
-                    </div>
-                </li>
-                <li class="checklist-item">
-                    <span class="check-num">2</span>
-                    <div class="checklist-text">
-                        <strong>개인 편한 복장 및 운동화 준비</strong>
-                        <span>연극, 음악, 움직임 등의 신체 활동 위주 세션이 많으므로 반드시 활동하기 편한 의류를 착용해 주세요.</span>
-                    </div>
-                </li>
-                <li class="checklist-item">
-                    <span class="check-num">3</span>
-                    <div class="checklist-text">
-                        <strong>개인 세면도구 및 상비약 지참</strong>
-                        <span>호텔 기본 비품 외 개인 건강 관리에 필요한 상비약이나 위생용품을 개별 지참해 주시기 바랍니다.</span>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </div>
+    <!-- 공지사항 배너 (관리자가 등록하면 여기에 바로 표시) -->
+    <div class="notice-banner" id="guideNoticeBanner" style="display:none"></div>
+
+    
 
     <!-- [2] 4박 5일 연수 개요 -->
     <div class="accordion-item">
@@ -1084,10 +1047,6 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
             <p class="route-list" style="list-style:none; padding-left:0; font-size:13px;">
                 차량 운전 시 아래의 원클릭 버튼을 터치하시면 **목적지가 '블룸비스타'로 자동 지정**되어 길 안내가 시작되며, 연수 기간 내 전용 주차장을 무료로 이용하실 수 있습니다.
             </p>
-
-            <div class="notice-box">
-                🔔 이동 지원 버스 탑승 여부 및 승하차 노선 정보의 최종 수정 기한은 7/24(금)까지입니다. 기한 마감 이후에는 배차 확정으로 인해 변경이 불가능합니다.
-            </div>
 
             <!-- 블룸비스타 좌표 직통 내비 버튼 -->
             <div class="map-buttons">
@@ -1392,9 +1351,7 @@ async function tryGate() {
     }
 }
 
-/* ===================== 공지 팝업 ===================== */
-let noticePopupShown = false;
-function closeNoticeModal() { document.getElementById("noticeModal").style.display = "none"; }
+/* ===================== 공지 배너 ===================== */
 
 /* ===================== 뷰 전환 ===================== */
 function switchView(v) {
@@ -1957,13 +1914,15 @@ async function resetGuide() {
     flashMsg("guideMsg", true, "원본으로 복원되었습니다");
 }
 
-/* 공지: 앱을 열 때 팝업으로 1회 표시 (닫기 가능) — 메인(홈) 화면일 때만, 관리자 페이지에서는 표시하지 않음 */
+/* 공지: 팝업 대신 안내 페이지 상단에 박스로 표시 (관리자 페이지에는 표시하지 않음) */
 function applyNotice(text) {
-    const onHome = document.getElementById("view-home").classList.contains("active");
-    if (text && !noticePopupShown && onHome) {
-        noticePopupShown = true;
-        document.getElementById("noticeModalText").textContent = text;
-        document.getElementById("noticeModal").style.display = "flex";
+    const el = document.getElementById("guideNoticeBanner");
+    if (!el) return;
+    if (text) {
+        el.textContent = "📢 " + text;
+        el.style.display = "block";
+    } else {
+        el.style.display = "none";
     }
 }
 
