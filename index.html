@@ -1648,8 +1648,10 @@ function renderPerson() {
                 </select>
                 <div class="spacer"></div>
                 <span style="font-size:12px;color:#888;font-weight:600" id="personCount"></span>
+                <button class="btn-ghost" onclick="toggleAddPersonForm()">＋ 참여자 추가</button>
                 <button class="btn-ghost" id="editModeBtn" onclick="toggleEditMode()">✏️ 수정 모드</button>
             </div>
+            <div id="addPersonForm" style="display:none"></div>
             <div id="personEditHint"></div>
             <div id="personTableBox"></div>
             <div id="personExtras"></div>`;
@@ -1717,7 +1719,7 @@ function renderPersonTable() {
                 }
             });
         });
-        const editBtn = editMode ? `<td><button class="btn-ghost" style="padding:4px 9px;font-size:12px" title="참여자 정보 수정" onclick="editingIdx=${r.idx};renderPersonTable()">✎</button></td>` : "";
+        const editBtn = editMode ? `<td><button class="btn-ghost" style="padding:4px 9px;font-size:12px" title="참여자 정보 수정" onclick="editingIdx=${r.idx};renderPersonTable()">✎</button> <button class="btn-ghost" style="padding:4px 9px;font-size:12px;color:var(--warning-red, #D9383A)" title="명단에서 삭제" onclick="deleteRosterPerson(${r.idx})">🗑</button></td>` : "";
         return `<tr>${editBtn}
             <td><span class="chip p${r.p}">${PROGRAMS[r.p].replace(" 프로그램", "")}</span></td>
             <td class="name-col">${r.n}</td><td>${r.f || ""}</td><td>${r.g || ""}</td>
@@ -1767,6 +1769,70 @@ async function savePersonEdit(idx) {
     editingIdx = null;
     await loadAdmin(); // 프로그램별 통계 등 재계산
 }
+
+/* ── 참여자 명단 자체를 추가/삭제 (연결된 시트의 Roster 탭에 직접 반영) ── */
+function toggleAddPersonForm() {
+    const el = document.getElementById("addPersonForm");
+    if (!el) return;
+    const showing = el.style.display !== "none";
+    if (showing) { el.style.display = "none"; el.innerHTML = ""; return; }
+    el.style.display = "block";
+    el.innerHTML = `
+        <div class="panel" style="background:#F4F5FF;margin-bottom:14px;padding:16px;border-radius:14px">
+            <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+                <select class="ipt" id="ap-p" style="padding:7px;font-size:12px;width:120px">
+                    ${PROGRAMS.map((p, i) => `<option value="${i}">${p.replace(" 프로그램", "")}</option>`).join("")}
+                </select>
+                <input class="ipt" id="ap-n" placeholder="이름*" style="padding:7px;font-size:12px;width:90px">
+                <input class="ipt" id="ap-f" placeholder="코드(Family)" style="padding:7px;font-size:12px;width:90px">
+                <input class="ipt" id="ap-g" placeholder="닉네임(First)" style="padding:7px;font-size:12px;width:100px">
+                <input class="ipt" id="ap-m" placeholder="멘토그룹" style="padding:7px;font-size:12px;width:150px">
+                <input class="ipt" id="ap-r" placeholder="지역" style="padding:7px;font-size:12px;width:70px">
+                <input class="ipt" id="ap-s" placeholder="소속학교" style="padding:7px;font-size:12px;width:150px">
+                <button class="btn-ghost" style="background:var(--dark-blue);color:#fff;border-color:var(--dark-blue)" onclick="submitAddPerson()">추가</button>
+                <button class="btn-ghost" onclick="toggleAddPersonForm()">취소</button>
+            </div>
+            <div class="msg" id="addPersonMsg" style="margin-top:8px"></div>
+        </div>`;
+}
+
+async function submitAddPerson() {
+    const n = document.getElementById("ap-n").value.trim();
+    if (!n) { alert("이름은 필수입니다."); return; }
+    const payload = {
+        p: document.getElementById("ap-p").value,
+        n,
+        f: document.getElementById("ap-f").value.trim(),
+        g: document.getElementById("ap-g").value.trim(),
+        m: document.getElementById("ap-m").value.trim(),
+        r: document.getElementById("ap-r").value.trim(),
+        s: document.getElementById("ap-s").value.trim(),
+    };
+    try {
+        const data = await backendGet_("roster-add", payload);
+        if (Array.isArray(data.roster)) ROSTER = data.roster;
+        toggleAddPersonForm();
+        await loadAdmin();
+    } catch (e) {
+        const m = document.getElementById("addPersonMsg");
+        if (m) { m.className = "msg err"; m.textContent = "추가에 실패했습니다. 네트워크 확인 후 다시 시도해 주세요."; }
+    }
+}
+
+async function deleteRosterPerson(idx) {
+    const person = ROSTER[idx];
+    if (!person) return;
+    if (!confirm(`'${person.n}' 님을 참여자 명단에서 완전히 삭제할까요?\n(이미 기록된 체크인 이력 자체는 삭제되지 않습니다)`)) return;
+    try {
+        const data = await backendGet_("roster-delete", { p: person.p, n: person.n });
+        if (Array.isArray(data.roster)) ROSTER = data.roster;
+        editingIdx = null;
+        await loadAdmin();
+    } catch (e) {
+        alert("삭제에 실패했습니다. 네트워크 확인 후 다시 시도해 주세요.");
+    }
+}
+
 
 function renderLog() {
     const wrap = document.getElementById("adm-log");
