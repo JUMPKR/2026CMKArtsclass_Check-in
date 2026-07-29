@@ -1,6 +1,3 @@
-
-
-Index · HTML
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -12,7 +9,7 @@ Index · HTML
 <title>2026 CMK 아츠클래스 교사연수 · 체크인 & 안내</title>
 <style>
 /* ===== 안내 페이지 원본 스타일 (자동 주입) ===== */
- 
+
         :root {
             --primary-bg: #EAEBFC;
             --main-purple: #9295F7;
@@ -22,14 +19,14 @@ Index · HTML
             --warning-red: #D9383A;
             --light-purple: #F4F5FF;
         }
- 
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
         }
- 
+
         .guide-wrap {
             background-color: var(--primary-bg);
             color: var(--text-dark);
@@ -40,7 +37,7 @@ Index · HTML
             align-items: center;
             min-height: 100vh;
         }
- 
+
         .container {
             background-color: var(--white);
             max-width: 850px;
@@ -51,7 +48,7 @@ Index · HTML
             padding: 40px 30px;
             position: relative;
         }
- 
+
         /* 상단 우측 3사 로고 구역 */
         .top-logos {
             position: absolute;
@@ -76,7 +73,7 @@ Index · HTML
             height: 12px;
             background-color: #DDD;
         }
- 
+
         /* 상단 헤더원라인 */
         .header {
             margin: 35px 0 25px 0;
@@ -91,7 +88,7 @@ Index · HTML
         .main-title span {
             color: var(--main-purple);
         }
- 
+
         /* 외부 유출 금지 경고 배너 */
         .warning-banner {
             background-color: #FFF0F0;
@@ -104,7 +101,7 @@ Index · HTML
             font-size: 14px;
             margin-bottom: 25px;
         }
- 
+
         /* 아코디언 컴포넌트 */
         .accordion-item {
             border: 1px solid #E2E4FF;
@@ -113,7 +110,7 @@ Index · HTML
             overflow: hidden;
             background-color: var(--white);
         }
- 
+
         .accordion-header {
             background-color: var(--light-purple);
             padding: 18px 20px;
@@ -127,33 +124,33 @@ Index · HTML
             user-select: none;
             transition: background 0.2s;
         }
- 
+
         .accordion-header:hover {
             background-color: #E6E8FF;
         }
- 
+
         .accordion-header::after {
             content: '▼';
             font-size: 12px;
             color: var(--dark-blue);
             transition: transform 0.3s;
         }
- 
+
         .accordion-item.active .accordion-header::after {
             transform: rotate(180deg);
         }
- 
+
         .accordion-content {
             display: none;
             padding: 20px;
             border-top: 1px solid #E2E4FF;
             background-color: var(--white);
         }
- 
+
         .accordion-item.active .accordion-content {
             display: block;
         }
- 
+
         /* 체크리스트 스타일 */
         .checklist-group {
             list-style: none;
@@ -187,7 +184,7 @@ Index · HTML
             font-size: 13px;
             color: #555;
         }
- 
+
         /* 개요 인포 그리드 */
         .info-grid {
             display: grid;
@@ -196,7 +193,7 @@ Index · HTML
             font-size: 15px;
         }
         .info-label { font-weight: bold; color: var(--dark-blue); }
- 
+
         /* 내부 탭 구조 */
         .tab-menu {
             display: flex;
@@ -222,7 +219,7 @@ Index · HTML
         }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
- 
+
         /* 테이블 구조 에러 수정 및 안정화 */
         .table-wrapper {
             overflow-x: auto;
@@ -244,7 +241,7 @@ Index · HTML
         .break-row { background-color: #F9FAFF; color: #666; font-size: 12px; font-weight: 600; }
         .subject-text { font-weight: 700; color: var(--dark-blue); }
         .desc-text { font-size: 12px; color: #555; margin-top: 2px; display: block; }
- 
+
         /* 공간 안내 스타일 개편 */
         .hotel-img {
             width: 100%;
@@ -272,7 +269,7 @@ Index · HTML
         .space-title { font-weight: 700; color: var(--dark-blue); margin-bottom: 6px; font-size: 14px; }
         .space-title span { color: #E67E22; font-size: 12px; margin-left: 5px; }
         .space-desc { font-size: 13px; color: #555; line-height: 1.4; }
- 
+
         /* 안내 박스 및 리스트 */
         .notice-box {
             background-color: #FFF9E6;
@@ -295,7 +292,7 @@ Index · HTML
             font-size: 14px;
             color: #444;
         }
- 
+
         /* 내비 및 링크 버튼 공통 */
         .map-buttons {
             display: flex;
@@ -318,7 +315,7 @@ Index · HTML
         .btn-kakao { background-color: #FEE500; color: #191919; }
         .btn-naver { background-color: #03C75A; color: #ffffff; }
         .btn-talk { background-color: #3C1E1E; color: #FFCD00; grid-column: span 2; margin-top: 5px; }
- 
+
         .contact-item {
             display: flex;
             justify-content: space-between;
@@ -330,7 +327,7 @@ Index · HTML
         .contact-item:last-child { border-bottom: none; }
         .contact-label { font-weight: 600; }
         .contact-value { font-weight: 700; color: var(--dark-blue); }
- 
+
         /* 하단 푸터 */
         .footer-info {
             margin-top: 35px;
@@ -352,7 +349,7 @@ body {
     background-color: var(--primary-bg);
 }
 .app-shell { max-width: 900px; margin: 0 auto; padding: 16px 14px 60px; }
- 
+
 .app-header {
     position: sticky; top: 0; z-index: 40;
     background: var(--primary-bg);
@@ -362,7 +359,7 @@ body {
 .app-header h1 { font-size: 28px; font-weight: 800; color: var(--dark-blue); line-height: 1.25; }
 .app-header h1 span { color: var(--main-purple); }
 .app-header .sub { font-size: 12.5px; color: #666; font-weight: 600; }
- 
+
 .app-nav { display: flex; gap: 6px; margin-bottom: 16px; }
 .app-tab {
     flex: 1; padding: 13px 8px; border: 1px solid #E2E4FF; background: var(--white);
@@ -371,15 +368,15 @@ body {
 }
 .app-tab.active { background: var(--dark-blue); color: var(--white); border-color: var(--dark-blue); }
 .app-tab:focus-visible { outline: 3px solid var(--main-purple); outline-offset: 2px; }
- 
+
 .view { display: none; }
 .view.active { display: block; }
 #view-home.active { padding: 22px 0 36px; }
- 
+
 /* 안내 페이지 임베드 래퍼 */
 .guide-wrap { min-height: auto !important; padding: 0 !important; display: block !important; }
 .guide-wrap .container { margin: 0 auto; }
- 
+
 /* ===== 카드 공통 ===== */
 .panel {
     background: var(--white); border-radius: 24px; padding: 26px 22px;
@@ -387,7 +384,7 @@ body {
 }
 .panel h2 { font-size: 17px; font-weight: 800; color: var(--dark-blue); margin-bottom: 4px; }
 .panel .hint { font-size: 13px; color: #777; margin-bottom: 18px; }
- 
+
 /* ===== 로고 바 & 공지 ===== */
 .logo-bar {
     display: flex; align-items: center; gap: 12px; justify-content: flex-end; padding: 0;
@@ -402,7 +399,7 @@ body {
     padding: 12px 16px; border-radius: 14px; font-size: 13.5px; font-weight: 700; margin-bottom: 18px;
     white-space: pre-wrap;
 }
- 
+
 /* ===== 공지 팝업 모달 ===== */
 .modal-overlay {
     position: fixed; inset: 0; background: rgba(20, 24, 70, .45); z-index: 100;
@@ -415,7 +412,7 @@ body {
 .modal-card .modal-ico { font-size: 36px; margin-bottom: 8px; }
 .modal-card h3 { font-size: 17px; font-weight: 800; color: var(--dark-blue); margin-bottom: 10px; }
 .modal-card p { font-size: 14px; color: #444; line-height: 1.6; white-space: pre-wrap; text-align: left; }
- 
+
 /* ===== 안내 페이지: 체크리스트 번호, 장소 강조 ===== */
 .guide-wrap .check-num {
     flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%;
@@ -429,10 +426,10 @@ body {
 }
 .guide-wrap .venue-hero .v-name { font-size: 20px; font-weight: 800; color: var(--dark-blue); }
 .guide-wrap .venue-hero .v-addr { font-size: 15px; font-weight: 700; color: #555; margin-top: 3px; }
- 
+
 /* ===== 해당 없음 셀 ===== */
 table.adm-table td.na-cell { color: #D5D7EA; text-align: center; background: #FBFBFE; }
- 
+
 /* ===== 암구호 게이트 ===== */
 .gate-box { text-align: center; padding: 8px 0 4px; }
 .gate-box .ico { font-size: 34px; margin-bottom: 6px; }
@@ -440,7 +437,7 @@ table.adm-table td.na-cell { color: #D5D7EA; text-align: center; background: #FB
 .gate-box p { font-size: 13px; color: #777; font-weight: 600; margin-bottom: 14px; }
 .gate-row { display: flex; gap: 8px; max-width: 340px; margin: 0 auto; }
 .gate-row input { flex: 1; text-align: center; letter-spacing: .35em; font-size: 18px; }
- 
+
 /* ===== 지각 표시 ===== */
 .late-note {
     background: #FFF0F0; border: 1px solid #FCAEAE; color: var(--warning-red);
@@ -451,13 +448,13 @@ table.adm-table td.late-cell { color: var(--warning-red); font-weight: 800; back
     display: inline-block; margin-left: 5px; padding: 1px 7px; border-radius: 999px;
     background: #FFE3E3; color: var(--warning-red); font-size: 10.5px; font-weight: 800; vertical-align: 1px;
 }
- 
+
 /* ===== 안내 바로가기 링크 ===== */
 .jump-link {
     display: inline-block; margin-top: 6px; font-size: 12.5px; font-weight: 800;
     color: var(--main-purple); text-decoration: underline; text-underline-offset: 3px;
 }
- 
+
 /* ===== 관리자 설정 탭 ===== */
 .set-block { background: #F9FAFF; border: 1px solid #E2E4FF; border-radius: 16px; padding: 18px; margin-bottom: 14px; }
 .set-block h3 { font-size: 15px; font-weight: 800; color: var(--dark-blue); margin-bottom: 4px; }
@@ -496,17 +493,17 @@ table.adm-table td.late-cell { color: var(--warning-red); font-weight: 800; back
     background: none; border: none; color: #9AA0C9; font-size: 12.5px; font-weight: 700;
     cursor: pointer; text-decoration: underline; text-underline-offset: 3px;
 }
- 
+
 .back-row { margin-bottom: 12px; }
 .back-btn {
     background: var(--white); border: 1px solid #E2E4FF; border-radius: 999px;
     padding: 9px 16px; font-size: 13px; font-weight: 700; color: var(--dark-blue); cursor: pointer;
 }
- 
+
 /* ===== 체크인 폼 ===== */
 .field { margin-bottom: 16px; }
 .field label { display: block; font-size: 13px; font-weight: 700; color: var(--dark-blue); margin-bottom: 7px; }
- 
+
 .session-banner {
     background: var(--light-purple); border: 1px solid #E2E4FF; border-radius: 16px;
     padding: 16px 18px; margin-bottom: 20px; display: flex; align-items: center; gap: 14px;
@@ -521,13 +518,13 @@ table.adm-table td.late-cell { color: var(--warning-red); font-weight: 800; back
 .closed-box { text-align: center; padding: 30px 10px; }
 .closed-box .ico { font-size: 40px; margin-bottom: 10px; }
 .closed-box p { font-size: 14px; color: #666; font-weight: 600; }
- 
+
 select.ipt, input.ipt {
     width: 100%; padding: 14px; font-size: 15px; border-radius: 12px;
     border: 1.5px solid #D9DCFF; background: #FAFBFF; color: var(--text-dark); font-weight: 600;
 }
 select.ipt:focus, input.ipt:focus { outline: none; border-color: var(--main-purple); background: #fff; }
- 
+
 .suggest { position: relative; }
 .suggest-list {
     position: absolute; left: 0; right: 0; top: calc(100% + 4px); z-index: 30;
@@ -538,7 +535,7 @@ select.ipt:focus, input.ipt:focus { outline: none; border-color: var(--main-purp
 .suggest-item { padding: 12px 14px; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; gap: 8px; }
 .suggest-item:hover { background: var(--light-purple); }
 .suggest-item .meta { font-size: 12px; color: #888; font-weight: 600; }
- 
+
 .btn-primary {
     width: 100%; padding: 16px; border: none; border-radius: 14px; cursor: pointer;
     background: var(--dark-blue); color: #fff; font-size: 16px; font-weight: 800; margin-top: 6px;
@@ -548,11 +545,11 @@ select.ipt:focus, input.ipt:focus { outline: none; border-color: var(--main-purp
     padding: 10px 16px; border-radius: 10px; border: 1px solid #D9DCFF; background: #fff;
     color: var(--dark-blue); font-weight: 700; font-size: 13px; cursor: pointer;
 }
- 
+
 .msg { padding: 12px 14px; border-radius: 12px; font-size: 13.5px; font-weight: 700; margin-top: 14px; display: none; }
 .msg.err { display: block; background: #FFF0F0; border: 1px solid #FCAEAE; color: var(--warning-red); }
 .msg.ok { display: block; background: #EFFBF2; border: 1px solid #A9E4BC; color: #1B7C3D; }
- 
+
 /* ===== 완료 티켓 (시그니처 요소) ===== */
 .ticket { display: none; }
 .ticket.show { display: block; }
@@ -579,14 +576,14 @@ select.ipt:focus, input.ipt:focus { outline: none; border-color: var(--main-purp
     letter-spacing: .1em;
 }
 .ticket-note { font-size: 12.5px; color: #777; margin-top: 12px; text-align: center; }
- 
+
 /* ===== 관리자 ===== */
 .lock-box { max-width: 380px; margin: 30px auto; text-align: center; }
 .lock-box .lock-ico { font-size: 34px; margin-bottom: 8px; }
 .pin-row { display: flex; gap: 8px; margin-top: 14px; }
 .pin-row input { flex: 1; text-align: center; letter-spacing: .4em; font-size: 18px; }
 .pin-row button { flex: 0 0 auto; }
- 
+
 .adm-toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
 .adm-toolbar .spacer { flex: 1; }
 .adm-tabs { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
@@ -597,7 +594,7 @@ select.ipt:focus, input.ipt:focus { outline: none; border-color: var(--main-purp
 .adm-tab.active { background: var(--main-purple); color: #fff; border-color: var(--main-purple); }
 .adm-view { display: none; }
 .adm-view.active { display: block; }
- 
+
 .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
 .stat-card { background: #F9FAFF; border: 1px solid #E2E4FF; border-radius: 14px; padding: 14px; }
 .stat-card .day { font-size: 12px; font-weight: 800; color: var(--main-purple); margin-bottom: 8px; }
@@ -607,7 +604,7 @@ select.ipt:focus, input.ipt:focus { outline: none; border-color: var(--main-purp
 .stat-total .day { color: #AEB2FF; }
 .stat-total .row { color: #D6D8FF; }
 .stat-total .row b { color: #fff; }
- 
+
 .adm-table-wrap { overflow-x: auto; border: 1px solid #E2E4FF; border-radius: 12px; }
 table.adm-table { min-width: 0; width: max-content; min-width: 100%; font-size: 12.5px; }
 table.adm-table th, table.adm-table td { white-space: nowrap; padding: 9px 11px; }
@@ -617,12 +614,12 @@ table.adm-table th.sess { text-align: center; }
 table.adm-table td.name-col { font-weight: 800; color: var(--dark-blue); }
 .bar-wrap { background: #EDEFFC; border-radius: 6px; height: 8px; overflow: hidden; min-width: 90px; }
 .bar { height: 100%; background: var(--main-purple); border-radius: 6px; }
- 
+
 .chip { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 11px; font-weight: 800; }
 .chip.p0 { background: #EAEBFC; color: #4A50C4; }
 .chip.p1 { background: #FFF3E4; color: #C46A11; }
 .chip.p2 { background: #E7F7EE; color: #1B7C3D; }
- 
+
 .manual-tag {
     display: inline-block; margin-left: 5px; padding: 1px 7px; border-radius: 999px;
     background: #FFF3E4; color: #C46A11; font-size: 10.5px; font-weight: 800; vertical-align: 1px;
@@ -634,13 +631,13 @@ table.adm-table td.no-cell.add:hover { background: var(--light-purple); color: v
 td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 800; }
 .btn-ghost.edit-on { background: var(--main-purple); color: #fff; border-color: var(--main-purple); }
 .btn-ghost.btn-del { padding: 6px 12px; font-size: 12px; color: var(--warning-red); border-color: #FCAEAE; }
- 
+
 .storage-warn {
     display: none; background: #FFF9E6; border: 1px solid #FFEAA7; color: #8a6d1a;
     padding: 10px 14px; border-radius: 12px; font-size: 12.5px; font-weight: 700; margin-bottom: 14px;
 }
 .footer-line { text-align: center; font-size: 11px; color: #999; margin-top: 26px; }
- 
+
 @media (max-width: 560px) {
     .app-header h1 { font-size: 23px; }
     .lg-found { height: 28px; }
@@ -656,7 +653,7 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
 </head>
 <body>
 <div class="app-shell">
- 
+
     <div class="app-header">
         <div class="logo-bar">
             <img src="data:image/png;base64,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" alt="현대차 정몽구 재단" class="lg-found">
@@ -668,10 +665,10 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
         <h1>2026 CMK <span>아츠클래스</span> 교사연수 체크인 &amp; 안내</h1>
         <div class="sub">8/3(월) ~ 8/7(금) · 블룸비스타 호텔앤컨퍼런스</div>
     </div>
- 
+
     <div class="storage-warn" id="storageWarn">⚠️ 미리보기 모드입니다. 백엔드(Apps Script URL)가 아직 연결되지 않아 체크인 데이터가 이 브라우저에만 임시 저장되고 저장되지 않습니다.
         <button onclick="this.parentElement.style.display='none'" style="float:right;background:none;border:none;font-weight:800;color:#8a6d1a;cursor:pointer">✕</button></div>
- 
+
     <!-- ================= 홈 ================= -->
     <div class="view active" id="view-home">
         <div class="notice-banner" id="guideNoticeBanner" style="display:none"></div>
@@ -694,17 +691,17 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
             <button onclick="switchView('admin')">운영사무국 · 관리자 페이지</button>
         </div>
     </div>
- 
+
     <!-- ================= 체크인 ================= -->
     <div class="view" id="view-checkin">
         <div class="back-row"><button class="back-btn" onclick="switchView('home')">← 처음으로</button></div>
         <div class="panel" id="checkinPanel">
             <h2>연수 체크인</h2>
             <div class="hint">프로그램을 선택하고 성함을 입력해 주세요. 일자와 오전/오후는 자동으로 기록됩니다.</div>
- 
+
             <div class="session-banner" id="sessionBanner"></div>
             <div class="late-note" id="lateNote" style="display:none"></div>
- 
+
             <!-- 현장 암구호 게이트 -->
             <div class="gate-box" id="gateBox" style="display:none">
                 <div class="ico">🔑</div>
@@ -717,7 +714,7 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
                 </div>
                 <div class="msg" id="gateMsg" style="max-width:340px;margin:14px auto 0"></div>
             </div>
- 
+
             <div id="checkinForm" style="display:none">
                 <div class="field">
                     <label>참여 프로그램</label>
@@ -725,18 +722,18 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
                         <option value="">프로그램을 선택해 주세요</option>
                     </select>
                 </div>
- 
+
                 <div class="field suggest">
                     <label>이름 (한글 성함)</label>
                     <input class="ipt" id="nameIpt" type="text" placeholder="예: 홍길동" autocomplete="off"
                            oninput="onNameInput()" onfocus="onNameInput()">
                     <div class="suggest-list" id="suggestList"></div>
                 </div>
- 
+
                 <button class="btn-primary" id="submitBtn" onclick="doCheckin()">체크인하기</button>
                 <div class="msg" id="ciMsg"></div>
             </div>
- 
+
             <!-- 완료 티켓 -->
             <div class="ticket" id="ticket">
                 <div class="ticket-card">
@@ -755,28 +752,28 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
             </div>
         </div>
     </div>
- 
+
     <!-- ================= 안내 페이지 (원본 임베드) ================= -->
     <div class="view" id="view-guide">
         <div class="back-row"><button class="back-btn" onclick="switchView('home')">← 처음으로</button></div>
         <div class="guide-wrap" id="guideContent">
- 
- 
+
+
 <div class="container">
     
- 
+
     <!-- 헤더 (한 줄로 수정 배치) -->
     <div class="header">
         <h1 class="main-title">2026 CMK 아츠클래스 교사연수 <span>참여교사 안내 페이지</span></h1>
     </div>
- 
+
     <!-- 외부 유출 금지 고지 -->
     <div class="warning-banner">
         ⚠️ 본 페이지는 선발된 참여 교사 전용 안내 공간입니다. 외부 유출을 절대 금합니다.
     </div>
- 
+
     
- 
+
     <!-- [2] 4박 5일 연수 개요 -->
     <div class="accordion-item active">
         <div class="accordion-header" onclick="toggleAccordion(this)">ℹ️ 4박 5일 연수 개요</div>
@@ -795,7 +792,7 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
             </div>
         </div>
     </div>
- 
+
     <!-- [3] 프로그램별 운영 시간표 (오류 완벽 수정본) -->
     <div class="accordion-item active">
         <div class="accordion-header" onclick="toggleAccordion(this)">📅 프로그램별 상세 시간표 (1일차 ~ 5일차 전정)</div>
@@ -805,7 +802,7 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
                 <button class="tab-btn" onclick="openTab(event, 'tab2')">알럼나이 프로그램</button>
                 <button class="tab-btn" onclick="openTab(event, 'tab3')">한국 멘토연수 프로그램</button>
             </div>
- 
+
             <!-- 1. 신규교사 프로그램 -->
             <div id="tab1" class="tab-content active">
                 <div class="table-wrapper">
@@ -866,7 +863,7 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
                     </table>
                 </div>
             </div>
- 
+
             <!-- 2. 알럼나이교사 프로그램 -->
             <div id="tab2" class="tab-content">
                 <div class="table-wrapper">
@@ -927,7 +924,7 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
                     </table>
                 </div>
             </div>
- 
+
             <!-- 3. 한국멘토연수 프로그램 -->
             <div id="tab3" class="tab-content">
                 <div class="table-wrapper">
@@ -990,7 +987,7 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
             </div>
         </div>
     </div>
- 
+
     <!-- [4] 온드림 아츠클래스 교사연수 공간 안내 (전면 개편) -->
     <div class="accordion-item">
         <div class="accordion-header" onclick="toggleAccordion(this)">🏢 프로그램별 세부 연수 공간 및 식사 장소 안내</div>
@@ -1017,7 +1014,7 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
             </div>
         </div>
     </div>
- 
+
     <!-- [5] 이동 지원 안내 (명칭 변경 및 내비 타겟팅 최적화) -->
     <div class="accordion-item" id="acc-transport">
         <div class="accordion-header" onclick="toggleAccordion(this)">📍 이동 지원 안내 & 차량 내비게이션 바로 연동</div>
@@ -1026,25 +1023,25 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
                 <div class="v-name">🏢 블룸비스타 호텔앤컨퍼런스</div>
                 <div class="v-addr">📍 경기도 양평군 강하면 강남로 316</div>
             </div>
- 
+
             <div class="sub-section-title">🚌 1. 입소일 이동 지원 버스 (8월 3일 월요일)</div>
             <ul class="route-list">
                 <li><strong>서울역 승차</strong> : 낮 12시 정시 출발 (연수 프로그램 준비 셔틀)</li>
                 <li><strong>잠실역 승차</strong> : 오후 1시 정시 출발 (연수 프로그램 준비 셔틀)</li>
             </ul>
- 
+
             <div class="sub-section-title">🚌 2. 퇴소일 이동 지원 버스 (8월 7일 금요일) — 단일 노선</div>
             <ul class="route-list">
                 <li><strong>블룸비스타 출발</strong> : 낮 12시 30분 (버스 1대, 잠실역 경유 후 서울역 도착)</li>
                 <li><strong>잠실역 하차</strong> : 오후 2시 도착 예상</li>
                 <li><strong>서울역 하차</strong> : 오후 3시 도착 예상</li>
             </ul>
- 
+
             <div class="sub-section-title">🚗 3. 개인 자차 차량 이용 이동 시</div>
             <p class="route-list" style="list-style:none; padding-left:0; font-size:13px;">
                 차량 운전 시 아래의 원클릭 버튼을 터치하시면 **목적지가 '블룸비스타'로 자동 지정**되어 길 안내가 시작되며, 연수 기간 내 전용 주차장을 무료로 이용하실 수 있습니다.
             </p>
- 
+
             <!-- 블룸비스타 좌표 직통 내비 버튼 -->
             <div class="map-buttons">
                 <a href="https://map.kakao.com/link/to/블룸비스타,37.497530,127.424364" class="map-btn btn-kakao" target="_blank">📲 카카오내비 목적지 바로 연결</a>
@@ -1052,7 +1049,7 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
             </div>
         </div>
     </div>
- 
+
     <!-- [6] 응급 대응 및 소통 채널 안내 -->
     <div class="accordion-item">
         <div class="accordion-header" onclick="toggleAccordion(this)">🚨 응급 대응 비상 연락망 및 공식 카카오톡 채널</div>
@@ -1079,7 +1076,7 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
             <a href="http://pf.kakao.com/_Htxbyxj" class="map-btn btn-talk" target="_blank">💬 아츠클래스 공식 카카오톡 채널로 문의하기</a>
         </div>
     </div>
- 
+
     <!-- 미니멀 기관 푸터 -->
     <div class="footer-info">
         <p>© 2026 HYUNDAI MOTOR CHUNG MONG-KOO FOUNDATION · JUMP · ARTIS. ALL RIGHTS RESERVED.</p>
@@ -1087,7 +1084,7 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
 </div>
         </div>
     </div>
- 
+
     <!-- ================= 관리자 ================= -->
     <div class="view" id="view-admin">
         <div class="back-row"><button class="back-btn" onclick="switchView('home')">← 처음으로</button></div>
@@ -1102,7 +1099,7 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
             </div>
             <div class="msg" id="pinMsg"></div>
         </div>
- 
+
         <div id="adminBody" style="display:none">
             <div class="panel">
                 <div class="adm-toolbar">
@@ -1112,7 +1109,7 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
                     <button class="btn-ghost" onclick="loadAdmin()">↻ 새로고침</button>
                     <button class="btn-ghost" onclick="exportCsv()">⬇ CSV 다운로드</button>
                 </div>
- 
+
                 <div class="adm-tabs">
                     <button class="adm-tab active" data-adm="summary" onclick="switchAdm('summary')">일자별 요약</button>
                     <button class="adm-tab" data-adm="program" onclick="switchAdm('program')">프로그램별</button>
@@ -1120,7 +1117,7 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
                     <button class="adm-tab" data-adm="log" onclick="switchAdm('log')">체크인 로그</button>
                     <button class="adm-tab" data-adm="settings" onclick="switchAdm('settings')">⚙️ 설정</button>
                 </div>
- 
+
                 <div class="adm-view active" id="adm-summary"></div>
                 <div class="adm-view" id="adm-program"></div>
                 <div class="adm-view" id="adm-person"></div>
@@ -1129,10 +1126,10 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
             </div>
         </div>
     </div>
- 
+
     <div class="footer-line">© 2026 HYUNDAI MOTOR CHUNG MONG-KOO FOUNDATION · JUMP · ARTIS</div>
 </div>
- 
+
 <script>
 /* ===================== 데이터 ===================== */
 const PROGRAMS = ["신규교사 프로그램", "알럼나이교사 프로그램", "한국멘토연수 2기"];
@@ -1155,7 +1152,7 @@ async function sha256(s) {
     const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
     return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
 }
- 
+
 /* ===================== 저장소 (Google Sheets 백엔드 + 폴백) =====================
    GitHub Pages 등 정적 호스팅에서는 window.storage가 없으므로,
    Google Apps Script로 배포한 Web App(구글시트 연동)을 실제 백엔드로 사용합니다.
@@ -1165,7 +1162,7 @@ const BACKEND_URL = "https://script.google.com/macros/s/AKfycbxLjm5YgWkZxvbzckOY
 const hasBackend = typeof BACKEND_URL === "string" && BACKEND_URL.indexOf("https://script.google.com") === 0;
 const memStore = new Map();
 if (!hasBackend) document.getElementById("storageWarn").style.display = "block";
- 
+
 async function backendGet_(action, params) {
     const qs = new URLSearchParams({ action, ...params }).toString();
     const res = await fetch(`${BACKEND_URL}?${qs}`);
@@ -1199,7 +1196,7 @@ async function backendWrite_(payload) {
     }
     return backendPost_(payload);
 }
- 
+
 const store = {
     async get(key, shared) {
         if (hasBackend) {
@@ -1238,12 +1235,12 @@ const store = {
         return [...memStore.keys()].filter(k => k.startsWith(prefix));
     }
 };
- 
+
 /* 키 규칙
    - 공유(백엔드 시트):  ci:{day}:{am|pm}:{이름}:{HHMM}   (전체 체크인 원장 → 관리자 통계)
    - 개인(이 브라우저의 localStorage): mine:{day}:{am|pm}  (이 기기에서 해당 시간대 1회만 체크인 허용)
 */
- 
+
 /* ===================== 상태 (일자·세션은 현재 시각으로 자동 결정) ===================== */
 const state = { day: 1, ses: "am", inPeriod: false, late: false };
 const WINDOWS = { am: { s: 510, e: 540, label: "08:30 ~ 09:00" }, pm: { s: 765, e: 795, label: "12:45 ~ 13:15" } };
@@ -1251,12 +1248,12 @@ const DAY1_WINDOW = { s: 780, e: 840, label: "13:00 ~ 14:00" }; // 8/3 입소일
 const SES_SPLIT = 765; // 12:45 이전 = 오전 세션, 이후 = 오후 세션 (1일차 제외)
 const DEFAULT_DAYCODE = "0709";
 let gateUnlocked = {}; // { "day-ses": true } — 이 화면에서 암구호 통과 여부
- 
+
 /* 1일차 오전, 5일차(8/7) 오후는 세션이 없음 */
 function sesExists(day, ses) { return !(day === 1 && ses === "am") && !(day === 5 && ses === "pm"); }
 function windowFor(day, ses) { return day === 1 ? DAY1_WINDOW : WINDOWS[ses]; }
 function sesTitle(day, ses) { return day === 1 ? "입소 체크인" : SES_LABEL[ses] + " 체크인"; }
- 
+
 function computeSession() {
     const now = new Date();
     const start = new Date(2026, 7, 3); // 2026-08-03
@@ -1276,7 +1273,7 @@ function computeSession() {
         state.late = mins > WINDOWS[state.ses].e;   // 정규 시간 종료 후 = 지각
     }
 }
- 
+
 async function getDayCode(day, ses) {
     // 세션별 암구호 → 없으면 일자 공통 → 없으면 기본값
     // (두 조회를 동시에 보내서 순차 대기로 인한 지연을 줄입니다)
@@ -1288,7 +1285,7 @@ async function getDayCode(day, ses) {
     if (r2 && r2.value) return String(r2.value);
     return DEFAULT_DAYCODE;
 }
- 
+
 function renderSessionBanner() {
     const d = DAYS.find(x => x.d === state.day);
     const w = windowFor(state.day, state.ses);
@@ -1308,12 +1305,12 @@ function renderSessionBanner() {
     document.getElementById("homeLive").textContent =
         `지금 · ${state.day}일차 ${sesTitle(state.day, state.ses)}`;
 }
- 
+
 async function openCheckin() {
     computeSession();
     renderSessionBanner();
     switchView("checkin");
- 
+
     // 서버 응답(이미 체크인했는지 확인)을 기다리는 동안 화면이 비어 보이지 않도록,
     // 우선 이번 세션에서 암구호를 통과했는지 여부만으로 화면을 즉시 보여주고
     // 이후 실제 서버 확인 결과로 필요하면 화면을 교체합니다.
@@ -1327,10 +1324,10 @@ async function openCheckin() {
         document.getElementById("gateBox").style.display = "block";
         setTimeout(() => document.getElementById("gateIpt").focus(), 50);
     }
- 
+
     await refreshLockState();
 }
- 
+
 async function tryGate() {
     const v = document.getElementById("gateIpt").value.trim();
     const m = document.getElementById("gateMsg");
@@ -1345,9 +1342,9 @@ async function tryGate() {
         m.textContent = "암구호가 올바르지 않습니다. 현장 안내를 확인해 주세요.";
     }
 }
- 
+
 /* ===================== 공지 배너 ===================== */
- 
+
 /* ===================== 뷰 전환 ===================== */
 function switchView(v) {
     document.querySelectorAll(".view").forEach(el => el.classList.toggle("active", el.id === "view-" + v));
@@ -1360,7 +1357,7 @@ function switchAdm(v) {
     document.querySelectorAll(".adm-tab").forEach(b => b.classList.toggle("active", b.dataset.adm === v));
     document.querySelectorAll(".adm-view").forEach(el => el.classList.toggle("active", el.id === "adm-" + v));
 }
- 
+
 /* ===================== 체크인 UI ===================== */
 function fillProgSel() {
     const sel = document.getElementById("progSel");
@@ -1371,7 +1368,7 @@ function fillProgSel() {
     });
 }
 function onProgChange() { document.getElementById("nameIpt").value = ""; closeSuggest(); }
- 
+
 function onNameInput() {
     const q = document.getElementById("nameIpt").value.trim();
     const pi = document.getElementById("progSel").value;
@@ -1394,13 +1391,13 @@ function pickName(n, p) {
 }
 function closeSuggest() { document.getElementById("suggestList").classList.remove("open"); }
 document.addEventListener("click", e => { if (!e.target.closest(".suggest")) closeSuggest(); });
- 
+
 function showMsg(type, text) {
     const m = document.getElementById("ciMsg");
     m.className = "msg " + type; m.textContent = text;
 }
 function clearMsg() { document.getElementById("ciMsg").className = "msg"; }
- 
+
 /* "이 기기에서 이미 체크인했는지"는 공유 백엔드가 아니라 이 브라우저에만 저장합니다.
    (공유 시트에 저장하면 기기 구분이 안 되어, 같은 세션에서 한 명이라도 체크인하면
    그 뒤에 오는 모든 사람이 "이미 체크인함"으로 잘못 표시되는 심각한 문제가 있었습니다) */
@@ -1413,7 +1410,7 @@ function getMineLocal(day, ses) {
 function setMineLocal(day, ses, valueStr) {
     try { localStorage.setItem(`mine:${day}:${ses}`, valueStr); return true; } catch (e) { return false; }
 }
- 
+
 /* 이 기기의 체크인 여부 + 암구호 통과 여부에 따라 화면 결정 */
 async function refreshLockState() {
     clearMsg();
@@ -1441,17 +1438,17 @@ async function refreshLockState() {
         form.style.display = "block";
     }
 }
- 
+
 async function doCheckin() {
     clearMsg(); closeSuggest();
     computeSession(); renderSessionBanner(); // 제출 시점 기준으로 일자·시간대 확정
     const btn = document.getElementById("submitBtn");
     const pi = document.getElementById("progSel").value;
     const name = document.getElementById("nameIpt").value.trim();
- 
+
     if (pi === "") { showMsg("err", "참여 프로그램을 선택해 주세요."); return; }
     if (!name) { showMsg("err", "성함을 입력해 주세요."); return; }
- 
+
     const person = ROSTER.find(r => r.p === Number(pi) && r.n === name);
     if (!person) {
         const other = ROSTER.find(r => r.n === name);
@@ -1460,20 +1457,20 @@ async function doCheckin() {
             : `'${name}' 님을 명단에서 찾을 수 없습니다. 성함을 확인하시거나 운영사무국(010-4127-2057)에 문의해 주세요.`);
         return;
     }
- 
+
     btn.disabled = true; btn.textContent = "체크인 중…";
     try {
         // 1) 이 기기에서 이미 체크인했는지
         const lock = getMineLocal(state.day, state.ses);
         if (lock) { await refreshLockState(); return; }
- 
+
         // 2) 같은 사람이 (다른 기기에서라도) 이미 체크인했는지
         const dup = await store.list(`ci:${state.day}:${state.ses}:${name}:`, true);
         if (dup.length > 0) {
             showMsg("err", `'${name}' 님은 이미 ${state.day}일차 ${sesTitle(state.day, state.ses)}이 완료되어 있습니다.`);
             return;
         }
- 
+
         // 3) 저장 (정규 시간 이후면 지각 플래그 포함)
         const now = new Date();
         const hh = String(now.getHours()).padStart(2, "0");
@@ -1481,23 +1478,23 @@ async function doCheckin() {
         const timeLabel = `${hh}:${mm}`;
         const rec = JSON.stringify({ t: now.toISOString(), p: person.p, late: state.late });
         const keySuffix = state.late ? ":l" : "";
- 
+
         const saved = await store.set(`ci:${state.day}:${state.ses}:${name}:${hh}${mm}${keySuffix}`, rec, true);
         if (!saved) { showMsg("err", "저장에 실패했습니다. 네트워크 확인 후 다시 시도해 주세요."); return; }
- 
+
         setMineLocal(state.day, state.ses,
             JSON.stringify({ name, p: person.p, time: timeLabel, day: state.day, ses: state.ses }));
- 
+
         await refreshLockState();
     } finally {
         btn.disabled = false; btn.textContent = "체크인하기";
     }
 }
- 
+
 /* ===================== 관리자 ===================== */
 let admRecords = []; // {key, day, ses, name, time, p, inRoster, manual}
 let editMode = false;
- 
+
 async function tryUnlock() {
     const v = document.getElementById("pinIpt").value;
     const m = document.getElementById("pinMsg");
@@ -1512,7 +1509,7 @@ async function tryUnlock() {
         m.className = "msg err"; m.textContent = "비밀번호가 올바르지 않습니다.";
     }
 }
- 
+
 async function loadAdmin() {
     document.getElementById("lastLoaded").textContent = "불러오는 중…";
     const keys = await store.list("ci:", true);
@@ -1528,16 +1525,16 @@ async function loadAdmin() {
             manual: flag === "m", late: flag === "l"
         };
     }).filter(Boolean);
- 
+
     renderSummary(); renderProgram(); renderPerson(); renderLog(); renderSettings();
     const now = new Date();
     document.getElementById("lastLoaded").textContent =
         `업데이트 ${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")} · 총 ${admRecords.length}건`;
 }
- 
+
 /* --- 관리자 수정: 수동 체크인 추가 / 체크인 삭제 --- */
 function dayLabel(d) { const x = DAYS.find(v => v.d === d); return x ? `${x.date}(${x.dow})` : d + "일차"; }
- 
+
 async function adminAdd(name, day, ses) {
     if (!sesExists(day, ses)) return;
     if (!confirm(`${name} 님을 ${day}일차(${dayLabel(day)}) ${sesTitle(day, ses)}(으)로 처리할까요?\n(수동 처리로 표시됩니다)`)) return;
@@ -1548,7 +1545,7 @@ async function adminAdd(name, day, ses) {
     if (!saved) { alert("저장에 실패했습니다. 다시 시도해 주세요."); return; }
     await loadAdmin();
 }
- 
+
 async function adminDelete(key) {
     const r = admRecords.find(x => x.key === key);
     if (!r) return;
@@ -1556,13 +1553,13 @@ async function adminDelete(key) {
     await store.delete(key, true);
     await loadAdmin();
 }
- 
+
 function toggleEditMode() { editMode = !editMode; editingIdx = null; renderPersonTable(); }
- 
+
 function countOf(day, ses, progIdx) {
     return admRecords.filter(r => r.day === day && r.ses === ses && (progIdx === undefined || r.p === progIdx)).length;
 }
- 
+
 function renderSummary() {
     const total = ROSTER.length;
     let html = `<div class="stat-grid">`;
@@ -1595,7 +1592,7 @@ function renderSummary() {
     </div></div>`;
     document.getElementById("adm-summary").innerHTML = html;
 }
- 
+
 function renderProgram() {
     const progTotals = PROGRAMS.map((_, i) => ROSTER.filter(r => r.p === i).length);
     let head = `<tr><th>프로그램</th><th>인원</th>`;
@@ -1605,7 +1602,7 @@ function renderProgram() {
         head += d.d === 1 ? `<th class="sess">—</th><th class="sess">입소</th>` : `<th class="sess">오전</th><th class="sess">오후</th>`;
     });
     head += `</tr>`;
- 
+
     let body = "";
     PROGRAMS.forEach((pName, i) => {
         body += `<tr><td class="name-col"><span class="chip p${i}">${pName}</span></td><td>${progTotals[i]}명</td>`;
@@ -1628,14 +1625,14 @@ function renderProgram() {
         body += `<td class="sess" style="text-align:center;font-weight:800;color:var(--dark-blue)">${countOf(d.d, "pm")}</td>`;
     });
     body += `</tr>`;
- 
+
     document.getElementById("adm-program").innerHTML =
         `<div class="adm-table-wrap"><table class="adm-table"><thead>${head}</thead><tbody>${body}</tbody></table></div>`;
 }
- 
+
 let personFilter = { q: "", p: "" };
 let editingIdx = null; // 참여자 정보 편집 중인 명단 인덱스
- 
+
 function renderPerson() {
     // 툴바는 최초 1회만 렌더링 (검색창 포커스 유지)
     const wrap = document.getElementById("adm-person");
@@ -1659,19 +1656,19 @@ function renderPerson() {
     }
     renderPersonTable();
 }
- 
+
 function renderPersonTable() {
     const recMap = {}; // name -> {day-ses: record}
     admRecords.forEach(r => {
         if (!recMap[r.name]) recMap[r.name] = {};
         recMap[r.name][`${r.day}-${r.ses}`] = r;
     });
- 
+
     let rows = ROSTER.map((r, idx) => ({ ...r, idx }));
     if (personFilter.p !== "") rows = rows.filter(r => r.p === Number(personFilter.p));
     if (personFilter.q) rows = rows.filter(r =>
         r.n.includes(personFilter.q) || (r.s || "").includes(personFilter.q) || (r.r || "").includes(personFilter.q) || (r.m || "").includes(personFilter.q));
- 
+
     let head = `<tr>${editMode ? "<th></th>" : ""}<th>프로그램</th><th>이름</th><th>Family</th><th>First</th><th>멘토그룹</th><th>지역</th><th>소속학교</th><th>출석</th>`;
     DAYS.forEach(d => { head += `<th class="sess" colspan="2">${d.d}일차<br><span style="font-weight:600;color:#999">${d.date}(${d.dow})</span></th>`; });
     head += `</tr><tr><th colspan="${editMode ? 9 : 8}"></th>`;
@@ -1679,7 +1676,7 @@ function renderPersonTable() {
         head += d.d === 1 ? `<th class="sess">—</th><th class="sess">입소</th>` : `<th class="sess">오전</th><th class="sess">오후</th>`;
     });
     head += `</tr>`;
- 
+
     let body = rows.map(r => {
         const tm = recMap[r.n] || {};
         // ── 편집 중인 행: 정보 입력 폼 ──
@@ -1727,22 +1724,22 @@ function renderPersonTable() {
             <td>${r.m || ""}</td><td>${r.r || ""}</td><td>${r.s || ""}</td>
             <td style="text-align:center;font-weight:800;color:var(--dark-blue)">${cnt}/9</td>${cells}</tr>`;
     }).join("");
- 
+
     document.getElementById("personTableBox").innerHTML =
         `<div class="adm-table-wrap"><table class="adm-table"><thead>${head}</thead><tbody>${body}</tbody></table></div>`;
     document.getElementById("personCount").textContent = `${rows.length}명 표시`;
- 
+
     const btn = document.getElementById("editModeBtn");
     btn.textContent = editMode ? "✅ 수정 모드 끄기" : "✏️ 수정 모드";
     btn.className = "btn-ghost" + (editMode ? " edit-on" : "");
     document.getElementById("personEditHint").innerHTML = editMode
         ? `<div class="msg ok" style="display:block;margin-bottom:12px">수정 모드: ✎로 참여자 정보 수정 · 빈 칸(＋)은 수동 체크인 · 체크된 칸은 삭제</div>` : "";
- 
+
     const extras = [...new Set(admRecords.filter(r => !r.inRoster).map(r => r.name))];
     document.getElementById("personExtras").innerHTML = extras.length
         ? `<div class="msg err" style="display:block;margin-top:10px">⚠️ 명단에 없는 체크인: ${extras.join(", ")}</div>` : "";
 }
- 
+
 async function savePersonEdit(idx) {
     const orig = ROSTER[idx];
     const upd = {
@@ -1756,7 +1753,7 @@ async function savePersonEdit(idx) {
     };
     if (!upd.n) { alert("이름은 비울 수 없습니다."); return; }
     if (upd.n !== orig.n && !confirm(`이름을 '${orig.n}' → '${upd.n}'(으)로 변경합니다.\n기존 체크인 기록은 이전 이름으로 남습니다. 계속할까요?`)) return;
- 
+
     Object.assign(ROSTER[idx], upd);
     // 전체 수정본을 공유 저장소에 저장 → 모든 기기에 반영
     let ov = {};
@@ -1770,13 +1767,13 @@ async function savePersonEdit(idx) {
     editingIdx = null;
     await loadAdmin(); // 프로그램별 통계 등 재계산
 }
- 
+
 function renderLog() {
     const wrap = document.getElementById("adm-log");
     const sesOrder = { am: 0, pm: 1 };
     const sorted = [...admRecords].sort((a, b) =>
         (b.day - a.day) || (sesOrder[b.ses] - sesOrder[a.ses]) || b.time.localeCompare(a.time));
- 
+
     if (!sorted.length) {
         wrap.innerHTML = `<div class="closed-box"><div class="ico">🗒️</div><p>아직 체크인 기록이 없습니다.</p></div>`;
         return;
@@ -1797,7 +1794,7 @@ function renderLog() {
             <tr><th>날짜</th><th>구분</th><th>시간</th><th>이름</th><th>프로그램</th><th>방식</th><th></th></tr>
         </thead><tbody>${rows}</tbody></table></div>`;
 }
- 
+
 function exportCsv() {
     const timeMap = {};
     admRecords.forEach(r => {
@@ -1826,7 +1823,7 @@ function exportCsv() {
     a.click();
     URL.revokeObjectURL(a.href);
 }
- 
+
 /* ===================== 관리자 설정 (암구호·공지·안내 편집) ===================== */
 async function renderSettings() {
     const wrap = document.getElementById("adm-settings");
@@ -1846,7 +1843,7 @@ async function renderSettings() {
     ]);
     const notice = noticeR && noticeR.value ? noticeR.value : "";
     const guideHtml = overR && overR.value ? overR.value : document.getElementById("guideContent").innerHTML;
- 
+
     wrap.innerHTML = `
         <div class="set-block">
             <h3>🔑 세션별 현장 암구호</h3>
@@ -1857,7 +1854,7 @@ async function renderSettings() {
             <button class="btn-ghost" onclick="saveDayCodes()">암구호 저장</button>
             <span class="msg" id="codeMsg" style="display:inline-block;margin:0 0 0 8px;padding:6px 12px"></span>
         </div>
- 
+
         <div class="set-block">
             <h3>📢 공지 팝업</h3>
             <div class="desc">입력하면 참여자가 앱을 열 때 팝업 창으로 표시됩니다. 참여자는 ✕ 또는 확인 버튼으로 닫을 수 있습니다. 비우고 저장하면 팝업이 뜨지 않습니다.</div>
@@ -1865,7 +1862,7 @@ async function renderSettings() {
             <div style="margin-top:10px"><button class="btn-ghost" onclick="saveNotice()">공지 저장</button>
             <span class="msg" id="noticeMsg" style="display:inline-block;margin:0 0 0 8px;padding:6px 12px"></span></div>
         </div>
- 
+
         <div class="set-block">
             <h3>📖 참여자 안내 페이지 편집</h3>
             <div class="desc">안내 페이지의 HTML을 직접 수정합니다. 문구 수정 시 태그(&lt;...&gt;)는 그대로 두고 글자만 바꿔 주세요. 저장하면 모든 참여자에게 즉시 반영됩니다.</div>
@@ -1878,14 +1875,14 @@ async function renderSettings() {
         </div>`;
     document.getElementById("guideIpt").value = guideHtml;
 }
- 
+
 function flashMsg(id, ok, text) {
     const el = document.getElementById(id);
     el.className = "msg " + (ok ? "ok" : "err");
     el.textContent = text;
     setTimeout(() => { el.className = "msg"; el.textContent = ""; }, 2500);
 }
- 
+
 async function saveDayCodes() {
     let allOk = true;
     for (const d of DAYS) {
@@ -1900,14 +1897,14 @@ async function saveDayCodes() {
     }
     flashMsg("codeMsg", allOk, allOk ? "저장되었습니다" : "일부 저장 실패");
 }
- 
+
 async function saveNotice() {
     const v = document.getElementById("noticeIpt").value.trim();
     const r = await store.set("notice-banner", v, true);
     flashMsg("noticeMsg", !!r, r ? "저장되었습니다" : "저장 실패");
     applyNotice(v);
 }
- 
+
 async function saveGuide() {
     const v = document.getElementById("guideIpt").value;
     if (!v.trim()) { flashMsg("guideMsg", false, "내용이 비어 있습니다"); return; }
@@ -1915,7 +1912,7 @@ async function saveGuide() {
     flashMsg("guideMsg", !!r, r ? "저장되었습니다" : "저장 실패 (용량 확인)");
     if (r) document.getElementById("guideContent").innerHTML = v;
 }
- 
+
 async function resetGuide() {
     if (!confirm("안내 페이지를 업로드된 원본으로 되돌릴까요?")) return;
     await store.delete("guide-html", true);
@@ -1923,7 +1920,7 @@ async function resetGuide() {
     document.getElementById("guideIpt").value = GUIDE_DEFAULT;
     flashMsg("guideMsg", true, "원본으로 복원되었습니다");
 }
- 
+
 /* 공지: 팝업 대신 메인(홈) 화면 상단에 박스로 상시 표시 */
 let currentNoticeText = "";
 function applyNotice(text) {
@@ -1941,7 +1938,7 @@ function updateNoticeVisibility() {
         el.style.display = "none";
     }
 }
- 
+
 /* 명단 수정본 적용 (관리자에서 참여자 정보를 고친 경우) */
 function applyRosterOverrides(ov) {
     if (!ov) return;
@@ -1967,7 +1964,7 @@ async function loadInitData() {
         applyNotice("");
     }
 }
- 
+
 /* 체크리스트 → 이동 지원 안내 바로가기 */
 function goTransport(e) {
     e.preventDefault();
@@ -1977,7 +1974,7 @@ function goTransport(e) {
         acc.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 }
- 
+
 /* ===================== 안내 페이지 원본 스크립트 ===================== */
 function toggleAccordion(element) {
     element.parentElement.classList.toggle("active");
@@ -1990,7 +1987,7 @@ function openTab(evt, tabName) {
     evt.currentTarget.classList.add("active");
     evt.stopPropagation();
 }
- 
+
 /* ===================== 초기화 ===================== */
 const GUIDE_DEFAULT = document.getElementById("guideContent").innerHTML; // 원본 백업 (되돌리기용)
 computeSession();
@@ -1999,7 +1996,7 @@ fillProgSel();
 loadInitData(); // 명단·공지·안내페이지를 한 번의 요청으로 불러오기
 // 홈에 표시되는 현재 세션 배지를 1분마다 갱신
 setInterval(() => { computeSession(); renderSessionBanner(); }, 60000);
- 
+
 /* 새로고침해도 마지막으로 보던 화면(특히 관리자 페이지)을 유지 + 페이지별 주소(#checkin, #guide, #admin) 지원 */
 const VALID_VIEWS = ["home", "checkin", "guide", "admin"];
 (function restoreView() {
@@ -2018,7 +2015,7 @@ const VALID_VIEWS = ["home", "checkin", "guide", "admin"];
         loadAdmin();
     }
 })();
- 
+
 // 뒤로/앞으로 가기 버튼이나 주소창에서 직접 해시를 바꾼 경우에도 화면 전환
 window.addEventListener("hashchange", () => {
     const v = location.hash.slice(1);
@@ -2027,9 +2024,3 @@ window.addEventListener("hashchange", () => {
 </script>
 </body>
 </html>
- 
-
-
-
-
-
