@@ -1350,6 +1350,7 @@ function switchView(v) {
     document.querySelectorAll(".view").forEach(el => el.classList.toggle("active", el.id === "view-" + v));
     window.scrollTo(0, 0);
     try { sessionStorage.setItem("currentView", v); } catch (e) {}
+    if (location.hash.slice(1) !== v) location.hash = v;
     updateNoticeVisibility();
 }
 function switchAdm(v) {
@@ -1983,20 +1984,30 @@ loadInitData(); // 명단·공지·안내페이지를 한 번의 요청으로 �
 // 홈에 표시되는 현재 세션 배지를 1분마다 갱신
 setInterval(() => { computeSession(); renderSessionBanner(); }, 60000);
 
-/* 새로고침해도 마지막으로 보던 화면(특히 관리자 페이지)을 유지 */
+/* 새로고침해도 마지막으로 보던 화면(특히 관리자 페이지)을 유지 + 페이지별 주소(#checkin, #guide, #admin) 지원 */
+const VALID_VIEWS = ["home", "checkin", "guide", "admin"];
 (function restoreView() {
     let savedView = null, wasUnlocked = false;
     try {
         savedView = sessionStorage.getItem("currentView");
         wasUnlocked = sessionStorage.getItem("adminUnlocked") === "1";
     } catch (e) {}
-    if (savedView) switchView(savedView);
-    if (savedView === "admin" && wasUnlocked) {
+    // 주소의 #해시가 있으면(직접 공유된 링크 등) 그걸 우선 사용, 없으면 이전 화면 기억값 사용
+    const hashView = location.hash.slice(1);
+    const targetView = VALID_VIEWS.includes(hashView) ? hashView : savedView;
+    if (targetView) switchView(targetView);
+    if (targetView === "admin" && wasUnlocked) {
         document.getElementById("adminLock").style.display = "none";
         document.getElementById("adminBody").style.display = "block";
         loadAdmin();
     }
 })();
+
+// 뒤로/앞으로 가기 버튼이나 주소창에서 직접 해시를 바꾼 경우에도 화면 전환
+window.addEventListener("hashchange", () => {
+    const v = location.hash.slice(1);
+    if (VALID_VIEWS.includes(v)) switchView(v);
+});
 </script>
 </body>
 </html>
