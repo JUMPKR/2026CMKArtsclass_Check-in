@@ -788,10 +788,10 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
 
             <div class="qna-guide">
                 <b>✍️ 작성 전 확인해 주세요</b>
-                <ul>
-                    <li>답변이 필요하면 <b>이름</b>을 함께 남겨주세요.</li>
-                    <li>서로 <b>예의를 지켜</b> 작성해 주세요.</li>
-                    <li><b>급한 운영 문의</b>는 카카오톡 채널로 연락해 주세요.</li>
+                <ul id="qnaGuideList">
+                    <li>답변이 필요하면 이름을 함께 남겨주세요.</li>
+                    <li>서로 예의를 지켜 작성해 주세요.</li>
+                    <li>급한 운영 문의는 카카오톡 채널로 연락해 주세요.</li>
                 </ul>
             </div>
 
@@ -2069,6 +2069,17 @@ async function renderSettings() {
         </div>
 
         <div class="set-block">
+            <h3>❓ 질문 남기기 가이드 수정</h3>
+            <div class="desc">"질문 남기기" 화면 상단 안내 문구입니다. 한 줄에 하나씩 입력하면 각각 항목으로 표시됩니다.</div>
+            <textarea class="guide-editor" id="qnaGuideIpt" style="min-height:90px;font-family:inherit;font-size:13.5px">${currentQnaGuide.replace(/</g, "&lt;")}</textarea>
+            <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+                <button class="btn-ghost" onclick="saveQnaGuide()">가이드 저장</button>
+                <button class="btn-ghost btn-del" onclick="resetQnaGuide()">기본값으로 되돌리기</button>
+                <span class="msg" id="qnaGuideMsg" style="display:inline-block;margin:0;padding:6px 12px"></span>
+            </div>
+        </div>
+
+        <div class="set-block">
             <h3>📖 참여자 안내 페이지 편집</h3>
             <div class="desc">안내 페이지의 HTML을 직접 수정합니다. 문구 수정 시 태그(&lt;...&gt;)는 그대로 두고 글자만 바꿔 주세요. 저장하면 모든 참여자에게 즉시 반영됩니다.</div>
             <textarea class="guide-editor" id="guideIpt"></textarea>
@@ -2117,6 +2128,23 @@ async function saveNotice() {
     const r = await store.set("notice-banner", v, true);
     flashMsg("noticeMsg", !!r, r ? "저장되었습니다" : "저장 실패");
     applyNotice(v);
+}
+
+async function saveQnaGuide() {
+    const v = document.getElementById("qnaGuideIpt").value.trim();
+    if (!v) { flashMsg("qnaGuideMsg", false, "내용이 비어 있습니다"); return; }
+    const r = await store.set("qna-guide", v, true);
+    flashMsg("qnaGuideMsg", !!r, r ? "저장되었습니다" : "저장 실패");
+    if (r) { currentQnaGuide = v; renderQnaGuideList(v); }
+}
+
+async function resetQnaGuide() {
+    if (!confirm("가이드 문구를 기본값으로 되돌릴까요?")) return;
+    await store.delete("qna-guide", true);
+    currentQnaGuide = QNA_GUIDE_DEFAULT;
+    renderQnaGuideList(QNA_GUIDE_DEFAULT);
+    document.getElementById("qnaGuideIpt").value = QNA_GUIDE_DEFAULT;
+    flashMsg("qnaGuideMsg", true, "기본값으로 복원되었습니다");
 }
 
 async function saveGuide() {
@@ -2173,6 +2201,10 @@ async function loadInitData() {
         }
         applyNotice(data.notice || "");
         if (data.guideHtml) document.getElementById("guideContent").innerHTML = data.guideHtml;
+        if (data.qnaGuide) {
+            currentQnaGuide = data.qnaGuide;
+            renderQnaGuideList(currentQnaGuide);
+        }
     } catch (e) {
         console.error("init load failed:", e);
         applyNotice("");
@@ -2204,6 +2236,19 @@ function openTab(evt, tabName) {
 
 /* ===================== 초기화 ===================== */
 const GUIDE_DEFAULT = document.getElementById("guideContent").innerHTML; // 원본 백업 (되돌리기용)
+const QNA_GUIDE_DEFAULT = "답변이 필요하면 이름을 함께 남겨주세요.\n서로 예의를 지켜 작성해 주세요.\n급한 운영 문의는 카카오톡 채널로 연락해 주세요.";
+let currentQnaGuide = QNA_GUIDE_DEFAULT;
+function renderQnaGuideList(text) {
+    const ul = document.getElementById("qnaGuideList");
+    if (!ul) return;
+    const lines = (text || "").split("\n").map(s => s.trim()).filter(Boolean);
+    ul.innerHTML = "";
+    lines.forEach(line => {
+        const li = document.createElement("li");
+        li.textContent = line; // 관리자가 입력한 텍스트를 그대로 텍스트로만 표시 (HTML 삽입 방지)
+        ul.appendChild(li);
+    });
+}
 computeSession();
 renderSessionBanner();
 fillProgSel();
