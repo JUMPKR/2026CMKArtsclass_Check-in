@@ -1220,26 +1220,45 @@ const hasBackend = typeof BACKEND_URL === "string" && BACKEND_URL.indexOf("https
 const memStore = new Map();
 if (!hasBackend) document.getElementById("storageWarn").style.display = "block";
 
+// 서버 요청이 일시적으로 실패해도(예: 짧은 순간 동시 접속자가 몰려 한도를 넘는 경우)
+// 사용자가 다시 누를 필요 없이 짧은 간격을 두고 자동으로 몇 번 더 시도합니다.
+async function withRetry_(fn, retries, baseDelayMs) {
+    let lastErr;
+    for (let i = 0; i <= retries; i++) {
+        try {
+            return await fn();
+        } catch (e) {
+            lastErr = e;
+            if (i < retries) await new Promise(r => setTimeout(r, baseDelayMs * (i + 1)));
+        }
+    }
+    throw lastErr;
+}
+
 async function backendGet_(action, params) {
-    const qs = new URLSearchParams({ action, ...params }).toString();
-    const res = await fetch(`${BACKEND_URL}?${qs}`);
-    if (!res.ok) throw new Error("backend get failed: " + res.status);
-    const data = await res.json();
-    if (!data.ok) throw new Error("backend error: " + (data.error || "unknown"));
-    return data;
+    return withRetry_(async () => {
+        const qs = new URLSearchParams({ action, ...params }).toString();
+        const res = await fetch(`${BACKEND_URL}?${qs}`);
+        if (!res.ok) throw new Error("backend get failed: " + res.status);
+        const data = await res.json();
+        if (!data.ok) throw new Error("backend error: " + (data.error || "unknown"));
+        return data;
+    }, 2, 500);
 }
 async function backendPost_(payload) {
-    const res = await fetch(BACKEND_URL, {
-        method: "POST",
-        // text/plain 사용: Apps Script는 CORS preflight(OPTIONS)를 처리하지 못하므로,
-        // application/json 대신 simple request로 취급되는 text/plain으로 보냅니다.
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify(payload),
-    });
-    if (!res.ok) throw new Error("backend post failed: " + res.status);
-    const data = await res.json();
-    if (!data.ok) throw new Error("backend error: " + (data.error || "unknown"));
-    return data;
+    return withRetry_(async () => {
+        const res = await fetch(BACKEND_URL, {
+            method: "POST",
+            // text/plain 사용: Apps Script는 CORS preflight(OPTIONS)를 처리하지 못하므로,
+            // application/json 대신 simple request로 취급되는 text/plain으로 보냅니다.
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error("backend post failed: " + res.status);
+        const data = await res.json();
+        if (!data.ok) throw new Error("backend error: " + (data.error || "unknown"));
+        return data;
+    }, 2, 500);
 }
 // 쓰기(set/delete)는 원칙적으로 GET 방식을 사용합니다.
 // Apps Script 웹앱은 POST 요청이 내부 리다이렉트를 거치면서 크로스 도메인 환경에서
