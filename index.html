@@ -18,6 +18,10 @@
             --white: #ffffff;
             --warning-red: #D9383A;
             --light-purple: #F4F5FF;
+            --gradient-main: linear-gradient(135deg, #9295F7 0%, #5B6EE8 55%, #4C7EEF 100%);
+            --shadow-soft: 0 14px 34px rgba(35,41,122,0.10), 0 2px 8px rgba(35,41,122,0.05);
+            --shadow-soft-hover: 0 20px 44px rgba(35,41,122,0.16), 0 4px 12px rgba(35,41,122,0.08);
+            --shadow-glow: 0 12px 28px rgba(91,110,232,0.35);
         }
 
         * {
@@ -380,7 +384,7 @@ body {
 /* ===== 카드 공통 ===== */
 .panel {
     background: var(--white); border-radius: 24px; padding: 26px 22px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 16px;
+    box-shadow: var(--shadow-soft); margin-bottom: 16px;
 }
 .panel h2 { font-size: 17px; font-weight: 800; color: var(--dark-blue); margin-bottom: 4px; }
 .panel .hint { font-size: 13px; color: #777; margin-bottom: 18px; }
@@ -465,7 +469,7 @@ table.adm-table td.late-cell { color: var(--warning-red); font-weight: 800; back
 }
 
 /* ===== 관리자 설정 탭 ===== */
-.set-block { background: #F9FAFF; border: 1px solid #E2E4FF; border-radius: 16px; padding: 18px; margin-bottom: 14px; }
+.set-block { background: #F9FAFF; border: none; border-radius: 18px; padding: 18px; margin-bottom: 14px; box-shadow: 0 6px 18px rgba(35,41,122,0.06); }
 .set-block h3 { font-size: 15px; font-weight: 800; color: var(--dark-blue); margin-bottom: 4px; }
 .set-block .desc { font-size: 12.5px; color: #777; font-weight: 600; margin-bottom: 12px; }
 .code-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; margin-bottom: 12px; }
@@ -478,18 +482,19 @@ table.adm-table td.late-cell { color: var(--warning-red); font-weight: 800; back
 }
 .home-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 8px; }
 .home-card {
-    background: var(--white); border: 1px solid #E2E4FF; border-radius: 24px;
+    background: var(--white); border: none; border-radius: 24px;
     padding: 34px 22px 28px; cursor: pointer; text-align: left;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: transform .12s, box-shadow .12s;
+    box-shadow: var(--shadow-soft); transition: transform .18s, box-shadow .18s;
     display: flex; flex-direction: column; gap: 8px;
 }
-.home-card:hover { transform: translateY(-3px); box-shadow: 0 16px 36px rgba(35,41,122,.12); }
+.home-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-soft-hover); }
 .home-card:focus-visible { outline: 3px solid var(--main-purple); outline-offset: 2px; }
 .home-card .ico { font-size: 40px; line-height: 1; }
 .home-card .tit { font-size: 19px; font-weight: 800; color: var(--dark-blue); }
 .home-card .desc { font-size: 13px; color: #777; line-height: 1.5; }
 .home-card .go { margin-top: auto; font-size: 13px; font-weight: 800; color: var(--main-purple); }
-.home-card.card-checkin { background: var(--dark-blue); border-color: var(--dark-blue); }
+.home-card.card-checkin { background: var(--gradient-main); border-color: transparent; box-shadow: var(--shadow-glow); }
+.home-card.card-checkin:hover { box-shadow: 0 22px 48px rgba(91,110,232,0.45); }
 .home-card.card-checkin .tit { color: #fff; }
 .home-card.card-checkin .desc { color: #C9CCFF; }
 .home-card.card-checkin .go { color: #AEB2FF; }
@@ -561,9 +566,11 @@ select.ipt:focus, input.ipt:focus, textarea.ipt:focus { outline: none; border-co
 
 .btn-primary {
     width: 100%; padding: 16px; border: none; border-radius: 14px; cursor: pointer;
-    background: var(--dark-blue); color: #fff; font-size: 16px; font-weight: 800; margin-top: 6px;
+    background: var(--gradient-main); color: #fff; font-size: 16px; font-weight: 800; margin-top: 6px;
+    box-shadow: var(--shadow-glow); transition: transform .15s, box-shadow .15s;
 }
-.btn-primary:disabled { background: #C5C8E8; cursor: not-allowed; }
+.btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 16px 34px rgba(91,110,232,0.45); }
+.btn-primary:disabled { background: #C5C8E8; cursor: not-allowed; box-shadow: none; }
 .btn-ghost {
     padding: 10px 16px; border-radius: 10px; border: 1px solid #D9DCFF; background: #fff;
     color: var(--dark-blue); font-weight: 700; font-size: 13px; cursor: pointer;
@@ -577,8 +584,8 @@ select.ipt:focus, input.ipt:focus, textarea.ipt:focus { outline: none; border-co
 .ticket { display: none; }
 .ticket.show { display: block; }
 .ticket-card {
-    position: relative; background: var(--dark-blue); color: #fff; border-radius: 20px;
-    padding: 30px 24px 26px; overflow: hidden;
+    position: relative; background: var(--gradient-main); color: #fff; border-radius: 20px;
+    padding: 30px 24px 26px; overflow: hidden; box-shadow: var(--shadow-glow);
 }
 .ticket-card::before, .ticket-card::after {
     content: ''; position: absolute; width: 26px; height: 26px; border-radius: 50%;
@@ -614,12 +621,12 @@ select.ipt:focus, input.ipt:focus, textarea.ipt:focus { outline: none; border-co
     padding: 10px 16px; border-radius: 999px; border: 1px solid #E2E4FF; background: #fff;
     font-size: 13px; font-weight: 700; color: var(--dark-blue); cursor: pointer;
 }
-.adm-tab.active { background: var(--main-purple); color: #fff; border-color: var(--main-purple); }
+.adm-tab.active { background: var(--gradient-main); color: #fff; border-color: transparent; box-shadow: 0 6px 16px rgba(91,110,232,0.3); }
 .adm-view { display: none; }
 .adm-view.active { display: block; }
 
 .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
-.stat-card { background: #F9FAFF; border: 1px solid #E2E4FF; border-radius: 14px; padding: 14px; }
+.stat-card { background: #F9FAFF; border: none; border-radius: 14px; padding: 14px; box-shadow: 0 4px 14px rgba(35,41,122,0.06); }
 .stat-card .day { font-size: 12px; font-weight: 800; color: var(--main-purple); margin-bottom: 8px; }
 .stat-card .row { display: flex; justify-content: space-between; font-size: 13px; padding: 3px 0; }
 .stat-card .row b { color: var(--dark-blue); font-size: 15px; }
@@ -1184,7 +1191,7 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
         </div>
     </div>
 
-    <div class="footer-line">© 2026 HYUNDAI MOTOR CHUNG MONG-KOO FOUNDATION · JUMP · ARTIS</div>
+    <div class="footer-line">© 2026 CMK ARTSCLASS</div>
 </div>
 
 <script>
