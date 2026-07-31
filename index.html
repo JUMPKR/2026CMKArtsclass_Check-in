@@ -295,7 +295,11 @@
             padding-left: 20px;
             font-size: 14px;
             color: #444;
+            line-height: 1.7;
         }
+        .route-list li { margin-bottom: 10px; }
+        .route-list a { color: var(--main-purple); font-weight: 700; text-decoration: none; }
+        .route-list a:hover { text-decoration: underline; }
 
         /* 내비 및 링크 버튼 공통 */
         .map-buttons {
@@ -710,7 +714,7 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
                 <span class="desc">프로그램과 성함만 입력하면<br>오늘 일자·시간대로 자동 체크인됩니다.</span>
                 <span class="go">체크인하러 가기 →</span>
             </button>
-            <button class="home-card" onclick="switchView('guide')">
+            <button class="home-card" onclick="switchView('info')">
                 <span class="ico">📖</span>
                 <span class="tit">참여자 안내</span>
                 <span class="desc">일정표,<br>연수 공간·이동·비상 연락망 안내</span>
@@ -816,7 +820,7 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
     </div>
 
     <!-- ================= 안내 페이지 (원본 임베드) ================= -->
-    <div class="view" id="view-guide">
+    <div class="view" id="view-info">
         <div class="back-row"><button class="back-btn" onclick="switchView('home')">← 처음으로</button></div>
         <div class="guide-wrap" id="guideContent">
 
@@ -854,6 +858,52 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
             </div>
         </div>
     </div>
+
+    <!-- [5] 이동 지원 안내 (명칭 변경 및 내비 타겟팅 최적화) -->
+    <div class="accordion-item" id="acc-transport">
+        <div class="accordion-header" onclick="toggleAccordion(this)">📍 이동 지원 안내 & 차량 내비게이션 바로 연동</div>
+        <div class="accordion-content">
+            <div class="venue-hero">
+                <div class="v-name">🏢 블룸비스타 호텔앤컨퍼런스</div>
+                <div class="v-addr">📍 경기도 양평군 강하면 강남로 316</div>
+            </div>
+
+            <div class="sub-section-title">🚌 1. 입소일 이동 지원 버스 (8월 3일 월요일)</div>
+            <ul class="route-list">
+                <li>
+                    <strong>서울역 승차</strong><br>
+                    집합시간: 11시 30분 · 출발시간: 11시 45분<br>
+                    담당자 연락처: <a href="tel:010-8263-2408">010-8263-2408</a> · 차량 번호: 서울72바6807
+                </li>
+                <li>
+                    <strong>잠실역 승차</strong><br>
+                    집합시간: 12시 10분 · 출발시간: 12시 25분<br>
+                    담당자 연락처: <a href="tel:010-8200-8983">010-8200-8983</a> · 차량 번호: 서울72바6807
+                </li>
+            </ul>
+
+            <div class="sub-section-title">🚌 2. 퇴소일 이동 지원 버스 (8월 7일 금요일) — 단일 노선</div>
+            <ul class="route-list">
+                <li><strong>블룸비스타 출발</strong> : 낮 12시 30분 (버스 1대, 잠실역 경유 후 서울역 도착)</li>
+                <li><strong>잠실역 하차</strong> : 오후 2시 도착 예상</li>
+                <li><strong>서울역 하차</strong> : 오후 3시 도착 예상</li>
+            </ul>
+
+            <div class="sub-section-title">🚗 3. 개인 자차 차량 이용 이동 시</div>
+            <p class="route-list" style="list-style:none; padding-left:0; font-size:13px;">
+                차량 운전 시 아래의 원클릭 버튼을 터치하시면 **목적지가 '블룸비스타'로 자동 지정**되어 길 안내가 시작되며, 연수 기간 내 전용 주차장을 무료로 이용하실 수 있습니다.<br>
+                도착 후에는 <strong>C동 1층 로비</strong>로 오시면 안내를 받으실 수 있습니다.
+            </p>
+
+            <!-- 블룸비스타 좌표 직통 내비 버튼 -->
+            <div class="map-buttons">
+                <a href="https://map.kakao.com/link/to/블룸비스타,37.497530,127.424364" class="map-btn btn-kakao" target="_blank">📲 카카오내비 목적지 바로 연결</a>
+                <a href="https://map.naver.com/v5/search/블룸비스타" class="map-btn btn-naver" target="_blank">📲 네이버지도 목적지 바로 연결</a>
+            </div>
+        </div>
+    </div>
+
+    
 
     <!-- [3] 프로그램별 운영 시간표 (오류 완벽 수정본) -->
     <div class="accordion-item active">
@@ -1073,41 +1123,6 @@ td.ok-cell .del-x { margin-left: 6px; color: var(--warning-red); font-weight: 80
                     <div class="space-title">식사 장소 <span>💡 이동 Tip</span></div>
                     <div class="space-desc"><strong>Bistro B</strong><br>📍 D동 지하 1층<br><span style="color:#D35400; font-weight:700;">※ 블룸비스타 호텔의 지하 1층과 지상 1층은 완벽히 연결되어 있어 원활한 동선 이동이 가능합니다.</span></div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- [5] 이동 지원 안내 (명칭 변경 및 내비 타겟팅 최적화) -->
-    <div class="accordion-item" id="acc-transport">
-        <div class="accordion-header" onclick="toggleAccordion(this)">📍 이동 지원 안내 & 차량 내비게이션 바로 연동</div>
-        <div class="accordion-content">
-            <div class="venue-hero">
-                <div class="v-name">🏢 블룸비스타 호텔앤컨퍼런스</div>
-                <div class="v-addr">📍 경기도 양평군 강하면 강남로 316</div>
-            </div>
-
-            <div class="sub-section-title">🚌 1. 입소일 이동 지원 버스 (8월 3일 월요일)</div>
-            <ul class="route-list">
-                <li><strong>서울역 승차</strong> : 낮 12시 정시 출발 (연수 프로그램 준비 셔틀)</li>
-                <li><strong>잠실역 승차</strong> : 오후 1시 정시 출발 (연수 프로그램 준비 셔틀)</li>
-            </ul>
-
-            <div class="sub-section-title">🚌 2. 퇴소일 이동 지원 버스 (8월 7일 금요일) — 단일 노선</div>
-            <ul class="route-list">
-                <li><strong>블룸비스타 출발</strong> : 낮 12시 30분 (버스 1대, 잠실역 경유 후 서울역 도착)</li>
-                <li><strong>잠실역 하차</strong> : 오후 2시 도착 예상</li>
-                <li><strong>서울역 하차</strong> : 오후 3시 도착 예상</li>
-            </ul>
-
-            <div class="sub-section-title">🚗 3. 개인 자차 차량 이용 이동 시</div>
-            <p class="route-list" style="list-style:none; padding-left:0; font-size:13px;">
-                차량 운전 시 아래의 원클릭 버튼을 터치하시면 **목적지가 '블룸비스타'로 자동 지정**되어 길 안내가 시작되며, 연수 기간 내 전용 주차장을 무료로 이용하실 수 있습니다.
-            </p>
-
-            <!-- 블룸비스타 좌표 직통 내비 버튼 -->
-            <div class="map-buttons">
-                <a href="https://map.kakao.com/link/to/블룸비스타,37.497530,127.424364" class="map-btn btn-kakao" target="_blank">📲 카카오내비 목적지 바로 연결</a>
-                <a href="https://map.naver.com/v5/search/블룸비스타" class="map-btn btn-naver" target="_blank">📲 네이버지도 목적지 바로 연결</a>
             </div>
         </div>
     </div>
@@ -2270,7 +2285,7 @@ function toggleAccordion(element) {
     element.parentElement.classList.toggle("active");
 }
 function openTab(evt, tabName) {
-    const root = document.getElementById("view-guide");
+    const root = document.getElementById("view-info");
     root.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
     root.querySelectorAll(".tab-btn").forEach(el => el.classList.remove("active"));
     document.getElementById(tabName).classList.add("active");
@@ -2300,8 +2315,8 @@ loadInitData(); // 명단·공지·안내페이지를 한 번의 요청으로 �
 // 홈에 표시되는 현재 세션 배지를 1분마다 갱신
 setInterval(() => { computeSession(); renderSessionBanner(); }, 60000);
 
-/* 새로고침해도 마지막으로 보던 화면(특히 관리자 페이지)을 유지 + 페이지별 주소(#checkin, #guide, #admin) 지원 */
-const VALID_VIEWS = ["home", "checkin", "guide", "qna", "admin"];
+/* 새로고침해도 마지막으로 보던 화면(특히 관리자 페이지)을 유지 + 페이지별 주소(#checkin, #info, #admin) 지원 */
+const VALID_VIEWS = ["home", "checkin", "info", "qna", "admin"];
 (function restoreView() {
     let savedView = null, wasUnlocked = false;
     try {
